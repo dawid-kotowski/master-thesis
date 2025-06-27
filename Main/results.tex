@@ -238,15 +238,17 @@ We remark, that the equidistant spacing of the time samples is a matter of conve
     \end{multline*}
     and
     \begin{equation*}
-        \Ecal_{\text{DOD}} = \frac{m^{-1} \vert \Theta \times \Theta' \times \Tcal \vert}{N_{data}} \sum_{i = 1}^{N_{s_1}} \sum_{j = 1}^{N_{s_2}} \sum_{k = 1}^{N_t} \norm{u(\mu_i, \nu_j, t_k) - V(\mu_i, t_k) V(\mu_i, t_k)^T u(\mu_i, \nu_j, t_k)}.
+        \Ecal_{\text{DOD}} = \frac{m^{-1} \vert \Theta \times \Theta' \times \Tcal \vert}{N_{data}} \, \bigg\vert \,  
+        \sum_{i = 1}^{N_{s_1}} \sum_{j = 1}^{N_{s_2}} \sum_{k = 1}^{N_t} 
+        \norm{u(\mu_i, \nu_j, t_k) - V(\mu_i, t_k) V(\mu_i, t_k)^T u(\mu_i, \nu_j, t_k)}^2 \, \bigg\vert^{1/2}.
     \end{equation*}
     This leaves us with the proof for the convergence statements. While $\Ecal_S \to 0$ as $N_s, N_t \to \infty$ can be shown in the same manner as it has been in aforementioned proof above, the DOD error is more tricky. 
     
     Using the triangle inequality again and combining it with the findings of Lemma (\ref{lemma: DOD Existence}) we get for any $\varepsilon > 0$ and a suitable amount of complexity of the ReLU neural network $V: \R^{p+1} \to \R^{N_h \times N}$
     \begin{align*}
-        \Ecal_{\text{DOD}} &\leq m^{-1} \bigg\vert \, \int_{\Theta \times \Theta' \times \Tcal} \norm{u(\mu, \nu, t) - V(\mu, t) V(\mu, t)^T u(\mu, \nu, t)} d(\mu, \nu, t) \, \bigg\vert \\
-        &+ m^{-1} \bigg\vert \, \Ecal_{\text{DOD}} - \int_{\Theta \times \Theta' \times \Tcal} \norm{u(\mu, \nu, t) - V(\mu, t) V(\mu, t)^T u(\mu, \nu, t)} d(\mu, \nu, t) \, \bigg\vert \\
-        \underset{N_s,\, N_t \to \infty}{\longrightarrow} &m^{-1} \bigg\vert \, \int_{\Theta \times \Theta' \times \Tcal} \norm{u(\mu, \nu, t) - V(\mu, t) V(\mu, t)^T u(\mu, \nu, t)} d(\mu, \nu, t) \, \bigg\vert \\
+        \Ecal_{\text{DOD}} &\leq m^{-1} \bigg\vert \, \int_{\Theta \times \Theta' \times \Tcal} \norm{u(\mu, \nu, t) - V(\mu, t) V(\mu, t)^T u(\mu, \nu, t)}^2 d(\mu, \nu, t) \, \bigg\vert^{1/2} \\
+        &+ \Ecal_{\text{DOD}} -  m^{-1} \bigg\vert \,  \int_{\Theta \times \Theta' \times \Tcal} \norm{u(\mu, \nu, t) - V(\mu, t) V(\mu, t)^T u(\mu, \nu, t)}^2 d(\mu, \nu, t) \, \bigg\vert^{1/2} \\
+        \underset{N_s,\, N_t \to \infty}{\longrightarrow} &m^{-1} \bigg\vert \, \int_{\Theta \times \Theta' \times \Tcal} \norm{u(\mu, \nu, t) - V(\mu, t) V(\mu, t)^T u(\mu, \nu, t)}^2 d(\mu, \nu, t) \, \bigg\vert^{1/2} \\
         &< m^{-1}\varepsilon + m^{-1}\int_{\Theta \times \Tcal} d_N(\mathcal{S}_{\mu, t}) d(\mu, t)
     \end{align*}
 
@@ -257,8 +259,8 @@ We remark, that the equidistant spacing of the time samples is a matter of conve
     Let $N_{s_2}$ be given under Assumption (\ref{assumption sample}), then for all $\varepsilon > 0$ there is a ReLU neural network
     $V: \R^{p+1} \to \R^{N_h \times N}$, such that for $u_j := u(\mu, \nu_j, t)$ with given $\mu \in \Theta$ and $t \in \Tcal$
     \begin{equation*}
-        \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \bigg\vert \, \sum_{j=1}^{N_{s_2}} \norm{u_j - V(\mu, t) V(\mu, t)^T u_j}^2 \\
-        - \min\limits_{W \in \R^{N_h \times N}} \sum_{j = 1}^{N_{s_2}} \norm{u_j - W W^T u_j}^2 \, \bigg\vert^{1/2} < \varepsilon.
+        \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \bigg\vert \, \frac{1}{N_{s_2}} \sum_{j=1}^{N_{s_2}} \norm{u_j - V(\mu, t) V(\mu, t)^T u_j}^2 \\
+        - \min\limits_{W \in \R^{N_h \times N}} \frac{1}{N_{s_2}} \sum_{j = 1}^{N_{s_2}} \norm{u_j - W W^T u_j}^2 \, \bigg\vert^{1/2} < \varepsilon.
     \end{equation*}
 \end{lemma}
 \begin{proof}
@@ -274,18 +276,18 @@ We remark, that the equidistant spacing of the time samples is a matter of conve
     \end{equation*}
     gives us the following inequality firstly using the monotonicity of the square root and then using the triangle inequalities multiple times
     \begin{align*}
-        &\sup\limits_{(\mu, t) \in \Theta \times \Tcal} \bigg\vert \, \sum_{j=1}^{N_{s_2}} \norm{u_j - V(\mu, t) V(\mu, t)^T u_j}^2 
+        & \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \bigg\vert \, \sum_{j=1}^{N_{s_2}} \norm{u_j - V(\mu, t) V(\mu, t)^T u_j}^2 
         - \sum_{j = 1}^{N_{s_2}} \norm{u_j - V^* (V^*)^T u_j}^2 \, \bigg\vert^{1/2} \\
-        \leq &\sup\limits_{(\mu, t) \in \Theta \times \Tcal} \bigg\vert \, \sum_{j = 1}^{N_{s_2}} \norm{V(\mu, t) V(\mu, t)^T u_j - V^* (V^*)^T u_j}^2 \, \bigg\vert^{1/2}, 
+        \leq& \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \bigg\vert \, \sum_{j = 1}^{N_{s_2}} \norm{V(\mu, t) V(\mu, t)^T u_j - V^* (V^*)^T u_j}^2 \, \bigg\vert^{1/2}, 
     \end{align*}
     then define $q_j := (V^*)^T u_j$ and $\hat{q}_j := V(\mu, t)^T u_j$ and their training vectors accordingly, i.e. $q := (q_j)_{j=1}^{N_{s_2}}, \hat{q} := (\hat{q}_j)_{j=1}^{N_{s_2}}$
     \begin{align*}
-        \leq &\sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{V(\mu, t) \hat{q} - V(\mu, t) q}_{train} + \norm{V(\mu, t) q - V^* q}_{train} \\
-        \leq &\sup\limits_{(\mu, t) \in \Theta \times \Tcal}  \norm{V(\mu, t)}_\infty \, \norm{\hat{q} - q}_{train} + \norm{V(\mu, t) - V^*}_\infty \, \norm{q}_{train} \\
-        = &\sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{V(\mu, t)}_\infty \, \norm{V(\mu, t)^T u - (V^*)^T u}_{train} + \norm{V(\mu, t) - V^*}_\infty \, \norm{(V^*)^T u}_{train} \\
-        \leq &\sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{V(\mu, t)}_\infty \, \norm{V(\mu, t) - V^*}_\infty \, \norm{u}_{train} + \norm{V(\mu, t) - V^*}_\infty \, \norm{V^*}_\infty \, \norm{u}_{train} \\
-        \leq &\sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{u}_{train} \left( \norm{V(\mu, t) - V^*}_\infty \, \left( \norm{V(\mu, t)}_\infty + 1 \right) \right) \\
-        \leq & \, 2 N_{s_2}^{1/2} M \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{V(\mu, t) - V^*}_\infty,
+        \leq& \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{V(\mu, t) \hat{q} - V(\mu, t) q}_{train} + \norm{V(\mu, t) q - V^* q}_{train} \\
+        \leq& \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal}  \norm{V(\mu, t)}_\infty \, \norm{\hat{q} - q}_{train} + \norm{V(\mu, t) - V^*}_\infty \, \norm{q}_{train} \\
+        = & \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{V(\mu, t)}_\infty \, \norm{V(\mu, t)^T u - (V^*)^T u}_{train} + \norm{V(\mu, t) - V^*}_\infty \, \norm{(V^*)^T u}_{train} \\
+        \leq& \, N_{s_2}^{-1/2}  \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{V(\mu, t)}_\infty \, \norm{V(\mu, t) - V^*}_\infty \, \norm{u}_{train} + \norm{V(\mu, t) - V^*}_\infty \, \norm{V^*}_\infty \, \norm{u}_{train} \\
+        \leq& \, N_{s_2}^{-1/2}  \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{u}_{train} \left( \norm{V(\mu, t) - V^*}_\infty \, \left( \norm{V(\mu, t)}_\infty + 1 \right) \right) \\
+        \leq& \, 2 M \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{V(\mu, t) - V^*}_\infty,
     \end{align*}
     where we used $\norm{u}_{train} \leq \vert \, \sum_{j=1}^{N_{s_2}} M^2 \, \vert^{1/2} = N_{s_2}^{1/2} M$ and additionally $\norm{V(\mu, t)}_\infty = \norm{V^*}_\infty = 1$
     by orthonormality in the last arguments.
@@ -301,13 +303,14 @@ We remark, that the equidistant spacing of the time samples is a matter of conve
 
 \begin{theorem} \label{theo: PAC bound for POD-DL-ROM}
     Let $\mathcal{G}: (\mu, \nu, t) \mapsto u(\mu, \nu, t)$ for any $(\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal$ be the
-    parameter-to-solution map and let Assumption (\ref{assumption sample}) and (\ref{assumption parameter-to-solution map}) be true. Let $\delta > 0$ and $1 > \varepsilon > 0$.
-    Now assume we can collect freely a sufficient amount of training data $N_{\text{data}} = N_{\text{data}}(\delta, \varepsilon)$ and put them into the
-    correlation matrix $K$ as defined in Definition (\ref{def: POD}) with $\sigma_k^2$ being its sorted eigenvalues. Now choose
+    parameter-to-solution map and let Assumption (\ref{assumption sample}) and (\ref{assumption parameter-to-solution map}) be true. Let $1  > \delta > 0$ and $\varepsilon > 0$.
+    Now assume we can collect freely a sufficient amount of training data $N_{\text{data}} = N_{\text{data}}(\delta, \varepsilon)$ and put it into the
+    correlation matrix $K$ as given in Definition (\ref{def: POD}) with $\sigma_k^2$ being its sorted eigenvalues. Now choose
     \begin{equation*}
         N = \operatorname{argmin} \left\{ j \in \N \, \bigg\vert \, \sum_{k > j} \sigma^2_k \leq \frac{m^2}{9} \varepsilon^2 \right\}.
     \end{equation*}
-    Given the POD matrix $V \in \R^{N_h \times N}$ we now define the parameter-to-POD-coefficient map $\mathcal{Q}: (\mu, \nu, t) \mapsto V^T u(\mu, \nu, t)$ for 
+    Given the POD matrix $V \in \R^{N_h \times N}$ we now define the parameter-to-POD-coefficient map 
+    $\mathcal{Q}: (\mu, \nu, t) \mapsto q(\mu, \nu, t) :=  V^T u(\mu, \nu, t)$ for 
     any $(\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal$. We assume that there exists $n > 0, \psi_* : \R^n \to \R^N, \psi_*' : \R^N \to \R^n$ that are respectively $s$-times and
     $s'$-times differentiable ( with $s >> s' \geq 2$), such that they enjoy the perfect embedding Assumption (\ref{assumption perfect embedding}), i.e. 
     \begin{equation*}
@@ -435,38 +438,102 @@ We remark, that the equidistant spacing of the time samples is a matter of conve
 \begin{theorem} \label{theo: PAC bound for DOD-DL-ROM}
     Let $\mathcal{G}: (\mu, \nu, t) \mapsto u(\mu, \nu, t)$ for any $(\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal$ be the
     parameter-to-solution map and let Assumption (\ref{assumption sample}) and (\ref{assumption parameter-to-solution map}) be true. 
-    Let $\delta > 0$ and $1 > \varepsilon > 0$.
-    Now assume we can collect freely a sufficient amount of training data $N_{\text{data}} = 
-    N_{\text{data}}(\delta, \varepsilon)$ and put them into the
-    correlation matrix $K$ as defined in Definition (\ref{def: POD}) with $\sigma_k^2$ being its sorted eigenvalues. 
+    Let $1 > \delta > 0$ and $\varepsilon > 0$.
+    Now assume we can collect freely a sufficient amount of training data $\Theta_{\text{data}}, \Theta'_{\text{data}}$ and 
+    $\Tcal_{\text{data}}$ of size $N_{\text{data}} = 
+    N_{\text{data}}(\delta, \varepsilon)$ and put all samples of $u(\mu, \nu_j, t)_{j=1}^{N_{s_2}}$ into a
+    correlation matrix $K_{\mu, t}$ for each sample $(\mu, t) \in \Theta_{\text{data}} \times \Tcal_{\text{data}}$ 
+    as given in Definition (\ref{def: POD}) with $\sigma_k(\mu, t)_k^2$ being its sorted eigenvalues. 
     Now choose
     \begin{equation*}
-        N = \operatorname{argmin} \left\{ j \in \N \, \bigg\vert \, \sum_{k > j} \sigma^2_k \leq \frac{m^2}{9} \varepsilon^2 \right\}.
+        N_{\text{DOD}} = \operatorname{argmin} \left\{ j \in \N \, \bigg\vert \, 
+        \sup\limits_{(\mu, t) \in \Theta_{\text{data}} \times \Tcal_{\text{data}}} \,
+        \sum_{k > j} \sigma(\mu, t)^2_k \leq \frac{m^2}{16} \varepsilon^2 \right\}.
     \end{equation*}
-    Given the POD matrix $V \in \R^{N_h \times N}$ we now define the parameter-to-POD-coefficient map 
-    $\mathcal{Q}: (\mu, \nu, t) \mapsto V^T u(\mu, \nu, t)$ for 
-    any $(\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal$. We assume that there exists 
-    $n > 0, \psi_* : \R^n \to \R^N, \psi_*' : \R^N \to \R^n$ that are respectively $s$-times and
+    For each pair $(\mu, t) \in \Theta_{\text{data}} \times \Tcal_{\text{data}}$ given the respective POD matrix, so the 
+    best possible projection given the data set (refer to (\ref{prop: eigenvalues and optimal projection under sampling})), 
+    $V^*(\mu, t) \in \R^{N_h \times N_{\text{DOD}}}$ we now define the parameter-to-optimal-coefficient map 
+    $\mathcal{Q}: (\mu, \nu, t) \mapsto q(\mu, \nu, t) := V^*(\mu, t)^T u(\mu, \nu, t)$ for 
+    any $(\mu, \nu, t) \in \Theta_{\text{data}} \times \Theta' \times \Tcal_{\text{data}}$. We assume that there exists 
+    $n > 0, \Psi_* : \R^n \to \R^{N_{\text{DOD}}}, \Psi_*' : \R^{N_{\text{DOD}}} \to \R^n$ that are respectively $s$-times and
     $s'$-times differentiable ( with $s >> s' \geq 2$), such that they enjoy the perfect embedding 
     Assumption (\ref{assumption perfect embedding}), i.e. 
     \begin{equation*}
-        \psi_*(\psi_*'(q(\mu, \nu, t))) = q(\mu, \nu, t), \quad \forall (\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal.
+        \Psi_*(\Psi_*'(q(\mu, \nu, t))) = q(\mu, \nu, t), \quad \forall (\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal.
     \end{equation*}
     We further let 
     \begin{equation*}
-        C_1 := \sup\limits_{\vert \alpha \vert \leq s'} \sup\limits_{v \in \R^N} \vert \, D^\alpha \psi_*'(v) \, \vert, \quad 
-        C_2 := \sup\limits_{\vert \alpha \vert \leq s} \sup\limits_{w \in \R^n} \vert \, D^\alpha \psi_*'(w) \, \vert.
+        C'_1 := \sup\limits_{\vert \alpha \vert \leq s'} \sup\limits_{v \in \R^{N_{\text{DOD}}}} \vert \, D^\alpha \Psi_*'(v) \, \vert, \quad 
+        C'_2 := \sup\limits_{\vert \alpha \vert \leq s} \sup\limits_{w \in \R^n} \vert \, D^\alpha \Psi_*'(w) \, \vert.
     \end{equation*}
-    Then there is a constant $c = c(\Theta, \Theta', \Tcal, L, C_1, C_2, p, q, n, s, s')$ and a POD-DL-ROM architecture $V \hat{q} =
-    V \psi \circ \phi: \R^{p+q+1} \to \R^{N_h}$ composed of a decoder $\psi: \R^n \to \R^N$ having at most:
+    Then there is a constant $c = c(\Theta, \Theta', \Tcal, L, C_1, C_2, p, q, n, s, s')$ and a DOD-DL-ROM architecture $V \hat{q} =
+    V_{\text{DOD}} \Psi \circ \phi: \R^{p+q+1} \to \R^{N_h}$ composed of a decoder $\Psi: \R^n \to \R^{N_{\text{DOD}}}$ having at most:
     \begin{enumerate}
-        \item[-] $L_{n \to N} = c \log(\varepsilon^{-1})$ layers,
-        \item[-] $\omega_{n \to N} = cN \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1})$ active weights,
+        \item[-] $L_{n \to N_{\text{DOD}}} = c \log(\varepsilon^{-1})$ layers,
+        \item[-] $\omega_{n \to N_{\text{DOD}}} = c \,  N_{\text{DOD}} \, \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1})$ active weights,
     \end{enumerate}
-    and a reduced feed forward neural network $\phi: \R^{p+q+1} \to \R^n$ having at most:
+    a reduced feed forward neural network $\phi: \R^{p+q+1} \to \R^n$ having at most:
     \begin{enumerate}
         \item[-] $L_{(p+q+1) \to n} = c \log(\varepsilon^{-1})$ layers,
         \item[-] $\omega_{(p+q+1) \to n} = cn \varepsilon^{-(p+q+1)} \log(\varepsilon^{-1})$ active weights,
     \end{enumerate}
+    and a DOD Module $V_{\text{DOD}}: \R^{p+1} \to \R^{N_h \times N_{\text{DOD}}}$ having at most:
+    \begin{enumerate}
+        \item[-] $L_{(p+1) \to N_h \times N_{\text{DOD}}} = c \log(\varepsilon^{-1})$ layers,
+        \item[-] $\omega_{(p+1) \to N_h \times N_{\text{DOD}}} = c \, N_h \, N_{\text{DOD}} \, \varepsilon^{-(p+1)} \log(\varepsilon^{-1})$ active weights, 
+    \end{enumerate}
     such that $\prob[\Ecal_R < \varepsilon] > 1 - \delta$.
 \end{theorem}
+\begin{proof}
+    Similar as to the proof of Theorem (\ref{theo: PAC bound for POD-DL-ROM}), we will try to bound each quantity
+    of the statement in Theorem (\ref{theo: relative error DOD+DNN}), but with the catch, that $\Ecal_{\text{DOD}}$ is
+    stochastic in nature, and thus we will employ Lemma (\ref{lemma: optimal projection error}) to find an auxilary term,
+    which is independent of the data, to which the approximation of the neural net of the DOD is sufficiently "close". 
+    
+    The sampling error can be bounded in the same way as before, i.e. we can directly bound 
+    $\Ecal_S = \Ecal_S(N_{s_1}, N_{s_2}, N_t)$ independently of $N_{\text{DOD}}$, under the Assumption (\ref{assumption sample})
+    by the Weak Law of Large Numbers, i.e. for all $1 > \delta > 0$ and $\varepsilon > 0$ there are $N_{s_1}, N_{s_2}, N_t$, such that
+    \begin{equation} \label{eq: S error dod-dl-rom}
+        \prob[\Ecal_S((N_{s_1}, N_{s_2}, N_t)) < \varepsilon / 4] > 1 - \delta.
+    \end{equation}
+    Now recall the definition of $\Ecal_{\text{DOD}}$ in the proof of Theorem (\ref{theo: relative error DOD+DNN}) and 
+    further establish
+    \begin{align*}
+        \Ecal_{\text{DOD}} &= \frac{m^{-1} \vert \Theta \times \Theta' \times \Tcal \vert}{N_{data}^{1/2}} 
+        \, \bigg\vert \, \sum_{i = 1}^{N_{s_1}} \sum_{j = 1}^{N_{s_2}} \sum_{k = 1}^{N_t} 
+        \norm{u(\mu_i, \nu_j, t_k) - V(\mu_i, t_k) V(\mu_i, t_k)^T u(\mu_i, \nu_j, t_k)}^2 \, \bigg\vert^{1/2} \\
+        &\leq m^{-1} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \, \bigg\vert \, 
+        \frac{\vert \Theta \times \Theta' \times \Tcal \vert}{N_{s_2}}  \sum_{j = 1}^{N_{s_2}} 
+        \norm{u(\mu, \nu_j, t) - V(\mu, t) V(\mu, t)^T u(\mu, \nu_j, t)}^2 \, \bigg\vert^{1/2}, 
+    \end{align*}
+    enabling us to use Proposition (\ref{prop: eigenvalues and optimal projection under sampling}) in order 
+    to switch to the eigenvalues $\sigma(\mu, t)_k$ for $(\mu, t) \in \Theta_{\text{data}} \times \Tcal_{\text{data}}$
+    of the theoretical POD matrix $V^*(\mu, t)$ by employing the Lemma (\ref{lemma: optimal projection error}) with 
+    the bound
+    \begin{equation*}
+        \frac{\varepsilon \, m^2}{4 \vert \Theta \times \Theta' \times \Tcal \vert^{1/2}},
+    \end{equation*}
+    which directly gives us the approximation result via the defition of $N_{\text{DOD}}$
+    \begin{equation} \label{eq: dod error dod-dl-rom}
+        \Ecal_{\text{DOD}} < \frac{\varepsilon}{4} + 
+        m^{-1} \sup\limits_{(\mu, t) \in (\Theta_{\text{data}} \times \Tcal_{\text{data}})} 
+        \sqrt{\sum_{k > N_{\text{DOD}}} \sigma(\mu, t)_k^2} 
+        \leq \frac{\varepsilon}{2}.
+    \end{equation}
+
+    \notdone{Include the cost via Yarotski}
+    \notdone{Argue the actual part for the NN error}
+
+    Moreover we can use the exact same arguments as in the bound for $\Ecal_{\text{NN}}$ for the POD-DL-ROM as in the
+    proof of Theorem (\ref{theo: PAC bound for POD-DL-ROM}), which yields
+    \begin{equation} \label{eq: nn error dod-dl-rom}
+        \Ecal_{\text{NN}} < \frac{\varepsilon}{4}.
+    \end{equation}
+    Finally putting each Equation, i.e. (\ref{eq: S error dod-dl-rom}), (\ref{eq: dod error dod-dl-rom}) and (\ref{eq: nn error dod-dl-rom}),
+    together, we get 
+    \begin{equation*}
+        \Ecal_R \leq \Ecal_S + \Ecal_{\text{DOD}} + \Ecal_{\text{NN}} < \frac{\varepsilon}{4} +  \frac{\varepsilon}{2}
+        + \frac{\varepsilon}{4} = \varepsilon,
+    \end{equation*}
+    with probability greater than $1 - \delta$ concluding our proof.
+\end{proof}

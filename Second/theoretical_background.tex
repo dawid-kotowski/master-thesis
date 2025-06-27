@@ -66,11 +66,16 @@ Here we will discuss prerequisites to the Proper Orthogonal Decomposition and re
 \end{proof}
 
 \begin{proposition} \label{prop: eigenvalues and optimal projection under sampling}
-    Let $\mathcal{V}_N = \{ W \in \R^{N_h \times N} \, \vert \, W^T W = I_N \}$ be the set of all $N$-dimensional orthonormal bases and $V = [\xi]_{i=1}^N$ be the POD matrix, then
-    \begin{align*}
-        \sum\limits_{i \in I, k = 1, \dots, N_t} \norm{u(\mu_j, t_k) - V V^T u(\mu_j, t_k)}_2^2 &= \min\limits_{W \in \mathcal{V}_N} \sum\limits_{i \in I, k = 1, \dots, N_t} \norm{u(\mu_j, t_k) - W W^T u(\mu_j, t_k)}_2^2 \\
-        &= \sum_{j=N+1}^r \sigma_k.
-    \end{align*}
+    Let $\mathcal{V}_N = \{ W \in \R^{N_h \times N} \, \vert \, W^T W = I_N \}$ be the set of all $N$-dimensional orthonormal bases, 
+    $N_{data} := N_t N_s$ and $V = [\xi]_{i=1}^N$ be the POD matrix, then
+    \begin{multline*}
+        \frac{\vert \, \Pcal \times \Tcal \, \vert}{N_{data}} 
+        \sum\limits_{i \in I, k = 1, \dots, N_t} \norm{u(\mu_j, t_k) - V V^T u(\mu_j, t_k)}_2^2 \\
+        = \min\limits_{W \in \mathcal{V}_N} \frac{\vert \, \Pcal \times \Tcal \, \vert}{N_{data}} 
+        \sum\limits_{i \in I, k = 1, \dots, N_t} 
+        \norm{u(\mu_j, t_k) - W W^T u(\mu_j, t_k)}_2^2 
+        = \sum_{j=N+1}^r \sigma_k^2.
+    \end{multline*}
 \end{proposition}
 
 \begin{definition}[Linear Kolmogorov $N$-width] \label{def: linear kolmogorov}
