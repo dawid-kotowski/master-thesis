@@ -1,0 +1,94 @@
+\section{Theoretical Background}
+
+
+\subsection{for PDE Solution Spaces} \label{section: background for PDE solutions}
+
+\almostdone{Introduce the general notion of the POD}
+\almostdone{Introduce KnW and its relation to the continous case}
+
+For this section we define $u(\mu_j, t_k) \in \R^{N_h}$ for $\mu_j \in \Pcal$ and $t_k \in \mathcal{T}$ to be some vectors, later representing the solutions to a parametric PDE for a given parameter and time point in a given discrete subspace of the solution manifold, sampled uniformly and iid from their respective spaces. Here $\Pcal$ represents and arbitrary compact subspace of $\R^{p + q}$, where $p, q > 0$ and $\Tcal = [0, T]$ for some $T > 0$. Further we let $I \subset \N$ define some index set. Additionally we let $N_s := \vert I \vert$ and $N_t$ denote the number of time samples $t_k$.
+
+Here we will discuss prerequisites to the Proper Orthogonal Decomposition and related concepts, such as the Kolmogorov $n$-width, which is closely related to the partial sums of the eigenvalues of the POD matrix. This is among the results, this section will cover. We base this chapter on \cite{quarteroni2015rb}.
+
+\begin{definition}[Proper Orthogonal Decomposition] \label{def: POD}
+    Assuming $N_{data} = N_s N_t < \infty$, we define by $U_j = [u(\mu_j, t_k)]_{k = 1}^{N_t} \in \R^{N_h \times N_t}$ the snapshot matrix for a given $j \in I$ and consequently $U = [U_j]_{j \in I} \in \R^{N_h \times N_{data}}$ the collective snapshot matrix. Then the (discrete) correlation matrix is given by
+    \begin{equation} \label{eq: discrete correlation matrix}
+        K = \frac{\vert \Pcal \times \mathcal{T} \vert}{N_{data}} U U^T \in \R^{N_h \times N_h}.
+    \end{equation}
+    $K$ is symmetric and semi-positive definite and thus has real and positive eigenvalues $\sigma^2_1 \geq \dots \geq \sigma^2_r$. We further call $\psi_k$ the eigenvectors of the correlation matrix $K$. With these, the corresponding POD basis of dimension $N < N_h$ is given via
+    \begin{equation}
+        \xi_k = \frac{1}{\sigma_k} K \psi_k, \quad 1 \leq k \leq N,
+    \end{equation}
+    for the $N$ largest eigenvalues and their corresponding eigenvectors.
+    Further, if $N_s, N_t = \infty$, we define the continuous counterpart to the correlation matrix via
+    \begin{equation} \label{eq: continuous correlation matrix}
+        K_\infty = \int_{\Pcal \times \mathcal{T}} u(\mu, t) u^T(\mu, t) d(\mu, t) \in \R^{N_h \times N_h},
+    \end{equation}
+    and its real eigenvalues by $\sigma^2_{k, \infty}$.
+\end{definition}
+
+\begin{proposition} \label{prop: existence and convergence to sigma infty}
+    Let $K$ and $K_\infty$ and their respective eigenvalues be defined as in (\ref{def: POD}), then letting $N_s, N_t \to \infty$, we get 
+    \begin{equation*}
+        \sum_{k > N} \sigma_k^2 \longrightarrow \sum_{k > N} \sigma_{k, \infty}^2, \quad \mbox{ a.s.}
+    \end{equation*}
+\end{proposition}
+\begin{proof}
+
+    \notdone{Insert adequate consideration.}
+    
+    By some consideration there exists a matrix $V_\infty \in \R^{N_h \times N_h}$ such that 
+    \begin{align*}
+        \sum_{k > N} \sigma^2_{k, \infty} &= \int_{\Pcal \times \mathcal{T}} \norm{u(\mu, t) - V_\infty V^T_\infty u(\mu, t)}^2 d(\mu, t) \\
+        &= \underset{W \in \R^{N_h \times N}: W^T W = I}{\min} \, \int_{\mu \times \mathcal{T}} \norm{u(\mu, t) - W W^T u(\mu, t) }^2 d(\mu, t).
+    \end{align*}
+    Thus, since this is the optimal choice of an approximation matrix for the continuous case and $V \in \R^{N_h \times N}$ is only optimal in the discrete setting and not necessarily the continuous case, we have
+    \begin{equation}
+        \sum_{k > N} \sigma^2_{k, \infty} \leq \int_{\Pcal \times \mathcal{T}} \norm{u(\mu, t) - V V^T u(\mu, t)}^2 d(\mu, t) = \sum_{k > N} \sigma^2_k.
+    \end{equation}
+    To properly handle the notion of $N_s, N_t \to \infty$ in a regularized fashion, we introduce some arbitrary samples $I_{train} \subset I$ and $\mathcal{T}_{train} \subset \mathcal{T}$, such that $I_{train}$ and $\mathcal{T}_{train}$ are finite. Note, that in general this does rely on the axiom of choice in the theoretical setting, but since the test samples are already known in practice, this is rather an unnecessary remark. We then write entry-wise for $m, l = 1, \dots N_h$
+    \begin{equation*}
+        [K_\infty - K]_{ml} = \int_{\Pcal \times \Tcal} [u(\mu, t)]_m [u(\mu, t)]_l d(\mu, t) - \frac{\vert \Pcal \times \Tcal \vert}{N_{data}} \sum_{j \in I_{train}} \sum_{k \in \Tcal_{train}} [u(\mu_j, t_k)]_m [u(\mu_j, t_k)]_l.
+    \end{equation*}
+    By the uniform iid sampling assumed in the introduction to Section (\ref{section: background for PDE solutions}), we know that with the entry-wise boundedness of the PDE solutions, the resulting matrix is subject to the strong law of large numbers, and thus converges to zero, given the entry-wise matrix norm $\norm{ \cdot }_1$ as $N_t, N_s \to \infty$ almost surely.
+    
+    \notdone{Why is the boundedness clear here? Independent of the specific PDE?}
+    
+    Now using Bauer-Fike's Theorem with the 1-norm, we have upon ordering, that for each $\sigma^2_{k,\infty}$ there is a $\sigma^2_k$ in the spectrum of $K$, such that
+    \begin{equation*}
+        \vert \sigma_{k, \infty}^2 - \sigma_k^2  \vert \leq \kappa(V) \norm{K_\infty - K}_1,
+    \end{equation*}
+    where $\kappa(V)$ denotes the condition number of the eigenvector matrix of $K$. 
+    
+    \notdone{Why is this sufficient? Does the condition number always stay bounded even throughout growing Ns, Nt?}
+    
+    Now by convergence of $\norm{K_\infty - K} \to 0$ almost surely for $N_s, N_t \to \infty$, we conclude the proof. 
+\end{proof}
+
+\begin{proposition} \label{prop: eigenvalues and optimal projection under sampling}
+    Let $\mathcal{V}_N = \{ W \in \R^{N_h \times N} \, \vert \, W^T W = I_N \}$ be the set of all $N$-dimensional orthonormal bases and $V = [\xi]_{i=1}^N$ be the POD matrix, then
+    \begin{align*}
+        \sum\limits_{i \in I, k = 1, \dots, N_t} \norm{u(\mu_j, t_k) - V V^T u(\mu_j, t_k)}_2^2 &= \min\limits_{W \in \mathcal{V}_N} \sum\limits_{i \in I, k = 1, \dots, N_t} \norm{u(\mu_j, t_k) - W W^T u(\mu_j, t_k)}_2^2 \\
+        &= \sum_{j=N+1}^r \sigma_k.
+    \end{align*}
+\end{proposition}
+
+\begin{definition}[Linear Kolmogorov $N$-width] \label{def: linear kolmogorov}
+    Let $\mathcal{S}_{N_h} = \{ u(\mu, t) \in \R^{N_h} \, \vert \, (\mu, t) \in \Pcal \times \Tcal \}$ be some manifold. The linear Kolmogorov $N$-width of $\mathcal{S}_{N_h}$ is defined as
+    \begin{equation*}
+        d_N(S_{N_h}) = \inf\limits_{V \in \R^{N_h \times N}} \sup\limits_{u \in S_{N_h}} \norm{u - V V^T u}.
+    \end{equation*}
+\end{definition}
+
+\begin{definition}[Nonlinear Kolmogorov $n$-width] \label{def: nonlinear kolmogorov}
+    The nonlinear Kolmogorov $n$-width of the reduced manifold $\mathcal{S}_N = \{ q(\mu, t) = V^T u(\mu, t) \, \vert \, (\mu, t) \in \Pcal \times \Tcal \}$ is defined as 
+    \begin{equation*}
+        \delta_n(\mathcal{S}_N) = \inf\limits_{\psi \in C(\R^N, \R^n), \psi' \in C(\R^n, \R^N)} \sup\limits_{u \in S_{N_h}} \norm{u - \psi(\psi'(u))}.
+    \end{equation*}
+\end{definition}
+
+\subsection{for Neural Networks} \label{section: background for nn}
+
+\notdone{Discuss existing literature}
+\notdone{Introduce Yarotski with Proof}
+\notdone{Introduce Gühring et al. with Proof}

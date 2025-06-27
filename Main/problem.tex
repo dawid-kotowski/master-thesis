@@ -1,0 +1,117 @@
+\section{Formulation of the General Problem}
+
+\notdone{Describe basic already existing techniques via literature}
+
+\subsection{Stationary parametric PDE}
+
+\notdone{
+Brief general description of parametric PDEs, no examples. Potentially add convergence rates and computational cost of traditional solvers
+}
+
+\subsection{Deep-learning based Reduced Order Models}
+
+\notdone{Introduce Proper Orthogonal Decomposition}
+\notdone{Introduce Autoencoders}
+\notdone{Introduce Deep Orthogonal Decomposition}
+
+\subsection{Non-stationary parametric PDE}
+
+\almostdone{Brief general description of time dependent parametric PDEs regarding existing literature.}
+\notdone{Definitely add traditional convergence and computational cost.}
+
+Let $\Theta \subset \R^{p}$ and $\Theta' \subset \R^q$ denote the geometric and physical parameter spaces respectively. Further we let $\Omega \subset \R^d$ be some Lipschitz domain and $\Gamma = [0, T]$ for some $T > 0$ be the trial space of a parametric time-dependent PDE, i.e. $u(t; \mu, \nu) = u(x, t; \mu, \nu)$ is the solution of the PDE, if
+\begin{equation*}\begin{cases}
+    \partial_t u(t; \mu, \nu) + \mathcal{L}(\mu, \nu)u(t; \mu, \nu) + \mathcal{N}(u(\mu, \nu), \mu, \nu) = f(t; \mu, \nu), \quad &(x, t) \in \Omega \times \Gamma, \\
+    \mathcal{B}(\mu, \nu) u(t; \mu, \nu) = g_N(t; \mu, \nu) &(x, t) \in \partial \Omega \times \Gamma, \\
+    u(t; \mu, \nu) = u_0(\mu, \nu) &(x, t) \in \Omega \times \{0 \}. \\
+\end{cases}
+\end{equation*}
+Assume we half-discretize the problem in the spacial domain $\Omega$ with $N_h$ degrees of freedom. Note that we refer to this discrete grid space on $\Omega$ as $\Omega^h$ and its boundary grid points as $\partial \Omega^{h}$. Then the resulting full order model can be seen as the solution to 
+\begin{equation*} \begin{cases}
+    M(\mu, \nu) \partial_{t} u_h(t; \mu, \nu) + A(\mu, \nu) u_h(t; \mu, \nu) + N(u_h(\mu, \nu), \mu, \nu)= f(t; \mu, \nu)  \quad &(x, t) \in \Omega^{h} \times \Gamma, \\
+    u_h(0; \mu, \nu) = u_0(\mu, \nu) \quad &(x, t) \in \Omega^{h} \times \{0\}, \end{cases} 
+\end{equation*}
+where we assume $M: \Theta \times \Theta' \to \R^{N_h \times N_h}$ to send the parameter set to a mass matrix, $A: \Theta \times \Theta' \to \R^{N_h \times N_h}$ to a symmetric positive definite stiffness matrix, $N: \R^{N_h} \to \R^{N_h}$ to be some non-linear term and $f: \Gamma \times \R^{N_h} \times \Theta \times \Theta' \to \R^{N_h}$ to be the corresponding source term of the equation. Additionally we assume to have initial conditions via the function $u_0: \Theta \times \Theta' \to \Omega^{N_h}$.
+
+
+\begin{assumption} \label{assumption KnW decay}
+    Let $\mathcal{S} := \{ u(\mu, \nu, t) \, \vert \, (\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal \}$ denote the total solution manifold and $\mathcal{S}_{\mu, t} := \{ u(\mu, \nu, t) \, \vert \, \nu \in \Theta' \}$ denote the solution submanifold for a fixed set $(\mu, t) \in \Theta \times \Tcal$, then we assume that
+    \begin{enumerate}
+        \item the linear KnW of $\mathcal{S}$ decays slowly, i.e. 
+        \begin{equation*}
+            d_N(\mathcal{S}) \leq C N^{-\alpha},
+        \end{equation*}
+        where $0 < \alpha \leq 1$ and $C > 0$ some constant.
+        \item the linear KnW of $\mathcal{S}_{\mu, t}$ decays quickly for all $\mu \in \Theta$ and $t \in \Tcal$, i.e. 
+        \begin{equation*}
+            \sup_{(\mu, t) \in \Theta \times \Tcal} d_N(\mathcal{S}_{\mu, t}) \leq C' N^{-\beta},    
+        \end{equation*}
+        where $\beta > 1$ and $C' > 0$ some constant.
+    \end{enumerate}
+\end{assumption}
+
+
+\subsection{Deep-learning based Reduced Order Models}
+
+\notdone{Introduce POD-DL-ROM}
+
+A general Deep learning based reduced order model (DL-ROM) firstly appeared in architecture and training in the paper \cite{DL-ROM}; to properly approximate the potentially non-linear solution manifold of the high fidelity FOM, we employ an Autoencoder (AE), and on the reduced manifold we employ some other Deep Learning architecture, like the proposed Deep Feed-Forward Neural Network (DFNN), to learn the latent dynamics of the parametric PDE. This concludes in the following approximation of the FOM solution $u_h$
+\begin{equation}
+    \hat{u}_h(t; \mu, \nu) = \Psi_h(\Phi_n(t; \mu, \nu, \theta_{DF}), \theta_{D}) \in \R^{N_h},
+\end{equation}
+where we set $\Psi_h = f^D_h : \R^n \times \Theta_D \to \R^{N_h}$ for the decoder (and $f^E_n: \R^{N_h} \times \Theta_E \to \R^n$ the corresponding encoder) of a convolutional AE. Then $f^E_n$ denotes the projection onto the reduced trial solution manifold and we assume $\Phi_n = \Phi_n^{DF} : \Gamma \times \Theta \times \Theta' \times \Theta_{DF} \to \R^n$ to be the DFNN mapping the dynamics of the parametric PDE onto the reduced trial solution manifold.
+
+The subsequent training is then performed via a loss function of a convex combination of both, the projection error using the encoder and the dynamics error considering both the decoder and the feed forward network, i.e. for $\theta = (\theta_D, \theta_E, \theta_{DF})$ define the optimal weights via
+\begin{align}
+    \theta^* = \argmin_\theta \frac{1}{N_s} \sum_{i, j = 1}^{N_{train}} \sum_{k = 1}^{N_t} \, &\frac{\omega_h}{2} \, \norm{u_h(t^k; \mu_i, \nu_j) - f^D_h(\Phi_n^{DF}(t^k; \mu_i, \nu_j, \theta_{DF}), \theta_D), \theta_{D})}^2 \\
+    + \, &\frac{1 - \omega_h}{2} \, \norm{f^E_n(u_h(t^k; \mu_i, \nu_j), \theta_E) - \Phi_n^{DF}(t^k; \mu_i, \nu_j, \theta_{DF})}^2.
+\end{align}
+
+\subsubsection{Deep Orthogonal Decomposition based Reduction}
+
+\almostdone{Introduce both DOD-DL-ROM and DOD+DNN}
+
+For comparison, one can see, that the POD-DL-ROM works significantly more efficient than the DL-ROM by pre-reducing the dimension $N_h$ to some $N < N_h$ in a linear POD-based fashion. This has the disadvantage of potentially losing fidelity, if the Kolmogorov $N$-width is rather large, which is the case for non-linear PDEs, relying on geometric circumstances. For this, we might instead of using snapshot-based rPOD for the matrix $S$ (optionally the correlation matrix) rather directly employ a Deep Orthogonal Decomposition to find the reduction matrix in dependency of $\mu \in \Theta$ and $t \in \Gamma$.
+
+Thus we have a common denominator for the DOD-DL-ROM approach. Defining $V: \Gamma \times \Theta \times \Theta_{DOD} \to \R^{N_h \times N}; V(t; \mu, \theta_{DOD}) \mapsto \A \Tilde{V}_{N_A}(t; \mu, \theta_{DOD})$, where $\A \in \R^{N_h \times N_A}$ is the pre-reduction POD for $N < N_A < N_h$ employed to deal with exceptionally large inherent dimensions $N_h$ and $\Tilde{V}_{N_A}(t; \mu, \theta_{DOD}) \in \R^{N_A \times N}$ is called \emph{inner module} of the DOD, yields the foundation of the reduction consideration. From hereon, there are a couple of different approaches, which lead to similar ideas; one is able to, after learning the DOD-map, either suppose, the remaining reduced solution manifold is "linear" enough to work directly with a coefficient finder network (Option A) or a further non-linear reduction, potentially by an Autoencoder, is needed (Option B). As an additional, maybe more ambiguous regarding error estimates, we want to introduce a CoLoRA-based ROM, which first tries to use the DOD-NN reductor for the stationary equivalent of the problem (if existent) and then employs a CoLoRA architecture to reduce the dimension up to the dynamics of the system (Option C). 
+
+For Options A and B: To use the same loss function as in the (POD-)DL-ROM, we do need to guarantee a previous construction of the inner module of the DOD. This first step is done with a separate training with a time dependent analogue to the DOD, i.e.
+\begin{equation}
+    \theta_{DOD}^* = \argmin_{\theta_{DOD}} \frac{1}{N_s} \sum_{i,j = 1}^{N_{train}} \sum_{k = 1}^{N_t} \, \norm{u_h(t^k; \mu_i, \nu_j) - V(t^k; \mu_i, \theta_{DOD}) V^T(t^k; \mu_i, \theta_{DOD}) \G u_h(t^k; \mu_i, \nu_j)}^2.
+\end{equation}
+
+\subsubsection{DOD+DNN} \label{subsec: DOD+DNN}
+
+Let $\Phi_n^{DLNN}: \Gamma \times \Theta \times \Theta' \times \Theta_{DLNN} \to \R^{N}$ be some Deep Feed-Forward Neural Network, then the overall workflow can be summed up by
+\begin{equation}
+    \hat{u}_h(t; \mu, \nu, \theta_{DOD}, \theta_{DFNN}) = \A \Tilde{V}_{N_A}(t; \mu, \theta_{DOD}) \cdot \Phi_n^{DFNN}(t; \mu, \nu, \theta_{DFNN}).
+\end{equation}
+This is a rather obvious extension of \cite{DOD}, but works surprisingly well. It will be the basic benchmark to overcome for the following algorithms. As for training a general comparison between the projection of a true solution and the prediction of the Feed Forward Network works well, i.e. for $\theta = \theta_{DFNN}$ let the optimal weights be given by
+\begin{equation}
+    \theta^* = \argmin_\theta \frac{1}{N_s} \sum_{i, j = 1}^{N_{train}} \sum_{k = 1}^{N_t} \norm{V^T(t^k; \mu_i, \theta^*_{DOD}) u_h(t^k; \mu_i, \nu_j) - \Phi_n^{DFNN}(t^k; \mu_i, \nu_j, \theta_{DFNN})}.
+\end{equation}
+
+\subsubsection{DOD-DL-ROM}
+
+Let $f_N^D$ and $f_n^E$ be the decoder and encoder of an AE respectively as above. Each of these non-linear DOD-DL-ROMs is subject to further dimensional reduction and thus is not comparable directly to the linear method above. Nonetheless in terms of reduction in dimensionality both methods can be comparable, if the latent dynamics dimension $n$ is the same in both cases. The general workflow is given by
+\begin{equation}
+    \hat{u}_h(t; \mu, \nu, \theta_{DOD}, \theta_D, \theta_{DFNN}) = \A \Tilde{V}_{N_A}(t; \mu, \theta_{DOD}) \cdot f_N^D(\Phi_n^{DFNN}(t; \mu, \nu, \theta_{DFNN}), \theta_{D}).
+\end{equation}
+
+Since for this, we employ an AE, we optimize for two loss functions, since the employed decoder is tied strictly to its respective encoder being able to correctly project onto the low-dimensional subspace of the latent dynamics of the PDE. For $\theta = (\theta_D, \theta_E, \theta_{DFNN})$ define the optimal weights via
+\begin{align*}
+    \theta^* = &\argmin_\theta \frac{1}{N_s} \sum_{i, j = 1}^{N_{train}} \sum_{k = 1}^{N_t} \\
+    &\frac{\omega_h}{2} \, \norm{u_h(t^k; \mu_i, \nu_j) - V(t^k; \mu_i, \theta_{DOD}^*) \cdot f^D_h(\Phi_n^{DFNN}(t^k; \mu_i, \nu_j, \theta_{DFNN}), \theta_D), \theta_{D})}^2 \\
+    + \, &\frac{1 - \omega_h}{2} \, \norm{V^T(t^k; \mu_i, \theta_{DOD}^*) \cdot f^E_n(u_h(t^k; \mu_i, \nu_j), \theta_E) - \Phi_n^{DFNN}(t^k; \mu_i, \nu_j, \theta_{DFNN})}^2.
+\end{align*}
+
+\subsubsection{CoLoRA-DL-ROM}
+
+\almostdone{Introduce CoLoRA DL-ROM}
+
+Here we aim at minimizing the dimension through two major reductions; the first being the reduction of the stationary DOD to the latent dimension of the $\mu$-invariant solution manifold of the stationary equivalent to the problem (regarding the Dirichlet boundary conditions as the initial conditions on some a priori defined boundary), and the second concerning the actual reduction with CoLoRA-layered architecture to the latent dynamic dimension $n << N_h$. The general workflow is thus given by 
+\begin{equation}
+    \hat{u}_h(t; \mu, \nu, \theta^*_{sDOD}, \theta_{C}) = \A \cdot \mathcal{C}_L( \dots (\mathcal{C}_2(\mathcal{C}_1(V_0(\mu, \theta^*_{sDOD}) \cdot \phi_0(\mu, \nu, \theta^*_{sDOD})), \theta_{C_1}), \theta_{C_2}), \theta_{C_L}),
+\end{equation}
+where $\mathcal{C}_i: \R^{N_A} \times \Theta_C \to \R^{N_A}; \mathcal{C}_i(x, \theta_{C_i}) = W_i x + A_i \, \text{diag}(\alpha_i(\nu, t)) B_i x + b_i$ for all $1 \leq i \leq L.$
+Remark, that we will still employ a pre-reduction using the rPOD matrix $\A$ stemming from the same snapshot matrix $S$ as in both Options before.

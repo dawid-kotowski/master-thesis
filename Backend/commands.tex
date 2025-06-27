@@ -1,0 +1,91 @@
+% Page layout
+\usepackage[headheight=25pt,left=20mm,top=20mm,bottom=20mm]{geometry}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\nouppercase{\leftmark}}
+\fancyfoot[C]{\thepage}
+
+% To do Lists (use [disable] to get rid of all)
+\setlength {\marginparwidth}{2cm} 
+\usepackage{todonotes}
+\newcommand{\notdone}[1]{\todo[inline, color=red!40]{#1}}
+\newcommand{\almostdone}[1]{\todo[inline, color=yellow!40]{#1}}
+\newcommand{\done}[1]{\todo[inline, color=green!40]{#1}}
+
+% Font
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Micro typography
+\usepackage{microtype}
+
+% Math environments
+\usepackage{mathtools,amssymb,amsthm}
+\numberwithin{equation}{section}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}[section]
+\numberwithin{equation}{section}
+\theoremstyle{definition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{assumption}{Assumption}
+
+% nur Theorem einrahmen:
+\usepackage[framemethod=TikZ]{mdframed}
+\mdfdefinestyle{thmstyle}{
+  linewidth=0.8pt,
+  roundcorner=3mm,                
+  linecolor=black!70,
+  backgroundcolor=gray!10,        
+  innertopmargin=3mm,
+  innerbottommargin=3mm,
+  innerleftmargin=3mm,
+  innerrightmargin=3mm,
+  skipabove=6pt,                  
+  skipbelow=6pt
+}
+\surroundwithmdframed[style=thmstyle]{theorem}
+
+
+% Header Settings
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\nouppercase{\leftmark}}
+\fancyhead[R]{}
+\fancyfoot[C]{\thepage}
+
+% Shortcuts
+\newcommand\norm[1]{\lVert \, #1 \, \rVert}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\G}{\mathbb{G}}
+\newcommand{\U}{\mathbb{U}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\A}{\mathbb{A}}
+\newcommand{\Tcal}{\mathcal{T}}
+\newcommand{\Ecal}{\mathcal{E}}
+\newcommand{\Pcal}{\mathcal{P}}
+\newcommand\bs[1]{\boldsymbol{#1}}
+\newcommand{\prob}{\mathbb{P}}
+\newcommand{\cost}{\text{cost}}
+\newcommand{\ceil}[1]{\left\lceil#1\right\rceil}
+\newcommand{\esssup}{\operatorname{ess} \, \sup}
+\newcommand{\argmin}{\operatorname{arg}\min}
+\newcommand{\id}{\operatorname{id}}
+
+% Hyperlinks
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref}
+
+% References
+\usepackage[backend=biber,style=alphabetic]{biblatex}
+\addbibresource{Backend/references.bib}
+
