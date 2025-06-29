@@ -1,20 +1,20 @@
-\section{Formulation of the General Problem}
+\chapter{Formulation of the General Problem}
 
 \notdone{Describe basic already existing techniques via literature}
 
-\subsection{Stationary parametric PDE}
+\section{Stationary parametric PDE}
 
 \notdone{
 Brief general description of parametric PDEs, no examples. Potentially add convergence rates and computational cost of traditional solvers
 }
 
-\subsection{Deep-learning based Reduced Order Models}
+\section{Deep-learning based Reduced Order Models}
 
 \notdone{Introduce Proper Orthogonal Decomposition}
 \notdone{Introduce Autoencoders}
 \notdone{Introduce Deep Orthogonal Decomposition}
 
-\subsection{Non-stationary parametric PDE}
+\section{Non-stationary parametric PDE}
 
 \almostdone{Brief general description of time dependent parametric PDEs regarding existing literature.}
 \notdone{Definitely add traditional convergence and computational cost.}
@@ -51,7 +51,7 @@ where we assume $M: \Theta \times \Theta' \to \R^{N_h \times N_h}$ to send the p
 \end{assumption}
 
 
-\subsection{Deep-learning based Reduced Order Models}
+\section{Deep-learning based Reduced Order Models}
 
 \notdone{Introduce POD-DL-ROM}
 
@@ -67,7 +67,7 @@ The subsequent training is then performed via a loss function of a convex combin
     + \, &\frac{1 - \omega_h}{2} \, \norm{f^E_n(u_h(t^k; \mu_i, \nu_j), \theta_E) - \Phi_n^{DF}(t^k; \mu_i, \nu_j, \theta_{DF})}^2.
 \end{align}
 
-\subsubsection{Deep Orthogonal Decomposition based Reduction}
+\subsection{Deep Orthogonal Decomposition based Reduction}
 
 \almostdone{Introduce both DOD-DL-ROM and DOD+DNN}
 
@@ -80,7 +80,7 @@ For Options A and B: To use the same loss function as in the (POD-)DL-ROM, we do
     \theta_{DOD}^* = \argmin_{\theta_{DOD}} \frac{1}{N_s} \sum_{i,j = 1}^{N_{train}} \sum_{k = 1}^{N_t} \, \norm{u_h(t^k; \mu_i, \nu_j) - V(t^k; \mu_i, \theta_{DOD}) V^T(t^k; \mu_i, \theta_{DOD}) \G u_h(t^k; \mu_i, \nu_j)}^2.
 \end{equation}
 
-\subsubsection{DOD+DNN} \label{subsec: DOD+DNN}
+\subsection{DOD+DNN} \label{subsec: DOD+DNN}
 
 Let $\Phi_n^{DLNN}: \Gamma \times \Theta \times \Theta' \times \Theta_{DLNN} \to \R^{N}$ be some Deep Feed-Forward Neural Network, then the overall workflow can be summed up by
 \begin{equation}
@@ -91,7 +91,7 @@ This is a rather obvious extension of \cite{DOD}, but works surprisingly well. I
     \theta^* = \argmin_\theta \frac{1}{N_s} \sum_{i, j = 1}^{N_{train}} \sum_{k = 1}^{N_t} \norm{V^T(t^k; \mu_i, \theta^*_{DOD}) u_h(t^k; \mu_i, \nu_j) - \Phi_n^{DFNN}(t^k; \mu_i, \nu_j, \theta_{DFNN})}.
 \end{equation}
 
-\subsubsection{DOD-DL-ROM}
+\subsection{DOD-DL-ROM}
 
 Let $f_N^D$ and $f_n^E$ be the decoder and encoder of an AE respectively as above. Each of these non-linear DOD-DL-ROMs is subject to further dimensional reduction and thus is not comparable directly to the linear method above. Nonetheless in terms of reduction in dimensionality both methods can be comparable, if the latent dynamics dimension $n$ is the same in both cases. The general workflow is given by
 \begin{equation}
@@ -105,7 +105,7 @@ Since for this, we employ an AE, we optimize for two loss functions, since the e
     + \, &\frac{1 - \omega_h}{2} \, \norm{V^T(t^k; \mu_i, \theta_{DOD}^*) \cdot f^E_n(u_h(t^k; \mu_i, \nu_j), \theta_E) - \Phi_n^{DFNN}(t^k; \mu_i, \nu_j, \theta_{DFNN})}^2.
 \end{align*}
 
-\subsubsection{CoLoRA-DL-ROM}
+\subsection{CoLoRA-DL-ROM}
 
 \almostdone{Introduce CoLoRA DL-ROM}
 
