@@ -162,7 +162,8 @@ We remark, that the equidistant spacing of the time samples is a matter of conve
     \begin{equation*}
         s: \bs{\mu} \mapsto \underset{{\V \in [-1, 1]^{N_h \times n}}}{\text{argmin}} J(\bs{\mu}, \V).
     \end{equation*}
-    This map is bounded (given by continuity of J and compactness of its image) and hence $s \in L^1(\Theta; \R^{N_h \times n})$, i.e. $\norm{s}_{L^1(\Theta; \R^{N_h \times n})} := \int_{\Theta} \norm{s(\bs{\mu})}_{\infty} d \mu{(\bs{\mu})} < \infty$. This means that by Hornik's Theorem \cite{Existence_of_ReLU_NN} there is a deep ReLU neural network $\bs{V}_0: \Theta \to \R^{N_h \times n}$ such that $\E_{\bs{\mu}} \vert \bs{V}_0(\bs{\mu}) - s(\bs{\mu}) \vert < \delta$ for all $\delta > 0$. Now let $\rho$ be a entry-wise ReLU activation function and we consider a three-layered network $L: \R^{N_h \times n} \to \R^{N_h \times n}$ given by
+    This map is bounded (given by continuity of J and compactness of its image) and hence $s \in L^1(\Theta; \R^{N_h \times n})$, i.e. $\norm{s}_{L^1(\Theta; \R^{N_h \times n})} := \int_{\Theta} \norm{s(\bs{\mu})}_{\infty} d \mu{(\bs{\mu})} < \infty$. 
+    This means that by Hornik's Theorem \cite{hornik1991nn} there is a deep ReLU neural network $\bs{V}_0: \Theta \to \R^{N_h \times n}$ such that $\E_{\bs{\mu}} \vert \bs{V}_0(\bs{\mu}) - s(\bs{\mu}) \vert < \delta$ for all $\delta > 0$. Now let $\rho$ be a entry-wise ReLU activation function and we consider a three-layered network $L: \R^{N_h \times n} \to \R^{N_h \times n}$ given by
     \begin{equation*}
         L(\bs{x}) := \bs{e} - \mathbb{I}_{N_h \times n} \rho(- \mathbb{I}_{N_h \times n} \rho(\mathbb{I}_{N_h \times n} \bs{x} + \bs{e}) + 2 \bs{e}),
     \end{equation*}
