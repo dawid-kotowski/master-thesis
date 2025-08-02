@@ -1,5 +1,5 @@
 % Page layout
-\usepackage[headheight=25pt,left=20mm,top=20mm,bottom=20mm]{geometry}
+\usepackage[headheight=25pt,left=20mm,top=30mm,bottom=35mm]{geometry}
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
@@ -8,7 +8,7 @@
 
 % To do Lists (use [disable] to get rid of all)
 \setlength {\marginparwidth}{2cm} 
-\usepackage[disable]{todonotes}
+\usepackage{todonotes}
 \newcommand{\notdone}[1]{\todo[inline, color=red!40]{#1}}
 \newcommand{\almostdone}[1]{\todo[inline, color=yellow!40]{#1}}
 \newcommand{\done}[1]{\todo[inline, color=green!40]{#1}}
@@ -26,8 +26,8 @@
 \numberwithin{equation}{section}
 
 % Theorem environments
-\newtheorem{theorem}{Theorem}[section]
-\numberwithin{equation}{section}
+\newtheorem{theorem}{Theorem}[chapter]
+\numberwithin{equation}{chapter}
 \theoremstyle{definition}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{proposition}[theorem]{Proposition}
@@ -63,6 +63,7 @@
 
 % Shortcuts
 \newcommand\norm[1]{\lVert \, #1 \, \rVert}
+\newcommand{\lzeronorm}[1]{\lVert \, #1 \, \rVert_{\ell^0}}
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\R}{\mathbb{R}}
@@ -73,7 +74,8 @@
 \newcommand{\Tcal}{\mathcal{T}}
 \newcommand{\Ecal}{\mathcal{E}}
 \newcommand{\Pcal}{\mathcal{P}}
-\newcommand\bs[1]{\boldsymbol{#1}}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+\newcommand{\hblock}[2]{\big[\, #1 \,\big|\, \dots \,\big|\, #2 \,\big]}
 \newcommand{\prob}{\mathbb{P}}
 \newcommand{\cost}{\text{cost}}
 \newcommand{\ceil}[1]{\left\lceil#1\right\rceil}

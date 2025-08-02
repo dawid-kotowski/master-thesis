@@ -1,7 +1,11 @@
 \chapter{Theoretical Background}
 
 
-\section{for PDE Solution Spaces} \label{section: background for PDE solutions}
+\section{Parametric Partial Differential Equations} \label{section: background for PDE solutions}
+
+\subsection{Sobolev Spaces}
+
+\subsection{Projections}
 
 \almostdone{Introduce the general notion of the POD}
 \almostdone{Introduce KnW and its relation to the continous case}
@@ -92,8 +96,160 @@ Here we will discuss prerequisites to the Proper Orthogonal Decomposition and re
     \end{equation*}
 \end{definition}
 
-\section{for Neural Networks} \label{section: background for nn}
+\section{Neural Networks} \label{section: background for nn}
 
 \notdone{Discuss existing literature}
 \notdone{Introduce Yarotski with Proof}
 \notdone{Introduce Gühring et al. with Proof}
+
+In this section, we will introduce the general notion of neural networks. Specifically important for us will be 
+concatenations of perceptrons, which are a specific subclass of networks, the so called \emph{feedforward neural network}.
+
+\begin{definition}[Neural Network] \label{def: neural network}
+    Let $d, L \in \N$, then a \emph{neural network $\Phi$ with input dimension $d$ and $L$ layers} is defined via 
+    \begin{equation*}
+        \Phi = ((A_1, b_1), (A_2, b_2), \dots, (A_L, b_L)),
+    \end{equation*} 
+    such that $N_0 = d$ and $N_1, \dots, N_L \in \N$, where each $A_l$ is an $N_l \times \sum_{k=0}^{l-1} N_k$ dimensional
+    matrix, and $b_l \in \R^{N_l}$.
+    
+    We further define $R_\rho(\Phi): \R^d \to \R^{N_L}$ as a \emph{realizations of $\Phi$ with activation function $\rho$} for some
+    arbitrary map $\rho : \R \to \R$ as the result of the following scheme for some input $x \in R^d$:
+    \begin{align*}
+        x_0 &:= x, \\
+        x_l &:= \rho \left( A_l \hblock{x_0^T}{x_{l-1}^T}^T + b_l \right), \quad \mbox{for } l = 1, \dots, L-1, \\
+        x_L &:= A_L \hblock{x_0^T}{x_{L-1}^T} + b_L,
+    \end{align*}
+    where $\rho$ acts componentwise, i.e. $\rho(y) := [\rho(y_1), \dots, \rho(y_m)]^T \in \R^m$ for each 
+    $y = [y_1, \dots, y_m] \in \R^m$. Note that we can write
+    \begin{equation*}
+        A_l = \hblock{A_{l, x_0}}{A_{l, x_{l-1}}},
+    \end{equation*}
+    with $A_{l, x_k}$ being a $N_l \times N_k$ dimensional matrix for $k = 0, \dots, l-1$ and $l = 1, \dots, L$.
+    This comes in handy to portray the scheme via
+    \begin{align*}
+        x_l &:= \rho \left( A_{l, x_0} x_0 + \dots + A_{l, x_{l-1}} x_{l-1} + b_l \right), \quad \mbox{for } l = 1, \dots, L-1, \\
+        x_L &:= A_{L, x_{L-1}} x_{L-1} + b_L.
+    \end{align*}
+    Moreover call $N_{\Phi} := d + \sum_{l=1}^L N_l$ the \emph{number of neurons} of the network, $L_{\Phi} := L$
+    the \emph{number of layers}, and finally $\omega_\Phi := \sum_{l=1}^L (\lzeronorm{A_l} + \lzeronorm{b_l})$ the \emph{number 
+    of active weights}.
+\end{definition}
+
+\begin{remark}
+    As a note, we can rewrite known neural network architectures, such as a convolutional autoencoder, 
+    as a neural network according to Definition (\ref{def: neural network}).
+\end{remark}
+\notdone{Motivate this with some example.}
+
+From this we can infer a simpler architechture, describing a network which omits any connection of non-neighboring
+layers.
+
+\begin{definition}[Standard Neural Network] \label{def: standard neural network}
+    If a neural network $\Phi = ((A_1, b_1), \dots, (A_L, b_L))$ now has the characteristic
+    \begin{equation*}
+        A_{l, x_i} = 0, \quad \mbox{for } l = 1, \dots, L, \mbox{ and } i = 0, \dots, l-2,
+    \end{equation*}
+    then we call $\Phi$ a \emph{standard neural network}.
+\end{definition}
+
+When considering the similarities and differences between two distinct neural networks $\Phi_1 = ((A_1, b_1), \dots, (A_L, b_L))$
+and $\Phi_2 = ((\hat{A}_1, \hat{b}_1), \dots, (\hat{A}_L, \hat{b}_L))$, one can
+easily see, that if $[A_1]_{ij}= 0$, while $[\hat{A}_1]_{ij} \neq 0$ for some $i, j$, then these networks are
+severely different, whereas if they only differ in the specific non-zero weight, they could be recovered from each
+other through training. This inspires the definition of \emph{an architecture of a network}.
+
+\begin{definition}[Neural Network Architecture] \label{def: neural network architecture}
+    For some $d, L \in \N$, we define a \emph{neural network architecture $\mathcal{A}$ with input dimension $d$
+    and $L$ layers} to be a binary neural network, i.e. for all entries of $A_i, b_i \in \{0, 1\}$ for $i = 1, \dots, L$ of $\mathcal{A}$.
+
+    We further say that a \emph{neural network} $\Phi = ((\hat{A}_1, \hat{b}_1), \dots, (\hat{A}_L, \hat{b}_L))$ has \emph{architecture} $\mathcal{A}$, if
+    \begin{enumerate}
+        \item $N_l(\Phi) = N_l$ for all $l = 1, \dots, L$, and
+        \item $[\hat{A}_l]_{ij} \neq 0$ implies $[A_l]_{ij} \neq 0$ for all $l = 1, \dots, L$ with $i = 1, \dots, N_l$ and
+        $j = 1, \dots, \sum_{k=0}^{l-1} N_k$.
+    \end{enumerate} 
+\end{definition}
+
+Since the associated realization of a neural network $R_\rho(\Phi)$ requires the definition of $\rho$, the activation function, we will
+define the most commonly used one in literature. It will help a lot with some of the constructions, since it has a simple nature, 
+but also provides the network with the necessary non-linearity.
+
+\begin{definition}[ReLU]
+    The function
+    \begin{equation*}
+        \rho: \R \to \R; \quad x \mapsto \max(0, x),
+    \end{equation*}
+    is called \emph{ReLU} (Rectified Linear Unit) \emph{activation function.}
+\end{definition}
+
+Given such an activation function, Kurt Hornik provided in 1990 the first contribution to a field, which
+would emerge centuries later: Approximation theory. He proved for any $L^p(\mu)$ function, for $\mu$ some finite measure, the existence 
+of an arbitrarily close ReLU valued neural network \cite{hornik1991nn}.
+
+\begin{theorem}[Hornik's Theorem]
+    Define for some continuous, unbounded and non-constant actiation function $\rho$ the set of all feedforward neural networks, 
+    as
+    \begin{equation*}
+        \mathcal{N}_d(\rho) := \bigcup_{L=1}^\infty \bigg\{ R_\rho(\Phi): \R^d \to \R \, \big\vert \, \Phi \mbox{ is neural network with } L\mbox{ layers} \bigg\}.
+    \end{equation*}
+    Then $\mathcal{N}_d(\rho)$ lies dense in $L^p(\mu)$ for every finite measure $\mu$, $p \in (0, \infty)$.
+\end{theorem}
+
+The proof of this statement leverages on Hahn Banach, but thus does not provide the specific architecture of
+the required neural network, which would be used for such an approximation. We aim significantly higher, namely at 
+a bound on the necessary non-zero weights and layers for such an approximation, and will thus
+not mention the proof beyond this outline. 
+
+\subsection{Network concatenations}
+
+In this subsection we will discuss the concatenations of multiple neural networks and the effects on the characteristic
+numbers of it. The complexity of a concatenated network can be given nicely, when the used activation function is 
+
+\begin{definition}[Network Concatenation]
+    Let $L_1, L_2 \in \N$ and 
+    \begin{equation*}
+        \Phi^1 = ((A_1, b_1), \dots, (A_{L_1}, b_{L_1})), \quad \Phi^2 = ((B_1, c_1), \dots, (B_{L_2}, c_{L_2})),
+    \end{equation*}
+    be two neural networks such that the input layer of $\Phi^1$ has the same dimension as the output layer of $\Phi^2$.
+    Then, $\Phi^1 \bullet \Phi^2$ denotes the following $L_1 + L_2 - 1$ layered network:
+    \begin{equation*}
+        \Phi^1 \bullet \Phi^2 := \left( ((B_1, c_1), \dots, (B_{L_2 - 1}, c_{L_2 - 1})), ((\tilde{A}_1, \tilde{b}_1), \dots, (\tilde{A}_{L_1}, \tilde{b}_{L_1})) \right),
+    \end{equation*}
+    where
+    \begin{equation*}
+        \tilde{A}_l^1 := \big[ \, A_{l, x_0} \, B_{L_2} \, \big| \, A_{l, x_1} \, \big| \, \dots \, \big| \, A_{l, x_{l-1}} \, \big] 
+        \quad \mbox{and} \quad \tilde{b}_l^1 := A_{l, x_0} \, c_{L_2} + b_l,
+    \end{equation*}
+    for $l = 1, \dots, L_1$. We call $\Phi^1 \bullet \Phi^2$ the \emph{concatenation} of $\Phi^1$ and $\Phi^2$.
+\end{definition}
+
+\begin{lemma}
+    For any two neural networks $\Phi^1$ and $\Phi^1$, we have
+    \begin{equation*}
+        R_\rho(\Phi^1 \bullet \Phi^2) = R_\rho(\Phi^1) \circ R_\rho(\Phi^2).
+    \end{equation*}
+\end{lemma}
+\begin{proof}
+    \notdone{maybe include proof?}
+    Intuitively speaking the latter network must account for all "missing" links, which a direct concatenation
+    would necessarily be missing; any layer after the "switch" from the first to the latter needs to have a correction
+    term in the weights, additionally attributing all potential connections which the first network would impose.
+    
+
+    Let w.l.o.g. $L_2 = 2$, since the pass through the first layers of the combined network, is equivalent
+    to the pass through the first layers of the individual network. Then we can show by induction:
+    \begin{enumerate}
+        \item \underline{Base case:} $L_2 = 1$. We argue with $A_{L_1} x = A_{L_1, x_0} \, x$ for $x$ of output dimension of $\Phi^1$, since
+        the input dimension of $\Phi^1$ is the output of $\Phi^2$.
+        \begin{align*}
+            R_\rho(\Phi^1) \circ R_\rho(\Phi^2) (x_0) &= A_{L_1} 
+            \left(B_{L_2, x_0} x_0 + B_{L_2, x_1} x_1 + c_{L_2}\right) + b_{L_1} \\
+            &= A_{L_1, x_0} B_{L_2, x_0} x_0 + A_{L_1, x_0} B_{L_2, x_1} x_1 + \left(A_{L_1, x_0} c_{L_2} + b_{L_1}\right) \\
+            &= A_{L_1, x_0} B_{L_2} \hblock{x_0^T}{x_1^T}^T + \left(A_{L_1, x_0} c_{L_2} + b_{L_1}\right) \\
+            &= R_\rho(\Phi^1 \bullet \Phi^2) (x_0)
+        \end{align*}
+        \item \underline{Induction assumption:} Let the statement be true for $L_2 \geq 2$ fixed.
+        \item \underline{Induction step:} $L_2 \mapsto L_2 + 1$.
+    \end{enumerate}
+\end{proof}
