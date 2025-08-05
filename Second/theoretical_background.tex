@@ -117,13 +117,13 @@ concatenations of perceptrons, which are a specific subclass of networks, the so
     arbitrary map $\rho : \R \to \R$ as the result of the following scheme for some input $x \in R^d$:
     \begin{align*}
         x_0 &:= x, \\
-        x_l &:= \rho \left( A_l \hblock{x_0^T}{x_{l-1}^T}^T + b_l \right), \quad \mbox{for } l = 1, \dots, L-1, \\
-        x_L &:= A_L \hblock{x_0^T}{x_{L-1}^T} + b_L,
+        x_l &:= \rho \left( A_l \begin{bmatrix}[c|c|c]x_0^T & \cdots & x_{l-1}^T\end{bmatrix}^T + b_l \right), \quad \mbox{for } l = 1, \dots, L-1, \\
+        x_L &:= A_L \begin{bmatrix}[c|c|c]x_0^T & \cdots & x_{l-1}^T\end{bmatrix}^T + b_L,
     \end{align*}
     where $\rho$ acts componentwise, i.e. $\rho(y) := [\rho(y_1), \dots, \rho(y_m)]^T \in \R^m$ for each 
     $y = [y_1, \dots, y_m] \in \R^m$. Note that we can write
     \begin{equation*}
-        A_l = \hblock{A_{l, x_0}}{A_{l, x_{l-1}}},
+        A_l = \begin{bmatrix}[c|c|c]A_{l, x_0} & \cdots & A_{l, x_{l-1}}\end{bmatrix},
     \end{equation*}
     with $A_{l, x_k}$ being a $N_l \times N_k$ dimensional matrix for $k = 0, \dots, l-1$ and $l = 1, \dots, L$.
     This comes in handy to portray the scheme via
@@ -175,7 +175,7 @@ Since the associated realization of a neural network $R_\rho(\Phi)$ requires the
 define the most commonly used one in literature. It will help a lot with some of the constructions, since it has a simple nature, 
 but also provides the network with the necessary non-linearity.
 
-\begin{definition}[ReLU]
+\begin{definition}[ReLU] \label{def: relu activation function}
     The function
     \begin{equation*}
         \rho: \R \to \R; \quad x \mapsto \max(0, x),
@@ -206,7 +206,7 @@ not mention the proof beyond this outline.
 In this subsection we will discuss the concatenations of multiple neural networks and the effects on the characteristic
 numbers of it. The complexity of a concatenated network can be given nicely, when the used activation function is 
 
-\begin{definition}[Network Concatenation]
+\begin{definition}[Network Concatenation] \label{def: network concatenation}
     Let $L_1, L_2 \in \N$ and 
     \begin{equation*}
         \Phi^1 = ((A_1, b_1), \dots, (A_{L_1}, b_{L_1})), \quad \Phi^2 = ((B_1, c_1), \dots, (B_{L_2}, c_{L_2})),
@@ -218,16 +218,29 @@ numbers of it. The complexity of a concatenated network can be given nicely, whe
     \end{equation*}
     where
     \begin{equation*}
-        \tilde{A}_l^1 := \big[ \, A_{l, x_0} \, B_{L_2} \, \big| \, A_{l, x_1} \, \big| \, \dots \, \big| \, A_{l, x_{l-1}} \, \big] 
+        \tilde{A}_l^1 := \begin{bmatrix}[c|c|c|c]A_{l, x_0} \, B_{L_2} & A_{l, x_1} & \cdots & A_{l, x_{l-1}}\end{bmatrix},
         \quad \mbox{and} \quad \tilde{b}_l^1 := A_{l, x_0} \, c_{L_2} + b_l,
     \end{equation*}
     for $l = 1, \dots, L_1$. We call $\Phi^1 \bullet \Phi^2$ the \emph{concatenation} of $\Phi^1$ and $\Phi^2$.
 \end{definition}
 
-\begin{lemma}
-    For any two neural networks $\Phi^1$ and $\Phi^1$, we have
+\begin{lemma}[Neutral Neural Network]
+    Let $\Phi^{\text{Id}} = ((A_1, b_1), (A_2, b_2))$ be a $d$-dimensional neural network, with
     \begin{equation*}
-        R_\rho(\Phi^1 \bullet \Phi^2) = R_\rho(\Phi^1) \circ R_\rho(\Phi^2).
+        A_1 := \begin{bmatrix} \text{Id}_{\R^d} \\ -\text{Id}_{\R^d} \end{bmatrix}, \quad b_1 := 0, \quad
+        A_2 := \begin{bmatrix}[c|c|c] 0_{\R^{d \times d}} & \text{Id}_{\R^d} & - \text{Id}_{\R^d} \end{bmatrix}, \quad b_2 := 0.
+    \end{equation*}
+    Then $R_\rho(\Phi^{\text{Id}}) = \text{Id}_{\R^d}$.
+\end{lemma}
+
+\begin{lemma} \label{lemma: network concatenation}
+    For any two neural networks $\Phi^1$ and $\Phi^1$ according to Definition (\ref{def: network concatenation}), 
+    $\Phi^1 \odot \Phi^2 := \Phi^1 \bullet \Phi^{\text{id}} \bullet \Phi^2$ is a neural network with $d$-dimensional input, $L_1 + L_2$ layers
+    with $\omega_{\Phi^1 \odot \Phi^2} \leq 2\omega_{\Phi^1}
+    + 2\omega_{\Phi^2}$ active weights, $N_{\Phi^1 \odot \Phi^2} \leq 2N_{\Phi^1} + 2N_{\Phi^2}$ neurons. Additionally
+    for all $x \in \R^d$, we have
+    \begin{equation*}
+        R_\rho(\Phi^1 \odot \Phi^2)(x) = R_\rho(\Phi^1) \circ R_\rho(\Phi^2)(x).
     \end{equation*}
 \end{lemma}
 \begin{proof}
@@ -246,10 +259,258 @@ numbers of it. The complexity of a concatenated network can be given nicely, whe
             R_\rho(\Phi^1) \circ R_\rho(\Phi^2) (x_0) &= A_{L_1} 
             \left(B_{L_2, x_0} x_0 + B_{L_2, x_1} x_1 + c_{L_2}\right) + b_{L_1} \\
             &= A_{L_1, x_0} B_{L_2, x_0} x_0 + A_{L_1, x_0} B_{L_2, x_1} x_1 + \left(A_{L_1, x_0} c_{L_2} + b_{L_1}\right) \\
-            &= A_{L_1, x_0} B_{L_2} \hblock{x_0^T}{x_1^T}^T + \left(A_{L_1, x_0} c_{L_2} + b_{L_1}\right) \\
+            &= A_{L_1, x_0} B_{L_2} \begin{bmatrix}[c|c]x_0^T & x_{1}^T\end{bmatrix}^T + \left(A_{L_1, x_0} c_{L_2} + b_{L_1}\right) \\
             &= R_\rho(\Phi^1 \bullet \Phi^2) (x_0)
         \end{align*}
         \item \underline{Induction assumption:} Let the statement be true for $L_2 \geq 2$ fixed.
         \item \underline{Induction step:} $L_2 \mapsto L_2 + 1$.
     \end{enumerate}
+\end{proof}
+
+\subsection{Network parallelization}
+
+We have shown, that there is a possiblity to simply compose networks, as is possible with functions. To 
+further build upon that idea, we will now introduce stacking in the context of definiting a network $P(\Phi^1, \Phi^2)$
+from two networks $\Phi^1$ and $\Phi^2$ such that $R_\rho(P(\Phi^1, \Phi^2))(x) = (R_\rho(\Phi^1)(x), R_\rho(\Phi^2)(x))$ for all $x \in \R^d$.
+
+\begin{definition}[Network Parallelization] \label{def: network parallelization}
+    Let $L_1, L_2 \in \N$ s.t. $L_1 \leq L_2$ and let 
+    \begin{equation*}
+        \Phi^1 = ((A_1, b_1), \dots, (A_{L_1}, b_{L_1})), \quad \Phi^2 = ((B_1, c_1), \dots, (B_{L_2}, c_{L_2})),
+    \end{equation*}
+    be two neural networks with $d$-dimensional input. We call
+    \begin{equation*}
+        P(\Phi^1, \Phi^2) := \left( (C_1, d_1), \dots, (C_{L_2}, d_{L_2}) \right),
+    \end{equation*}
+    the \emph{parallelization of $\Phi^1$ and $\Phi^2$} with
+    \begin{equation*}
+        C_l := 
+        \begin{bmatrix}[c|cc|c|cc]
+        A_{l,x_0} & A_{l,x_1} & 0 & \cdots & A_{l,x_{l-1}} & 0 \\
+        B_{l,x_0} & 0 & B_{l,x_1} & \cdots & 0 & B_{l,x_{l-1}}
+        \end{bmatrix},
+        \qquad
+        d_l :=
+        \begin{bmatrix}
+        b_l \\
+        c_l
+        \end{bmatrix},
+        \qquad \text{for } 1 \le l < L_1,
+    \end{equation*}
+
+    \begin{equation*}
+        C_{L_1} :=
+        \begin{bmatrix}[c|cc|c|cc|c|c|c]
+        B_{l,x_0} & 0 & B_{l, x_1} & \cdots & 0 & B_{l, x_{L_1 - 1}} & B_{l, x_{L_1}} & \cdots & B_{l, x_{l-1}} \\
+        \end{bmatrix},
+        \qquad
+        d_{l} := c_{l},
+    \end{equation*}
+    for $L_1 \leq l < L_2$, and
+    \begin{equation*}
+        C_{L_2} :=
+        \begin{bmatrix}[c|cc|c|cc|c|c|c]
+        A_{L_1,x_0} & A_{L_1,x_1} & 0 & \cdots & A_{L_1, x_{L_1 - 1}} & 0 & 0 & \cdots & 0\\
+        B_{L_2,x_0} & 0 & B_{L_2,x_1} & \cdots & 0 & B_{L_2,x_{L_1-1}} & B_{L_2, x_{L_1}} & \cdots & B_{L_2, x_{L_2 - 1}}
+        \end{bmatrix},
+    \end{equation*}
+    \begin{equation*}
+        d_{L_2} :=
+        \begin{bmatrix}
+        b_{L_1} \\
+        c_{L_2}
+        \end{bmatrix}.
+    \end{equation*}
+
+    A similar construction is used for the case $L_1 > L_2$.
+\end{definition}
+
+\begin{lemma} \label{lemma: network parallelization}
+    In the setting of Definition (\ref{def: network parallelization}), we have that 
+    $P(\Phi^1, \Phi^2)$ is a neural network with $d$-dimensional input, $\max\{L_1, L_2\}$ layers, 
+    $\omega_{P(\Phi^1, \Phi^2)} = \omega_{\Phi^1} + \omega_{\Phi^2}$ active weights and $N_{P(\Phi^1, \Phi^2)} = N_{\Phi^1} + N_{\Phi^2} - d$ neurons.
+    Additionally, for all $x \in \R^d$, we have that
+    \begin{equation*}
+        R_{\varrho}(P(\Phi^1, \Phi^2))(x) = (R_{\varrho}(\Phi^1)(x), R_{\varrho}(\Phi^2)(x)).
+    \end{equation*}
+\end{lemma}
+\notdone{maybe include proof?}
+
+\subsection{Standard Neural Networks}
+
+\begin{corollary} \label{cor: eqivalence nn and standard nn}
+    Let $\rho$ be the ReLU activation function. Then there are constants $C_1, C_2 > 0$
+    such that for any neural network $\Phi$ with $d$-dimensional input and $L = L(\Phi)$ layers, $N = N(\Phi)$
+    neurons and $M = M(\Phi)$ nonzero weights, there is a standard neural network $\Phi_{\text{st}}$ with
+    $d$-dimensional input, $L$ layers, at most $C_1 L N$ neurons and $C_2 \cdot (L N + M)$ nonzero weights such that
+    \begin{equation*}
+        R_\rho(\Phi)(x) = R_\rho(\Phi_{\text{st}})(x)
+    \end{equation*}
+    for all $x \in \R^d$.
+\end{corollary}
+
+\subsection{Approximation Theory}
+
+For all further theoretical results we will assume that $\rho$, the activation function, is the ReLU as given
+in Definition (\ref{def: relu activation function}) and furthermore define the set of functions bounded in Sobolev norm as
+\begin{equation*}
+    \Fcal_{s,d,p,B} := \big\{ f \in W^{s,p}((0,1)^d) \, \big\vert \, \snorm{f}[s][p][d] \leq B \big\}.
+\end{equation*}
+
+To create a decent outline for this subsection, we will shortly discuss the goal and the steps to be taken;
+in order to show a bound on the weights and layers needed for an approximating neural network, we need to
+take into account the interpolation error, we may overcome with sufficient regularity. Say we would have a 
+function $f$ in the Sobolev space $W^{2, 2}((0,1)^d)$, then it is apparent, that at least $2$ derivatives of $f$ must exists,
+in a piecewise, embedded sense, which can be leveraged to get a Taylor expansion around selected points.
+
+This procedure will deduce a quantifiable error for the network approximating the initial
+arbitrary Sobolev function $f$ in Sobolev norm, as long as we can bound the error, which the
+polynomial approximation produces with regard to the network itself.
+
+This leaves us with two main objectives:
+\begin{enumerate}
+    \item Bound the Sobolev function at critical equidistant points, using its Taylor expansion.
+    \item Relate a fixed error rate of the approximation polynomial and some neural network, to the networks complexity.
+\end{enumerate}
+
+These two objectives are pursued by both Yarotsky \cite{yarotsky2017nn} and Gühring et al \cite{gühring2019nn}, 
+even though it is worth noting, that Yarotsky
+only provides the special case $s=0, B=1$, since the proof only shows an estimation with a Taylor expansion
+regarding the $L_\infty$ norm, missing the crucial step of the interpolation bound to change the norm to the
+Sobolev expanded counterpart and additionally
+uses the $L_\infty$ norm to approximate multiplication by a neural network. 
+
+
+Tho we will use the statement of
+Gühring later on, which is the extension of Yarotsky to any choice of $s, p$ and $B$, 
+we will only give the idea of 
+the proof, since it follows the same pattern as Yarotsky's proof, but does include a lot of further 
+theoretical setting, which will not be of much use in the actual results presented in this paper.
+
+\begin{proposition} \label{prop: approximation by square}
+    There are constants $c_1, c_2, c_3 > 0$, such that for all $\varepsilon \in (0, 1)$ there is a
+    neural network $\Phi^{\text{sq}}_\varepsilon$ with at most $c_1 \cdot \ln(1/\varepsilon)$ nonzero weights, at most
+    $c_2 \cdot \ln(1/\varepsilon)$ layers, at most $c_3 \cdot \ln(1/\varepsilon)$ neurons, and with a $1$-dimensional
+    input and output such that
+    \begin{equation*}
+        \snorm{R_\rho(\Phi^{\text{sq}}_\varepsilon)(x) - x^2}[0][\infty][1] \leq \varepsilon,
+    \end{equation*}
+    and $R_\rho(\Phi^{\text{sq}}_\varepsilon(0)) = 0$.
+\end{proposition}
+\begin{proof}
+    Define the "tooth" function $g: [0,1] \to [0,1]$ with
+    \begin{equation*}
+        g(x) = \begin{cases}
+            2x, \quad &\text{for } x < 1/2, \\
+            2(1-x), \quad &\text{for } x \geq 1/2,
+        \end{cases}
+    \end{equation*}
+    and its composition 
+    \begin{equation*}
+        g_s(x) := \underbrace{g \circ g \circ \dots \circ g(x)}_{s \text{-times}}. 
+    \end{equation*}
+    Furthermore, from the definition of the ReLU function (refer to (\ref{def: relu activation function})),
+    we can also set $g(x) = 2 \rho(x) - 4 \rho(x - 1/2) + 2 \rho(x - 1)$, which is intern, the same as defining
+    a neural network with $1$-dimensional input and output via $\Phi = ((A_1, b_1), (A_2, b_2))$ with
+    \begin{equation*}
+        A_1 = \begin{bmatrix}
+            \text{Id}_\R \\ \text{Id}_\R \\ \text{Id}_\R
+        \end{bmatrix}, \quad
+        b_1 = \begin{pmatrix}
+            0 \\ -1/2 \\ -1
+        \end{pmatrix}, \quad
+        A_2 = \begin{bmatrix}
+            2 & -4 & 2 
+        \end{bmatrix}, \quad
+        b_2 = 0.
+    \end{equation*}
+    Then it is evident, using Lemma (\ref{lemma: network concatenation}), that $g_s(x) = R_\rho(\underbrace{\Phi \odot \dots \odot \Phi}_{s \text{-times}})(x)$ 
+    for all $x \in \R$ represents a network with $\Ocal(s)$ layers, active weights and neurons. Now, with an
+    explicit formulation of $g_m$ for a fixed level $m \geq 1$, one can identify the function $f(x):=x^2$
+    using linear interpolation on equidistant points 
+    $k / (2^m)$, where $k = 0, \dots, 2^m - 1$, i.e. let $\Phi_m = \Phi \odot \dots \odot \Phi$ ($m$-times) be a neural network, because then 
+    for all $x \in [\frac{k}{2^m}, \frac{k+1}{2^m}]$ it is true, that
+    \begin{equation*}
+        R_\rho(\Phi_m)(x) = \left( \frac{(k+1)^2}{2^m} - \frac{k^2}{2^m} \right) \left( x - \frac{k}{2^m} \right)
+        + \left( \frac{k}{2^m} \right)^2.
+    \end{equation*}
+    \almostdone{Why?}
+    Then we also know that, using the Bramble-Hilbert lemma in one-dimension \cite{bramble1970}, 
+    the fact that $f''(x) = 2$ for all $x \in (0,1)$, and $h = 1/2^m$, that
+    \begin{align*}
+        \norm{R_\rho(\Phi_m) - f}_{L_\infty((0,1))} \leq \max\limits_{k = 0, \dots, 2^m - 1} \, 
+        C h^2 \norm{f''}_{L_\infty([\frac{k}{2^m}, \frac{k+1}{2^m}])} = C' 2^{-2m}.
+    \end{align*}
+    Hence setting $m = \ceil{\ln(1/\varepsilon)}$, with $C, C' > 0$ constants, only dependent on
+    the domain, we achieve the wanted bound from the statement for the neural network
+    $\Phi^{\text{sq}}_\varepsilon := \Phi_m$ with $\Ocal(m) = 
+    \Ocal(\ln(1 / \varepsilon) + 1) \leq \Ocal(2 \ln(1 / \varepsilon))$
+    layers, neurons and active weights.
+\end{proof}
+
+This statement enables us to express multiplication using a neural network. This is straight forward, when 
+viewing the polarization identity:
+\begin{equation} \label{eq: polarization identify}
+    xy = \frac{1}{2}((x + y)^2 - x^2 - y^2), \quad \text{for } x,y \in \R, 
+\end{equation}
+as given by the first binomial formula.
+
+\begin{proposition}
+    Let $M > 0$ and $\varepsilon \in (0, 1)$, then there is a ReLU neural network $\tilde{\times}$ with $2$-dimensional input and
+    $1$-dimensional output, and constants $c_1 > 0$ and $c_2 = c_2(M) > 0$, such that
+    \begin{enumerate}
+        \item $\norm{R_\rho(\tilde{\times})(x, y) - xy}_{W^{0, \infty}((-M, M)^2)} \leq \varepsilon$,
+        \item if $x = 0$ or $y = 0$, then $R_\rho(\tilde{\times})(x, y) = 0$,
+        \item the number of layers, active weights and neurons of $\tilde{\times}$ is at most $c_1 \ln(1/\varepsilon) + c_2$.
+    \end{enumerate}
+\end{proposition}
+\begin{proof}
+    Let $\delta := \varepsilon/(6M^2)$. Then we construct
+    an approximation of the square function $f(x) = x^2$ for $x \in (0, 1)$ 
+    using Proposition (\ref{prop: approximation by square}) for the chosen $\delta$, i.e. we define $\Phi^{\text{sq}}_\delta$,
+    such that
+    \begin{equation*}
+        \snorm{R_\rho(\Phi^{\text{sq}}_\delta)(x) - x^2}[0][\infty][1] \leq \frac{\varepsilon}{6M^2},
+    \end{equation*}
+    which now of course has $\Ocal(\ln(1/\delta))$ many layers, active weights and neurons. Since the statement
+    necessarily needs to implement negative numbers as well, we show with $\vert x \vert = \rho(x) + \rho(-x)$
+    that it is indeed possible to expand any neural network with a positive domain to a negative domain using a neural network (by simply concatenating).
+    Thus we construct $\tilde{\times}$ via adding an 
+    addition layers on top of parallel square networks with scaled input, achieving
+    \begin{equation*}
+        R_\rho(\tilde{\times})(x, y) = 2 M^2 \left( R_\rho(\Phi^\text{sq}_\delta) 
+        \left( \frac{\vert x + y \vert}{2M} \right) - 
+        R_\rho(\Phi^\text{sq}_\delta) \left( \frac{\vert x \vert}{2M} \right)
+        - R_\rho(\Phi^\text{sq}_\delta) \left( \frac{\vert  y \vert}{2M} \right) \right).
+    \end{equation*}
+    To appreciate the third statement of our Proposition, 
+    we may now put together the necessary complexity of this network using the constants in Proposition (\ref{prop: approximation by square});
+    \begin{enumerate}
+        \item We have $2$ layers for the implementation of the absolute value, $1$ for the addition in the end, 
+        and $c_0 \ln(1 / \delta)$ for the square function, thus $L_{\tilde{\times}} \leq c_0\ln(1/\varepsilon) + c_0 \ln(6M^2) + 3$.
+        \item We have 
+    \end{enumerate}
+    To make the true multiplication match the form of our implemented network, using (\ref{eq: polarization identify}),
+    we may rewrite for $x, y \in (-M, M)$
+    \begin{align*}
+        xy &= 4M^2 \left(\frac{x}{2M} \cdot \frac{y}{2M} \right) \\
+        &= 4M^2 \frac{1}{2} \left( \left( \frac{x}{2M} + \frac{y}{2M} \right)^2 - \left( \frac{x^2}{2M} \right)^2
+        \left( \frac{y^2}{2M} \right)^2 \right) \\
+        &= 2M^2 \left( \left(\frac{\vert x + y \vert}{2M} \right)^2 - \left( \frac{\vert x \vert}{2M} \right)^2
+        - \left( \frac{\vert y \vert}{2M} \right)^2 \right).
+    \end{align*}
+    Now with the deviation from each of the square approximation we get with $\tilde{x} := \vert x \vert / (2M) \in (0,1)$
+    \begin{align*}
+        \norm{R_\rho(\tilde{\times})(x, y) - xy}_{L_\infty((0,1)^2)} 
+        &\leq 2M^2 \left( 3 \cdot \norm{R_\rho(\Phi^\text{sq}_\delta) 
+        (\tilde{x}) - \tilde{x}^2}_{L_\infty((0,1)^1)} \right) \\
+        &\leq 6M^2 \delta = \varepsilon.
+    \end{align*}
+    We note a few things happening here for clarity; it is possible to simply use the reverse triangle equality
+    to get all three term errors added, and then put them together. This can be done, since the $L_\infty((0,1)^2)$ norm 
+    appreciates only the maximal value of the error across all possible elements of the $(0,1)^2$ domain, but because
+    the inner function is bijective, these are just the same. Additionally we use the, trivial by definition, statement
+    \begin{equation*}
+        \norm{g \circ f}_{L^\infty((0,1))} \leq \norm{g}_{L^\infty((0,1))}.
+    \end{equation*}
 \end{proof}

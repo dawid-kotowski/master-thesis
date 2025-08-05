@@ -23,6 +23,13 @@
 
 % Math environments
 \usepackage{mathtools,amssymb,amsthm}
+\renewcommand{\arraystretch}{1.3} % default is 1.0
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
 \numberwithin{equation}{section}
 
 % Theorem environments
@@ -62,6 +69,11 @@
 \fancyfoot[C]{\thepage}
 
 % Shortcuts
+\usepackage{xparse}
+\NewDocumentCommand{\snorm}{m O{0} O{\infty} O{d}}{%
+  \lVert\, #1 \,\rVert_{W^{#2,#3}((0,1)^{#4})}%
+}
+\newcommand{\inftynorm}[1]{\norm{#1}_{L_\infty((0,1)^d)}}
 \newcommand\norm[1]{\lVert \, #1 \, \rVert}
 \newcommand{\lzeronorm}[1]{\lVert \, #1 \, \rVert_{\ell^0}}
 \newcommand{\E}{\mathbb{E}}
@@ -71,11 +83,12 @@
 \newcommand{\U}{\mathbb{U}}
 \newcommand{\V}{\mathbb{V}}
 \newcommand{\A}{\mathbb{A}}
+\newcommand{\Ocal}{\mathcal{O}}
 \newcommand{\Tcal}{\mathcal{T}}
 \newcommand{\Ecal}{\mathcal{E}}
 \newcommand{\Pcal}{\mathcal{P}}
+\newcommand{\Fcal}{\mathcal{F}}
 \newcommand{\bs}[1]{\boldsymbol{#1}}
-\newcommand{\hblock}[2]{\big[\, #1 \,\big|\, \dots \,\big|\, #2 \,\big]}
 \newcommand{\prob}{\mathbb{P}}
 \newcommand{\cost}{\text{cost}}
 \newcommand{\ceil}[1]{\left\lceil#1\right\rceil}
