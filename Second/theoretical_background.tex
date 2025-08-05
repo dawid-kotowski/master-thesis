@@ -488,8 +488,17 @@ as given by the first binomial formula.
     \begin{enumerate}
         \item We have $2$ layers for the implementation of the absolute value, $1$ for the addition in the end, 
         and $c_0 \ln(1 / \delta)$ for the square function, thus $L_{\tilde{\times}} \leq c_0\ln(1/\varepsilon) + c_0 \ln(6M^2) + 3$.
-        \item We have 
+        \item We need $4 + 2 + 2$ active weights for the first matrix to distribute each $(x,y)$ onto the parallel networks 
+        together with $6$ active weights for the construction of the input into the $\vert \cdot \vert$-function. Another $3$ are required for the
+        last layer adding all outputs. Of course each
+        of the different computiations for the artificial scaled square function must be in parallel, thus 
+        $\omega_{\tilde{\times}} \leq 3c_0\ln(1/\varepsilon) + 3c_0\ln(6M^2) + 17$.
+        \item A similar consideration gives us $9 = (2 + 1) \cdot 3$ neurons for the first two and the last layer, thus giving us
+        $N_{\tilde{\times}} \leq 3c_0\ln(1/\varepsilon) + 3c_0\ln(6M^2) + 9$.
     \end{enumerate}
+    Finally taking the adequate maximum, and remarking, that $c_0$ does not depend on $M$, we get the wanted bound in (2). 
+
+
     To make the true multiplication match the form of our implemented network, using (\ref{eq: polarization identify}),
     we may rewrite for $x, y \in (-M, M)$
     \begin{align*}
@@ -513,4 +522,34 @@ as given by the first binomial formula.
     \begin{equation*}
         \norm{g \circ f}_{L^\infty((0,1))} \leq \norm{g}_{L^\infty((0,1))}.
     \end{equation*}
+    This has shown the statement (3).
+
+    Statement (1) 
+    on the other hand, is a direct consequence of the subliminally result in Proposition (\ref{prop: approximation by square}).
 \end{proof}
+
+As a last step, before stating and proving the Yarotsky Theorem, we want to discuss the construction and complexity
+of a network approximating any collection of equidistantly spaced function with local support in a higher dimensional
+domain $(0,1)^d$ for $1 \leq d < \infty$. If we take into account, that we may also want these functions
+to form a partition of unity on the high dimensional domain, this will be ground to tackle the complexity
+of the approximation of polynomials with neural networks.
+
+\begin{lemma} \label{lemma: partition of unity}
+    For any $d, N \in \N$ there is a collection of functions
+    \begin{equation*}
+        \Psi = \left\{ \phi_m \, \vert \, m \in \{ 0, \dots, N \}^d \right\},
+    \end{equation*}
+    with $\phi: \R^d \to \R$ for all $m = (m_1, \dots, m_d) \in \{ 0, \dots, N \}^d$ with the following properties:
+    \begin{enumerate}
+        \item $0 \leq \phi_m(x) \leq 1$ for all $\phi_m \in \Psi$ and every $x \in \R^d$,
+        \item $\sum_{\phi_m \in \Psi} \phi_m(x) = 1$ for every $x \in [0,1]^d$,
+        \item $\text{supp}(\phi_m) \subset B_{1/N, \norm{\cdot}_{\ell^\infty}}(m / N)$ for all $\phi_m \in \Psi$,
+        \item there are constants $C, c \geq 1$ such that for each $\phi_m \in \Psi$ there is a neural network
+        $\Phi_m$ with $d$-dimensional input and output, at most $3$ layers, $C \cdot d$ active weights and neurons,
+        such that
+        \begin{equation*}
+            \prod_{l=1}^d [R_\rho(\Phi_m)]_l = \phi_m
+        \end{equation*}
+        and $\norm{[R_\rho(\Phi_m)]_l}_{L^\infty((0,1)^d)} \leq 1$ for all $l = 1, \dots, d$.
+    \end{enumerate}
+\end{lemma}
