@@ -354,7 +354,7 @@ from two networks $\Phi^1$ and $\Phi^2$ such that $R_\rho(P(\Phi^1, \Phi^2))(x) 
 For all further theoretical results we will assume that $\rho$, the activation function, is the ReLU as given
 in Definition (\ref{def: relu activation function}) and furthermore define the set of functions bounded in Sobolev norm as
 \begin{equation*}
-    \Fcal_{s,d,p,B} := \big\{ f \in W^{s,p}((0,1)^d) \, \big\vert \, \snorm{f}[s][p][d] \leq B \big\}.
+    \Fcal_{n,d,p,B} := \big\{ f \in W^{n,p}((0,1)^d) \, \big\vert \, \snorm{f}[n][p][d] \leq B \big\}.
 \end{equation*}
 
 To create a decent outline for this subsection, we will shortly discuss the goal and the steps to be taken;
@@ -455,7 +455,7 @@ viewing the polarization identity:
 \end{equation}
 as given by the first binomial formula.
 
-\begin{proposition}
+\begin{proposition} \label{prop: quasi multiplication}
     Let $M > 0$ and $\varepsilon \in (0, 1)$, then there is a ReLU neural network $\tilde{\times}$ with $2$-dimensional input and
     $1$-dimensional output, and constants $c_1 > 0$ and $c_2 = c_2(M) > 0$, such that
     \begin{enumerate}
@@ -489,7 +489,7 @@ as given by the first binomial formula.
         \item We have $2$ layers for the implementation of the absolute value, $1$ for the addition in the end, 
         and $c_0 \ln(1 / \delta)$ for the square function, thus $L_{\tilde{\times}} \leq c_0\ln(1/\varepsilon) + c_0 \ln(6M^2) + 3$.
         \item We need $4 + 2 + 2$ active weights for the first matrix to distribute each $(x,y)$ onto the parallel networks 
-        together with $6$ active weights for the construction of the input into the $\vert \cdot \vert$-function. Another $3$ are required for the
+        together with $6$ active weights for the superposing of the input into the $\vert \cdot \vert$-function. Another $3$ are required for the
         last layer adding all outputs. Of course each
         of the different computiations for the artificial scaled square function must be in parallel, thus 
         $\omega_{\tilde{\times}} \leq 3c_0\ln(1/\varepsilon) + 3c_0\ln(6M^2) + 17$.
@@ -553,3 +553,195 @@ of the approximation of polynomials with neural networks.
         and $\norm{[R_\rho(\Phi_m)]_l}_{L^\infty((0,1)^d)} \leq 1$ for all $l = 1, \dots, d$.
     \end{enumerate}
 \end{lemma}
+\begin{proof}
+    The idea of the proof, will be one of construction, where we will find adequate functions, which are
+    easily transferable into ReLU neural networks. For this, define the functions
+    \begin{equation*}
+        \psi: \R \to \R, \quad \psi(x) = \begin{cases}
+            1, \quad &\vert x \vert < 1, \\
+            0, \quad &2 < \vert x \vert, \\
+            2 - \vert x \vert \quad &1 \leq \vert x \vert \leq 2,
+        \end{cases}
+    \end{equation*}
+    and $\phi_m: \R^d \to \R$ as the prodoct of shifted and scaled versions of $\psi$, which inherit its local
+    support, i.e.
+    \begin{equation*}
+        \phi_m(x) := \prod_{l=1}^d \psi \left( 3N \left( x_l - \frac{m_l}{N} \right) \right),
+    \end{equation*}
+    for $m = (m_1, \dots, m_d) \in \{0, \dots, N\}^d$. 
+    This function satisfies our first three parts of the Lemma directly: Take one $x_i$ for some $i = 1, \dots, d$.
+    Now we get that $\psi(3N(x_i - (m_i/N))) \in [-2, 2]$, since $\psi$ has support of $[-2, 2]$. This gives us
+    \begin{equation*}
+        x \in \left[\frac{m}{N} - \frac{2}{3N}, \frac{m}{N} + \frac{2}{3N}\right],
+    \end{equation*}
+    yielding the third property, as we took $i$ arbitrarily. Simultaneously we use the zero product property,
+    and the fact, that the range of $\psi$ is $[0, 1]$ to get the first property. Defining $z_i := 3Nx_i$, we
+    can rewrite for any $N$ the one-dimensional function 
+    \begin{equation*}
+        S(x_i) := \sum_{m_i = 0}^N \psi\left( 3N \left( x_i - \frac{m_i}{N} \right) \right)\quad \text{into the function} \quad
+        \tilde{S}(z_i) := \sum_{m_i=0}^N \psi(z_i - 3m_i), 
+    \end{equation*}
+    that intern gives us the wanted result of $\tilde{S}(z_i) = 1$ for any $z_i \in [0, 3N]$, because the
+    least distance between points is $3$, which means going forwards or backwards either lands one outside the support
+    of the function, if $z_i \in [-1, 1]$, or it adds both third case values, i.e. setting $z_i \in [1, 2]$ w.l.o.g
+    \begin{equation*}
+        \psi(z_i) + \psi(z_i - 3) = (2 - z_1) + (2 + (z_i - 3)) = 1.
+    \end{equation*}
+    Now we can extrapolate this result to $S$ by a simple scaling argument and then use Fubini
+    and the factorization of the sum over products to get
+    \begin{equation*}
+        \sum_{m \in \{0, \dots, N\}^d} \phi_m(x) = \sum_{m_1 = 0}^N \cdots \sum_{m_d = 0}^N \prod_{l=1}^d
+        \psi\left( 3N \left( x_l - \frac{m_l}{N} \right) \right) = \prod_{l=1}^d \left( \sum_{m_l = 0}^N
+        \psi\left( 3N \left( x_l - \frac{m_l}{N} \right) \right) \right) = 1.
+    \end{equation*}
+    Finally we are only left with proving the forth property. For this, we need to construct a neural network 
+    $\Phi_\psi$, that realizes $\psi$. Let
+    \begin{equation*}
+        A_1 := \begin{bmatrix}
+            1 \\ 1 \\ 1 \\ 1
+        \end{bmatrix}, \quad
+        b_1 := \begin{pmatrix}
+            2 \\ 1 \\ -1 \\ -2
+        \end{pmatrix}, \quad
+        A_2 := \begin{bmatrix}[c|cccc]
+            0 & 1 & -1 & -1 & 1
+        \end{bmatrix}, \quad
+        b_2 := 0,
+    \end{equation*}
+    define the neural network $\Phi_\psi = ((A_1, b_1), (A_2, b_2))$. With distinction by cases one can easily
+    see, that for all $x \in \R$
+    \begin{align*}
+        R_\rho(\Phi_\psi)(x) &= A_2(\rho(A_1x + b_1)) + b_2 \\
+        &= A_2\left(\begin{bmatrix}
+            \rho(x + 2) & \rho(x + 1) & \rho(x - 1) & \rho(x - 2)
+        \end{bmatrix}^T\right) \\
+        &= \rho(x + 2) + \rho(x - 2) - (\rho(x + 1) + \rho(x - 1)) \\
+        &= \psi(x).
+    \end{align*}
+    Furthermore the complexity of this network is $2$ layers, $12$ active weights and $6$ neurons.
+    Let $\Phi_{m, l}$ be a neural network with $d$-dimensional input and one-dimensional output, such that
+    \begin{equation*}
+        R_\rho(\Phi_{m, l})(x) = 3N \left( x_l - \frac{m_l}{N} \right), 
+        \quad \text{for all } x \in \R^d \text{ and } m \in \{0, \dots, N\}^d.
+    \end{equation*}
+    Then the complexity of this network is $1$ layer, $2$ active weights and $d+1$ neurons. Finally realizing
+    that the composition of both these functions, i.e. the realization of the concatenation of networks, would yield
+    each factor for the wanted function. If we now parallelize this concatenation, we get the forth property
+    by definition, i.e. let 
+    \begin{equation*}
+        \Phi_m := P(\Phi_\psi \odot \Phi_{m, l} \, \vert \, l = 1, \dots, d),
+    \end{equation*}
+    since then
+    \begin{equation*}
+        \prod_{l=1}^d [R_\rho(\Phi_m)]_l(x) = \phi_m(x), \quad \text{for all }x \in \R^d.
+    \end{equation*}
+    This network now has $d$-dimensional input and output and the complexity, using both Lemma (\ref{lemma: network concatenation}) and Lemma (\ref{lemma: network parallelization}),
+    of $3$ layers, at most $(12 + 2) \cdot 2 \cdot d = 28 d$ active weights, and at most $9d$ neurons.
+\end{proof}
+
+With these auxiliary results, we may finally start with the statement and proof of the Yarotsky Theorem.
+
+\begin{theorem}[Yarotsky Theorem]
+    Let $d \in \N, n \in \N_{\geq 2}$ and $B = 1$ and $f \in \Fcal_{n ,d , \infty, B}$ some arbitrary function.
+    Then there is a constant $c = c(d, B, n) > 0$ with the following properties:
+    
+    For any $\varepsilon \in (0, 1)$, there is a neural network architecture 
+    $\Acal_\varepsilon = \Acal_\varepsilon(d, n, B, \varepsilon)$ with $d$-dimensional input and one-dimensional output such
+    that, there is a neural network $\Phi_\varepsilon^f$ that has architecture $\Acal_\varepsilon$ and satisfies
+    \begin{equation*}
+        \snorm{R_\rho(\Phi_\varepsilon^f)}[0][\infty][d] \leq \varepsilon,
+    \end{equation*}
+    and
+    \begin{enumerate}
+        \item $L_{\Acal_\varepsilon} \leq c \cdot \ln(1 / \varepsilon)$,
+        \item $\omega_{\Acal_\varepsilon} \leq c \cdot \varepsilon^{-d/n} \ln(1/\varepsilon)$,
+        \item $N_{\Acal_\varepsilon} \leq c \cdot \varepsilon^{-d/n} \ln(1/\varepsilon)$.
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    Given the definition of the functions $\phi_m \in \Psi$ as constructed in the 
+    proof of Lemma (\ref{lemma: partition of unity}), we want to structure the proof of this Theorem in
+    two sub-goals:
+    
+    The formulation of an approximate function $f_1$ for $f$ using the partition of unity and
+    an adequate Taylor expansion, 
+    and the subsequent approximation of that function $f_1$ with a neural network $\Phi_{f_1}$ 
+    using the $\tilde{\times}$-multiplication of Proposition (\ref{prop: quasi multiplication}).
+
+    \vspace{0.5cm}
+    \noindent\textit{Step 1: Taylor Expansion}
+    
+    For any $m \in \{0, \dots, N\}^d$, consider the $(n-1)$-Taylor polynomial for the function $f$ at
+    $x_0 = m/N$:
+    \begin{equation*}
+        P_m(x) = \sum_{n: \, \vert n \vert < n} \frac{D^n f(x)}{n!} \bigg\vert_{x = \frac{m}{N}} \left( x - \frac{m}{N} \right)^n,
+        \quad \text{for } x \in \R^d,
+    \end{equation*}
+    with the conventions $n! = \prod_{l=1}^d n_l!$ and $(x - m/N)^n = \prod_{l=1}^d(x_l - \frac{m_l}{N})^{n_l}$.
+    With the partition of unity of Lemma (\ref{lemma: partition of unity}), we can then set any function,
+    as a linear combination of its point-values and the partition function. Especially this allows us
+    to define
+    \begin{equation*}
+        f = \sum_{m \in \{0, \dots, N\}^d} \phi_m f, \quad \text{and} \quad f_1 = \sum_{m \in \{0, \dots, N\}^d} \phi_m P_m.
+    \end{equation*}
+    Now we can exploit the properties given by Lemma (\ref{lemma: partition of unity}), as follows;
+    firstly use the $\inftynorm{\phi_m} = 1$ property in Line (\ref{align: f-f1 eq 1}), then one can estimate the 
+    maximal number of partitions with $2^d$ in Line (\ref{align: f-f1 eq 2}). After this we take the
+    simple Lagrange remainder \notdone{argue this} in Line (\ref{align: f-f1 eq 3}).
+    Lastly one can simply argue with $f \in \Fcal_{n, d, \infty, B=1}$ in Line (\ref{align: f-f1 eq 4}).
+    \begin{align}
+        \inftynorm{f(x) - f(x_1)} &\leq \sum_{m \in \{0, \dots, N\}^d} 
+        \inftynorm{\phi_m(x) \left( f(x) - P_m(x) \right)} \\
+        &\leq \sum_{m: \left\vert x_l - \frac{m_l}{N} \right\vert < \frac{1}{N}, \, \forall l = 1, \dots, d} 
+        \inftynorm{f(x) - P_m(x)} \label{align: f-f1 eq 1}\\
+        &\leq 2^d \max\limits_{m: \left\vert x_l - \frac{m_l}{N} \right\vert < \frac{1}{N}, \, \forall l = 1, \dots, d}
+        \inftynorm{f(x) - P_m(x)} \label{align: f-f1 eq 2}\\
+        &\leq \frac{2^d d^n}{n!} \left( \frac{1}{N} \right)^n \, 
+        \max\limits_{n: \, \vert n \vert = n} \operatorname{ess} \!\!\!\! \sup\limits_{x \in (0, 1)^d} \inftynorm{D^n f(x)} 
+        \label{align: f-f1 eq 3}\\
+        &\leq \frac{2^d d^n}{n!} \left( \frac{1}{N} \right)^n \label{align: f-f1 eq 4}
+    \end{align}
+    Now taking
+    \begin{equation*}
+        N = \ceil{\left( \frac{n!}{2^d d^n} \cdot \frac{\varepsilon}{2} \right)^{-\frac{1}{n}}},
+    \end{equation*}
+    gives the approximation bound of 
+    \begin{equation} \label{eq: f-f1 bound in yarotsky}
+        \inftynorm{f - f_1} \leq \frac{\varepsilon}{2}.
+    \end{equation}
+
+    \vspace{0.5cm}
+    \noindent\textit{Step 2: Approximation by a Neural Network}
+
+    The polynomial function $f_1$ may be further expressed in a different form, which allows us to
+    seperately compare it to a potential network approximation using the definition of $\phi_m$, i.e. for
+    $x \in \R^d$ 
+    \begin{equation*}
+        f_1(x) = \sum_{m \in \{0, \dots, N\}^d} \sum_{n: \, \vert n \vert < n} a_{m, n} 
+        \underbrace{\left( \phi_m(x) \left(x - \frac{m}{N}\right)^n \right)}_{=: f_{m, n}(x)}.
+    \end{equation*}
+    This expansion now has at most $d^n (N + 1)^d$ terms containing $f_{m, n}$, since 
+    \begin{multline*}
+        \#\left\{ n = (n_1, \dots, n_d)^T \in \{0, \dots, n - 1\}^d \, : \, \vert n \vert < n\right\} \\
+        \leq \#\left\{ n = (n_1, \dots, n_d)^T \in \{0, \dots, n - 1\}^d \right\} = d^n,
+    \end{multline*}
+    and obviously $\#\{m = \{0, \dots, N\}^d \} = (N + 1)^d$. As aforementioned, we can now compare each
+    function $f_{m,n}$ pointwise to a realization of a network approximating $n+d$ of the multiplications
+    needed for $\prod_{l=1}^d (x_l - (m_l / N))^{n_l}$, $d$ additional multiplications for the realization
+    of the function $\phi_m$ and one multiplication for putting it together, i.e. 
+    \begin{multline*}
+        R_\rho(\Phi^{m, n}_{f_1})(x) = R_\rho(\tilde{\times})\bigg( [R_\rho(\Phi_m)]_1(x_1), 
+        R_\rho(\tilde{\times})\bigg([R_\rho(\Phi_m)]_2(x_2), \dots \\
+        R_\rho(\tilde{\times}) \bigg([R_\rho(\Phi_m)]_d(x_d), R_\rho(\tilde{\times})
+        \bigg(x_1 - \frac{m_1}{N}, \dots \\
+        R_\rho(\tilde{\times}) \bigg( x_{d-1} - \frac{m_{d-1}}{N}, R_\rho(\tilde{\times})\bigg(
+        x_d - \frac{m_d}{N}, \dots \\
+        R_\rho(\tilde{\times}) \bigg(x_d - \frac{m_d}{N},  x_d - \frac{m_d}{N}\bigg)
+        \bigg)\bigg)\bigg)\bigg) \bigg)\bigg).
+    \end{multline*}
+    for $x = (x_1, \dots, x_d) \in \R^d$ where we used $\Phi_m$ as in the proof Lemma (\ref{lemma: partition of unity}).
+
+    The comparision can then be done by counting the amount of usages of the network $\tilde{\times}$, which
+    is $(d+n)$, since by Proposition (\ref{prop: quasi multiplication}) 
+
+\end{proof}
