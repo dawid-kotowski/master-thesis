@@ -391,9 +391,9 @@ theoretical setting, which will not be of much use in the actual results present
     There are constants $c_1, c_2, c_3 > 0$, such that for all $\varepsilon \in (0, 1)$ there is a
     neural network $\Phi^{\text{sq}}_\varepsilon$ with at most $c_1 \cdot \ln(1/\varepsilon)$ nonzero weights, at most
     $c_2 \cdot \ln(1/\varepsilon)$ layers, at most $c_3 \cdot \ln(1/\varepsilon)$ neurons, and with a $1$-dimensional
-    input and output such that
+    input and output such that for $f(x) := x^2$
     \begin{equation*}
-        \snorm{R_\rho(\Phi^{\text{sq}}_\varepsilon)(x) - x^2}[0][\infty][1] \leq \varepsilon,
+        \snorm{R_\rho(\Phi^{\text{sq}}_\varepsilon) - f}[0][\infty][1] \leq \varepsilon,
     \end{equation*}
     and $R_\rho(\Phi^{\text{sq}}_\varepsilon(0)) = 0$.
 \end{proposition}
@@ -457,9 +457,9 @@ as given by the first binomial formula.
 
 \begin{proposition} \label{prop: quasi multiplication}
     Let $M > 0$ and $\varepsilon \in (0, 1)$, then there is a ReLU neural network $\tilde{\times}$ with $2$-dimensional input and
-    $1$-dimensional output, and constants $c_1 > 0$ and $c_2 = c_2(M) > 0$, such that
+    $1$-dimensional output, and constants $c_1 > 0$ and $c_2 = c_2(M) > 0$, such that for $\times: \R \times \R \to \R; (x, y) \mapsto xy$
     \begin{enumerate}
-        \item $\norm{R_\rho(\tilde{\times})(x, y) - xy}_{W^{0, \infty}((-M, M)^2)} \leq \varepsilon$,
+        \item $\norm{R_\rho(\tilde{\times})- \times}_{W^{0, \infty}((-M, M)^2)} \leq \varepsilon$,
         \item if $x = 0$ or $y = 0$, then $R_\rho(\tilde{\times})(x, y) = 0$,
         \item the number of layers, active weights and neurons of $\tilde{\times}$ is at most $c_1 \ln(1/\varepsilon) + c_2$.
     \end{enumerate}
@@ -470,7 +470,7 @@ as given by the first binomial formula.
     using Proposition (\ref{prop: approximation by square}) for the chosen $\delta$, i.e. we define $\Phi^{\text{sq}}_\delta$,
     such that
     \begin{equation*}
-        \snorm{R_\rho(\Phi^{\text{sq}}_\delta)(x) - x^2}[0][\infty][1] \leq \frac{\varepsilon}{6M^2},
+        \snorm{R_\rho(\Phi^{\text{sq}}_\delta) - f}[0][\infty][1] \leq \frac{\varepsilon}{6M^2},
     \end{equation*}
     which now of course has $\Ocal(\ln(1/\delta))$ many layers, active weights and neurons. Since the statement
     necessarily needs to implement negative numbers as well, we show with $\vert x \vert = \rho(x) + \rho(-x)$
@@ -508,11 +508,11 @@ as given by the first binomial formula.
         &= 2M^2 \left( \left(\frac{\vert x + y \vert}{2M} \right)^2 - \left( \frac{\vert x \vert}{2M} \right)^2
         - \left( \frac{\vert y \vert}{2M} \right)^2 \right).
     \end{align*}
-    Now with the deviation from each of the square approximation we get with $\tilde{x} := \vert x \vert / (2M) \in (0,1)$
+    Now with the deviation from each of the square approximation we get,
     \begin{align*}
-        \norm{R_\rho(\tilde{\times})(x, y) - xy}_{L_\infty((0,1)^2)} 
-        &\leq 2M^2 \left( 3 \cdot \norm{R_\rho(\Phi^\text{sq}_\delta) 
-        (\tilde{x}) - \tilde{x}^2}_{L_\infty((0,1)^1)} \right) \\
+        \norm{R_\rho(\tilde{\times}) - \times}_{L_\infty((0,1)^2)} 
+        &\leq 2M^2 \left( 3 \cdot \sup\limits_{\frac{\vert x \vert}{2M}\, : \, x \in (-M, M)}\vert \, R_\rho(\Phi^\text{sq}_\delta) 
+        (\tilde{x}) - \tilde{x}^2 \, \vert \right) \\
         &\leq 6M^2 \delta = \varepsilon.
     \end{align*}
     We note a few things happening here for clarity; it is possible to simply use the reverse triangle equality
@@ -641,15 +641,15 @@ of the approximation of polynomials with neural networks.
 
 With these auxiliary results, we may finally start with the statement and proof of the Yarotsky Theorem.
 
-\begin{theorem}[Yarotsky Theorem]
-    Let $d \in \N, n \in \N_{\geq 2}$ and $B = 1$ and $f \in \Fcal_{n ,d , \infty, B}$ some arbitrary function.
-    Then there is a constant $c = c(d, B, n) > 0$ with the following properties:
+\begin{theorem}[Yarotsky Theorem] \label{theo: yarotsky}
+    Let $d \in \N, n \in \N_{\geq 2}, B = 1$ and $f \in \Fcal_{n ,d , \infty, B}$ some arbitrary function.
+    Then there is a constant $c = c(d, n) > 0$ with the following properties:
     
     For any $\varepsilon \in (0, 1)$, there is a neural network architecture 
-    $\Acal_\varepsilon = \Acal_\varepsilon(d, n, B, \varepsilon)$ with $d$-dimensional input and one-dimensional output such
+    $\Acal_\varepsilon = \Acal_\varepsilon(d, n, \varepsilon)$ with $d$-dimensional input and one-dimensional output such
     that, there is a neural network $\Phi_\varepsilon^f$ that has architecture $\Acal_\varepsilon$ and satisfies
     \begin{equation*}
-        \snorm{R_\rho(\Phi_\varepsilon^f)}[0][\infty][d] \leq \varepsilon,
+        \snorm{f - R_\rho(\Phi_\varepsilon^f)}[0][\infty][d] \leq \varepsilon,
     \end{equation*}
     and
     \begin{enumerate}
@@ -690,20 +690,20 @@ With these auxiliary results, we may finally start with the statement and proof 
     simple Lagrange remainder \notdone{argue this} in Line (\ref{align: f-f1 eq 3}).
     Lastly one can simply argue with $f \in \Fcal_{n, d, \infty, B=1}$ in Line (\ref{align: f-f1 eq 4}).
     \begin{align}
-        \inftynorm{f(x) - f(x_1)} &\leq \sum_{m \in \{0, \dots, N\}^d} 
-        \inftynorm{\phi_m(x) \left( f(x) - P_m(x) \right)} \\
+        \inftynorm{f - f_1} &\leq \sum_{m \in \{0, \dots, N\}^d} 
+        \inftynorm{\phi_m \left( f - P_m \right)} \\
         &\leq \sum_{m: \left\vert x_l - \frac{m_l}{N} \right\vert < \frac{1}{N}, \, \forall l = 1, \dots, d} 
-        \inftynorm{f(x) - P_m(x)} \label{align: f-f1 eq 1}\\
+        \inftynorm{f - P_m} \label{align: f-f1 eq 1}\\
         &\leq 2^d \max\limits_{m: \left\vert x_l - \frac{m_l}{N} \right\vert < \frac{1}{N}, \, \forall l = 1, \dots, d}
-        \inftynorm{f(x) - P_m(x)} \label{align: f-f1 eq 2}\\
+        \inftynorm{f - P_m} \label{align: f-f1 eq 2}\\
         &\leq \frac{2^d d^n}{n!} \left( \frac{1}{N} \right)^n \, 
-        \max\limits_{n: \, \vert n \vert = n} \operatorname{ess} \!\!\!\! \sup\limits_{x \in (0, 1)^d} \inftynorm{D^n f(x)} 
+        \max\limits_{n: \, \vert n \vert = n} \inftynorm{D^n f} 
         \label{align: f-f1 eq 3}\\
         &\leq \frac{2^d d^n}{n!} \left( \frac{1}{N} \right)^n \label{align: f-f1 eq 4}
     \end{align}
     Now taking
     \begin{equation*}
-        N = \ceil{\left( \frac{n!}{2^d d^n} \cdot \frac{\varepsilon}{2} \right)^{-\frac{1}{n}}},
+        N = \ceil{\left( \frac{n!}{2^d d^n} \cdot \frac{\varepsilon}{2} \right)^{-\frac{1}{n}}}
     \end{equation*}
     gives the approximation bound of 
     \begin{equation} \label{eq: f-f1 bound in yarotsky}
@@ -716,19 +716,33 @@ With these auxiliary results, we may finally start with the statement and proof 
     The polynomial function $f_1$ may be further expressed in a different form, which allows us to
     seperately compare it to a potential network approximation using the definition of $\phi_m$, i.e. for
     $x \in \R^d$ 
-    \begin{equation*}
+    \begin{equation} \label{eq: yarotsky f_1 def}
         f_1(x) = \sum_{m \in \{0, \dots, N\}^d} \sum_{n: \, \vert n \vert < n} a_{m, n} 
         \underbrace{\left( \phi_m(x) \left(x - \frac{m}{N}\right)^n \right)}_{=: f_{m, n}(x)}.
-    \end{equation*}
+    \end{equation}
     This expansion now has at most $d^n (N + 1)^d$ terms containing $f_{m, n}$, since 
-    \begin{multline*}
-        \#\left\{ n = (n_1, \dots, n_d)^T \in \{0, \dots, n - 1\}^d \, : \, \vert n \vert < n\right\} \\
-        \leq \#\left\{ n = (n_1, \dots, n_d)^T \in \{0, \dots, n - 1\}^d \right\} = d^n,
-    \end{multline*}
-    and obviously $\#\{m = \{0, \dots, N\}^d \} = (N + 1)^d$. As aforementioned, we can now compare each
-    function $f_{m,n}$ pointwise to a realization of a network approximating $n+d$ of the multiplications
-    needed for $\prod_{l=1}^d (x_l - (m_l / N))^{n_l}$, $d$ additional multiplications for the realization
-    of the function $\phi_m$ and one multiplication for putting it together, i.e. 
+    \begin{equation*}
+        \left\vert\left\{ n \in \{0, \dots, n - 1\}^d \, : \, \vert n \vert < n\right\}\right\vert \\
+        \leq \left\vert\left\{ n \in \{0, \dots, n - 1\}^d \right\}\right\vert = d^n,
+    \end{equation*}
+    and obviously $\vert\{m = \{0, \dots, N\}^d \}\vert = (N + 1)^d$. We note, that we take $M = d + n$ for the
+    definition of the network multplication, i.e. $\tilde{\times}: (-M, M)^2 \to \R$. This is done, because
+    we have as an obvious consequence from the fact, that if $x, y \in (-1, 1)$, that
+    \begin{equation*}
+        \vert \, R_\rho(\tilde{\times})(x, y) - x y \, \vert \leq \delta \quad
+        \implies \quad
+        \vert \, R_\rho(\tilde{\times})(x, y)\, \vert \leq \vert y \vert + \delta,
+    \end{equation*}
+    for some fixed but not yet specified $\delta \in (0,1)$. Recursively concatenating 
+    $\tilde{\times}$ for $(d + n - 1)$-times can then propagate the error to at most $M = (d + n)$ 
+    upon the last realization of $\tilde{\times}$.
+    
+    As aforementioned, we can now compare each
+    function $f_{m,n}$ pointwise to a realization of a network approximating at most $n - 1$ of the multiplications
+    needed for $\prod_{l=1}^d (x_l - (m_l / N))^{n_l}$, as we know that $\sum_{l=1}^d n_l < n$, 
+    $d$ additional multiplications for the realization
+    of the function $\phi_m$ and one multiplication for putting it together. Hence we define a neural
+    network $\Phi^{m, n}_{f_1}$ with $d$-dimensional input and one dimensional output via
     \begin{multline*}
         R_\rho(\Phi^{m, n}_{f_1})(x) = R_\rho(\tilde{\times})\bigg( [R_\rho(\Phi_m)]_1(x_1), 
         R_\rho(\tilde{\times})\bigg([R_\rho(\Phi_m)]_2(x_2), \dots \\
@@ -740,8 +754,114 @@ With these auxiliary results, we may finally start with the statement and proof 
         \bigg)\bigg)\bigg)\bigg) \bigg)\bigg).
     \end{multline*}
     for $x = (x_1, \dots, x_d) \in \R^d$ where we used $\Phi_m$ as in the proof Lemma (\ref{lemma: partition of unity}).
+    This network contains at most $(d + n)$ concatenations of $\tilde{\times}$, 
+    and thus by Lemma (\ref{lemma: partition of unity}) and its constant $C > 0$, Lemma (\ref{lemma: network concatenation}),
+    and Proposition (\ref{prop: quasi multiplication}) and its constants $c_0, c_1(d, n) > 0$,
+    \begin{equation} \label{eq: yarotsky complexity with delta}
+        L_{\Phi^{m, n}_{f_1}} \leq 3 c_0 (d + n) \left(\ln\left(\frac{1}{\delta}\right) + (d + n) c_1 \right), \quad
+        \omega_{\Phi^{m, n}_{f_1}} \leq C 2(d + n) d \left(\ln\left(\frac{1}{\delta}\right) + 2(d + n) C \right).
+    \end{equation}
+    for a given precision level $\delta \in (0, 1)$, where the number of neurons are of the same order as 
+    the number of active weights.
 
-    The comparision can then be done by counting the amount of usages of the network $\tilde{\times}$, which
-    is $(d+n)$, since by Proposition (\ref{prop: quasi multiplication}) 
+    The error comparison of $R_\rho(\Phi^{m, n}_{f_1})$ and $f_{m, n}$ can then be done by counting the maximal depth of 
+    usages of the network $\tilde{\times}$,
+    which is $(d + n)$ as shown above, and the estimate of 
+    \begin{equation*}
+        \bigg\vert \, \left(x - \frac{m}{N}\right) \, \bigg\vert \leq 1, \quad 
+        \vert \, \psi(x) \, \vert \leq 1, 
+    \end{equation*} 
+    for all $x \in (0, 1)^d$. Then directly
+    \begin{equation*}
+        \inftynorm{R_\rho(\Phi_{f_1}^{m, n}) - f_{m,n}} \leq (d + n) \delta.
+    \end{equation*}
+    Now since, as mentioned below Equation (\ref{eq: yarotsky f_1 def}), $f_1$ has at most $d^n (N + 1)^d$
+    terms, but since any $x \in \R^d$ can be only in the support of at most $2^d$ functions $\phi_m$ by the
+    second statement in Proposition (\ref{prop: quasi multiplication}), the
+    sum going over all $m$ can be reduced to only those, which are non-zero, which we employ in 
+    Line (\ref{align: yarotsky r-f1 1}). This brings
+    $(N+1)^d \to 2^d$, supporting the equation in Line (\ref{align: yarotsky r-f1 2}). Setting
+    \begin{equation*}
+        \delta = \frac{\varepsilon}{2 \cdot 2^{d} d^n(d + n)}
+    \end{equation*}
+    allows us to finally assert, using the bound of Equation (\ref{eq: yarotsky complexity with delta})
+    for Line (\ref{align: yarotsky r-f1 3}),
+    \begin{align}
+        \inftynorm{R_\rho(\Phi_{f_1}) - f_1}
+        &\leq \sum_{m \in \{0, \dots, N\}^d} 
+        \sum_{n: \, \vert n \vert < n} \vert a_{m, n}  \vert \,
+        \inftynorm{R_\rho(\Phi_{f_1}^{m, n}) - f_{m, n}} \\
+        &= \sum_{m: \, x \in \operatorname{supp}(\phi_m)} 
+        \sum_{n: \, \vert n \vert < n} \vert a_{m, n} \vert \,
+        \inftynorm{R_\rho(\Phi_{f_1}^{m, n}) - f_{m, n}} \label{align: yarotsky r-f1 1}\\
+        &\leq 2^d d^n \max\limits_{m: \, x \in \operatorname{supp}(\phi_m)} \max\limits_{n: \, \vert n \vert < n}
+        \inftynorm{R_\rho(\Phi_{f_1}^{m, n}) - f_{m, n}} \label{align: yarotsky r-f1 2}\\
+        &\leq 2^d d^n (d + n) \delta \label{align: yarotsky r-f1 3} \\
+        &= \frac{\varepsilon}{2}. \label{align: yarotsky r-f1 4}
+    \end{align}
+    Our knowledge of $\delta$ together with at most $d^n (N + 1)^d = \Ocal(\varepsilon^{-d/n})$ parallel networks 
+    with one additive layer and the fact that
+    generally we have $c'\ln(1 / \delta + c'') \leq c''' \ln(1 / \delta)$ 
+    for $c', c'' > 0$ and $c''' \geq c' \ln(1 / c'')$, gets us the final complexity of $\Phi_{f_1}$ 
+    from the starting point of
+    Equation (\ref{eq: yarotsky complexity with delta}), i.e.
+    \begin{equation*}
+        L_{\Phi_{f_1}} \leq c \ln(1 / \varepsilon), \quad \omega_{\Phi_{f_1}} \leq c \varepsilon^{-d/n} \ln(1/\varepsilon),
+        \quad N_{\Phi_{f_1}} \leq c \varepsilon^{-d/n} \ln(1/\varepsilon).
+    \end{equation*}
+    with some constant $c = c(d, n) > 0$.
 
+    Using the triangle inequality, we can show that this network indeed satisfies the wanted precision bound with
+    both errors stemming from Equation () and Equation () respectively:
+    \begin{equation*}
+        \inftynorm{f - R_\rho(\Phi_{f_1})} \leq \inftynorm{f - f_1} + \inftynorm{f_1 - R_\rho(\Phi_{f_1})}
+        \leq \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.
+    \end{equation*}
+\end{proof}
+
+We may even expand Yarotsky to cover a more general case, where $f \in \Fcal_{n, d, p, B}$ for arbitrarily
+$1 \leq p \leq \infty$ and $B > 0$ and the norm, to which we assert the precision, an arbitray Sobolev norm.
+This extension is presented by Gühring et al. \cite{gühring2019nn}.
+
+\begin{theorem}[Gühring Theorem] \label{theo: gühring}
+    Let $d \in \N, n \in \N_{\geq 2}, B > 0$ and $f \in \Fcal_{n ,d , p, B}$ some arbitrary function.
+    Then there is a constant $c = c(d, n, p, B, s) > 0$ with the following properties:
+    
+    For any $\varepsilon \in (0, 1)$, there is a neural network architecture 
+    $\Acal_\varepsilon = \Acal_\varepsilon(d, n, p, B, s, \varepsilon)$ with $d$-dimensional input and one-dimensional output such
+    that, there is a neural network $\Phi_\varepsilon^f$ that has architecture $\Acal_\varepsilon$ and satisfies
+    \begin{equation*}
+        \snorm{f - R_\rho(\Phi_\varepsilon^f)}[s][p][d] \leq \varepsilon,
+    \end{equation*}
+    and
+    \begin{enumerate}
+        \item $L_{\Acal_\varepsilon} \leq c \cdot \ln(1 / \varepsilon)$,
+        \item $\omega_{\Acal_\varepsilon} \leq c \cdot \varepsilon^{-d/(n-s)} \ln(1/\varepsilon)$,
+        \item $N_{\Acal_\varepsilon} \leq c \cdot \varepsilon^{-d/(n-s)} \ln(1/\varepsilon)$.
+    \end{enumerate}
+\end{theorem}
+\begin{proof}[Proof Sketch]
+    Considering that all of the tools used for this proof will neither be of any use to the main results in
+    this paper nor to the general structure, we will only sketch the general steps necessary to achieve
+    it for the interested reader:
+
+    \begin{enumerate}
+        \item The first step is to expand the Proposition (\ref{prop: approximation by square}) to the 
+        $W^{1, \infty}(0,1)$-norm. This is done by simple calculation, since an explicit construction is being made.
+        \item This can be applied to Proposition (\ref{prop: quasi multiplication}) in the same way. Additionally
+        we need to bound $\vert\,R_\rho(\tilde{\times})\, \vert_{W^{1, \infty}}((0,1)^2)$, since this is required in
+        for the bound on the collective error under the Taylor expanded function in the end.
+        \item The most import additional step is to bound the switch of norms from $W^{1, p}((0,1)^d)$ to 
+        $W^{n, p}((0,1)^d)$ of a function being approximated by the partition of unity, that we discussed
+        in Lemma (\ref{lemma: partition of unity}). This gives
+        \begin{equation*}
+            \snorm{f - f_N}[s][p][d] \leq C \left( \frac{1}{N} \right)^{n-s} \snorm{f}[n][p][d],
+        \end{equation*}
+        for a partition of unity of size $N$. It is worth noting, that this factor in front is responsible for the
+        different approximation in regard to weights and neurons, since it influences the necessary choice of $\delta$.
+        \item The last step, which differs greatly from the proof of Yarotsky Theorem (\ref{theo: yarotsky}), is
+        the approximation of a sum of localized polynomials with a neural network. Here the challenge lies again in
+        the control of the derivatives.
+    \end{enumerate}
+    
 \end{proof}

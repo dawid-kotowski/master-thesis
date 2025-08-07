@@ -11,3 +11,43 @@
 \section{Literature review}
 
 \section{Outline}
+
+\section{Notation}
+
+We set $\N := \{1, 2, \dots \}$, $\N_0 := \{0, 1, \dots\}$ and $\N_{\geq n} := \{n, n+1, \dots \}$. Furthermore for any set $A$, we will
+write $\vert A \vert$ to denote its cardinality. If $x \in \R$, the gaussian ceiling function is given via
+$\ceil{x} := \min\{k \in \mathbb{Z} \, : \, k \geq x\}$.
+
+Further if $d \in \N$ and $\norm{\cdot}$ is a norm, then for $x \in \R^d$ and $r>0$ we set 
+$B_{r, \norm{\cdot}}(x)$ as the open ball around $x$ with radius $r$. Additionally $\vert \cdot \vert$ denotes
+the regular euclidean norm on $\R^d$. We usually do not differ between vectors and scalars in ubiquitous notation.
+
+The transpose of a matrix $A \in \R^{d_1 \times d_2}$ for some $d_1, d_2 \in \N$ is given by
+$A^T \in \R^{d_2 \times d_1}$.
+
+Let $(a_n)_{n \in \N} \in \R$ be some sequence, then we say $(a_n)_n$ has \emph{(convergence of) order} $n$,
+if there is $c \in \R$ independent of $n$, s.t. $a_n = c \cdot n$ for all $n \in \N$. We then denote $a_n = \Ocal(n)$.
+
+\subsection{Partial Differential Equations}
+
+
+\subsection{Neural Networks}
+
+Consider $d_1, d_2 \in \N$ and a matrix $A \in \R^{d_1 \times d_2}$, then the number of non-zero entries of $A$
+is given by
+\begin{equation*}
+    \norm{A}_{\ell^0}:= \vert \{(i,j) \, \vert \, A_{i,j} \neq 0 \} \vert.
+\end{equation*}
+Let $B \in \R^{d_1 \times d_3}$ be some other matrix for $d_3 \in \N$. Then we write
+\begin{equation*}
+    \begin{bmatrix}
+        A & B
+    \end{bmatrix} \in \R^{d_1 \times (d_2 + d_3)}
+    \quad \text{or} \quad
+    \begin{bmatrix}[c|c]
+        A & B
+    \end{bmatrix} \in \R^{d_1 \times (d_2 + d_3)},
+\end{equation*}
+for the stacking of matrices, where the latter notation is meant to symbolize a strong delineation between
+blocks. Similar applies to vertical stacking, if $A \in \R^{d_1 \times d_2}$ and $B \in \R^{d_3 \times d_2}$.
+As a special case, this applies to vectors as well. 
