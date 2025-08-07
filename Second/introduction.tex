@@ -14,7 +14,7 @@
 
 \section{Notation}
 
-We set $\N := \{1, 2, \dots \}$, $\N_0 := \{0, 1, \dots\}$ and $\N_{\geq n} := \{n, n+1, \dots \}$. Furthermore for any set $A$, we will
+We set $\N := \{1, 2, \dots \}$, $\N_0 := \{0, 1, \dots\}$ and $\N_{\geq n} := \{n, n+1, \dots \}$ for $n \in \N$. Furthermore for any set $A$, we will
 write $\vert A \vert$ to denote its cardinality. If $x \in \R$, the gaussian ceiling function is given via
 $\ceil{x} := \min\{k \in \mathbb{Z} \, : \, k \geq x\}$.
 
@@ -28,15 +28,51 @@ $A^T \in \R^{d_2 \times d_1}$.
 Let $(a_n)_{n \in \N} \in \R$ be some sequence, then we say $(a_n)_n$ has \emph{(convergence of) order} $n$,
 if there is $c \in \R$ independent of $n$, s.t. $a_n = c \cdot n$ for all $n \in \N$. We then denote $a_n = \Ocal(n)$.
 
+Moreover, we define the \emph{multiindex} notation as follows: For $\alpha = (\alpha_1, \dots, \alpha_d) 
+\in \N_0^d$, we write $\vert \alpha \vert := \alpha_1 + \dots + \alpha_d$
+and $\alpha! := \alpha_1! \cdots \alpha_d!$. If $x \in \R^d$, then we set
+\begin{equation*}
+    x^\alpha := \prod_{i=1}^d x_i^{\alpha_i}.
+\end{equation*}
+
 \subsection{Partial Differential Equations}
 
+For a function $f: X \to Y$ we denote $\operatorname{supp}(f) := \{ x \in X \, \vert \, f(x) \neq 0 \}$
+as the \emph{support} of $f$. Let $g: Y \to Z$ be another function, then $g \circ f: X \to Z$ is their \emph{composition.}
+Setting the standard topology of $\R^d$ lets us define $\bar{A}$ for some $A \subset \R^d$ as the \emph{closure} of $A$, and
+$\partial A$ its \emph{boundary}. If $A$ is non-empty, we set $\operatorname{diam}(A) := \sup_{x, y \in A} \vert x-y \vert$
+as the diameter of $A$. 
+
+Let $\Omega \subset \R^d$ be open. For $n \in \N_0 \cup \{ \infty \}$, we denote by $C^n(\Omega)$ the set
+of $n$-times continuously differentiable functions on $\Omega$.
+
+For $f \in C^n(\Omega)$ and $\alpha \in \N_0^d$ with $\vert \alpha \vert \leq n$ we write
+\begin{equation*}
+    D^\alpha f := \frac{\partial^{\vert \alpha \vert f}}{\partial x_1^{\alpha_1} \partial x_2^{\alpha_2} \cdots
+    \partial x_d^{\alpha_d}}.
+\end{equation*}
+
+A function $f: \Omega \to \R^m$ for $\Omega \subset \R^d$ is called \emph{Lipschitz continuous}, if there is a constant
+$L \geq 0$ such that
+\begin{equation*}
+    \vert \, f(x) - f(y) \, \vert \leq L \vert x - y \vert.
+\end{equation*}
+
+We further denote with 
+\begin{equation*}
+    L^p(\Omega) := \left\{f: \Omega \to \R \, \vert \, f \text{ is measurable, and } 
+    \int_\Omega \vert f(x) \vert^p d \mu(x) < \infty \right\}
+\end{equation*}
+the Lebesgue space, and if not specified otherwise we write $\norm{\cdot}_p := 
+\norm{\cdot}_{L^p(\Omega)}$ for all $1 \leq p \leq \infty$. Note that in critical situations we tend to
+be explicit about the norms.
 
 \subsection{Neural Networks}
 
 Consider $d_1, d_2 \in \N$ and a matrix $A \in \R^{d_1 \times d_2}$, then the number of non-zero entries of $A$
 is given by
 \begin{equation*}
-    \norm{A}_{\ell^0}:= \vert \{(i,j) \, \vert \, A_{i,j} \neq 0 \} \vert.
+    \norm{A}_{\ell^0}:= \vert \{(i,j) \, : \, A_{i,j} \neq 0 \} \vert.
 \end{equation*}
 Let $B \in \R^{d_1 \times d_3}$ be some other matrix for $d_3 \in \N$. Then we write
 \begin{equation*}
@@ -51,3 +87,4 @@ Let $B \in \R^{d_1 \times d_3}$ be some other matrix for $d_3 \in \N$. Then we w
 for the stacking of matrices, where the latter notation is meant to symbolize a strong delineation between
 blocks. Similar applies to vertical stacking, if $A \in \R^{d_1 \times d_2}$ and $B \in \R^{d_3 \times d_2}$.
 As a special case, this applies to vectors as well. 
+
