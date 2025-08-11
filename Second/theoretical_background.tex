@@ -3,14 +3,130 @@
 
 \section{Parametric Partial Differential Equations} \label{section: background for PDE solutions}
 
+
+
+
 \subsection{Sobolev Spaces}
 
-\subsection{Projections}
+
+
+
+For our work with Partial Differential Equation, and subsequent error approximations, we want to introduce
+Sobolev spaces. These are generalized differentiable spaces, where a weak derivative is given, as an analogon to the
+classic derivative in the $C^n(\Omega)$ 
+space. They are employed in order to exploit their compact embedding in the Hölder spaces, which are generalizations
+of $C^n(\Omega)$. We will not go in much detail about the theory of Sobolev spaces, since we mostly concern ourselves
+with finite dimensional subspaces, but some ground truth must be discussed. 
+
+For this subsection we primary use \cite{alt2016}, and for the first upcoming definition \cite{dacorogna2004}.
+
+\begin{definition}[Lipschitz Domain]
+    Let $d \in \N$, and $\Omega \subset \R^d$. Then $\Omega$ is called a \emph{Lipschitz domain} if for every
+    $x \in \partial \Omega$ and some $r > 0$, there is $U := B_{r, \vert \cdot \vert}(x) \subset \R^d$ and an isomorphic
+    map $H: Q \to B_{r, \vert \cdot \vert}(x)$ with $Q := \{ x \in \R^d \, \vert \, \norm{x}_{\ell^1} < d \}$ such that
+    \begin{equation*}
+        H \in C^k(\bar{Q}), \quad H^{-1} \in C^k(\bar{U}), \quad 
+        H(Q_+) = U \cap \Omega, \quad H(Q_0) = U \cap \partial \Omega
+    \end{equation*}
+    where $Q_+ := \{x \in Q \, \vert \, x_d > 0\}$ and similarily $Q_0 := \{x \in Q \, \vert \, x_d = 0 \}$,
+    and $H$ is only in $C^{0, 1}$.
+\end{definition}
+
+From now on, let $d \in \N$ and, if not given otherwise, $\Omega \subset \R^d$ be a Lipschitz domain.
+
+\begin{definition}[Weak Derivative]
+    Let $\alpha \in \N_0^d$ be a multiindex. A function $u \in L^1_\text{loc}(\Omega)$ is said to have an \emph{$\alpha$-th 
+    weak derivative}, if there is a function $v_\alpha \in L^1_\text{loc}(\Omega)$ such that
+    \begin{equation*}
+        \int_\Omega u D^\alpha \varphi = (-1)^{\vert \alpha \vert} \int_\Omega v_\alpha \varphi \quad \forall
+        \varphi \in C_0^\infty(\Omega).
+    \end{equation*}
+    We then write $v_\alpha = D^\alpha u$.
+\end{definition}
+
+\begin{definition}[Sobolev Space] \label{def: sobolev space}
+    Let $n \in \N_0$ and $1 \leq p \leq \infty$. Then we define the \emph{Sobolev space} as
+    \begin{equation*}
+        W^{n, p}(\Omega) := \{ f \in L^p(\Omega) \, \vert \, \norm{f}_{W^{n, p}(\Omega)} < \infty \},
+    \end{equation*}
+    where the norm on this space is given via
+    \begin{equation*}
+        \norm{f}_{W^{n, p}(\Omega)} := \begin{cases}
+            \displaystyle
+            \left( \sum\limits_{\vert \alpha \vert \leq n} \norm{D^\alpha f}^p_{L^p(\Omega)} \right)^{1/p}, 
+            \quad &\text{if } p<\infty \\[1.5em]
+            \displaystyle
+            \, \max\limits_{\vert \alpha \vert \leq n} \, \norm{D^\alpha f}_{L^\infty(\Omega)}, \quad &\text{if } p = \infty,
+        \end{cases}
+    \end{equation*}
+    for any $f \in W^{n, p}(\Omega)$.
+\end{definition}
+
+It is possible to extend this definition for $0 < n < 1$ to that of the \emph{Sobolev-Slobodeckij spaces}. In the 
+analysis of partial differential equations these are used to characterize the regularity of Sobolev functions,
+which are restricted to the boundary $\partial \Omega$. This restriction itself is called a trace operator.
+One of the statements of relevance under the following definition is this:
+
+If $\Omega \subset \R^d$ is a regular open set (for example, if $\Omega$ is a Lipschitz domain), and if 
+$u \in W^{1, p}(\Omega)$, then in fact $u \mapsto u \vert_{\partial \Omega}$ as a trace operator is surjective
+from $W^{1, p}(\Omega)$ onto $W^{1-(1/p), p}(\partial \Omega)$ and
+\begin{equation*}
+    \norm{u \vert_{\partial \Omega}}_{W^{1-(1/p), p}(\partial \Omega)} \leq C \norm{u}_{W^{1, p}(\Omega)},
+\end{equation*}
+for some $C > 0$ independent of $p$ and $u$.
+This of course only makes sense in light of the next definition.
+
+\begin{definition}[Sobolev-Slobodeckij Space]
+    Let $0 < s < 1$ and $1 \leq p \leq \infty$. Then we define the \emph{Sobolev-Slobodeckij space} as
+    \begin{equation*}
+        W^{s, p}(\Omega) := \{ f \in L^p(\Omega) \, \vert \, \norm{f}_{W^{s, p}(\Omega)} < \infty \},
+    \end{equation*}
+    where the norm on this space is given via
+    \begin{equation*}
+        \norm{f}_{W^{s, p}(\Omega)} := \begin{cases}
+            \displaystyle
+            \left( \norm{f}_{L^p(\Omega)}^p + \int_\Omega \int_\Omega 
+            \left( \frac{\vert f(x) - f(y) \vert}{\vert x-y \vert^{s + d/p}}\right)^p dx dy \right)^{1/p}, 
+            \quad &\text{if } p<\infty \\[1.5em]
+            \displaystyle
+            \, \max \left\{\norm{f}_{L^\infty(\Omega)}, \operatorname{ess} \!\! \sup_{x, y \in \Omega} 
+            \frac{\vert f(x)-f(y) \vert}{\vert x-y \vert^{s}} \right\}, \quad &\text{if } p = \infty,
+        \end{cases}
+    \end{equation*}
+    for any $f \in W^{s, p}(\Omega)$.
+\end{definition}
+
+
+\subsection{Existence and Uniqueness}
+
+
+
+The following subsection is meant as a summary of any literature concerning 
+the existence of actual solutions for a subclass of 
+time-dependent partial differential equations, to give the reader a feeling for the
+current developments in the field. Note 
+here, that this is of course not general for all time-dependend problems since the existence of
+a solution to equations such as the incompressible 
+Navier-Stokes equation are still a pending research question.
+
+
+
+\begin{theorem}[Hille-Yosida]
+    Let $A$ be a maximal monotone operator. Then, given any $u_0 \in D(A)$ there is a unique function
+    \begin{equation*}
+        u \in C^1([0, \infty]; H^1_0(\Omega))
+    \end{equation*}
+\end{theorem}
+
+\subsection{Reduced Order Modelling}
+
+
+
 
 \almostdone{Introduce the general notion of the POD}
 \almostdone{Introduce KnW and its relation to the continous case}
 
-For this section we define $u(\mu_j, t_k) \in \R^{N_h}$ for $\mu_j \in \Pcal$ and $t_k \in \mathcal{T}$ to be some vectors, later representing the solutions to a parametric PDE for a given parameter and time point in a given discrete subspace of the solution manifold, sampled uniformly and iid from their respective spaces. Here $\Pcal$ represents and arbitrary compact subspace of $\R^{p + q}$, where $p, q > 0$ and $\Tcal = [0, T]$ for some $T > 0$. Further we let $I \subset \N$ define some index set. Additionally we let $N_s := \vert I \vert$ and $N_t$ denote the number of time samples $t_k$.
+For this subsection we define $u(\mu_j, t_k) \in \R^{N_h}$ for $\mu_j \in \Pcal$ and $t_k \in \mathcal{T}$ to be some vectors, later representing the solutions to a parametric PDE for a given parameter and time point in a given discrete subspace of the solution manifold, sampled uniformly and iid from their respective spaces. Here $\Pcal$ represents and arbitrary compact subspace of $\R^{p + q}$, where $p, q > 0$ and $\Tcal = [0, T]$ for some $T > 0$. Further we let $I \subset \N$ define some index set. Additionally we let $N_s := \vert I \vert$ and $N_t$ denote the number of time samples $t_k$.
 
 Here we will discuss prerequisites to the Proper Orthogonal Decomposition and related concepts, such as the Kolmogorov $n$-width, which is closely related to the partial sums of the eigenvalues of the POD matrix. This is among the results, this section will cover. We base this chapter on \cite{quarteroni2015rb}.
 
@@ -95,6 +211,8 @@ Here we will discuss prerequisites to the Proper Orthogonal Decomposition and re
         \delta_n(\mathcal{S}_N) = \inf\limits_{\psi \in C(\R^N, \R^n), \psi' \in C(\R^n, \R^N)} \sup\limits_{u \in S_{N_h}} \norm{u - \psi(\psi'(u))}.
     \end{equation*}
 \end{definition}
+
+
 
 
 
@@ -374,9 +492,9 @@ This leaves us with two main objectives:
 These two objectives are pursued by both Yarotsky \cite{yarotsky2017nn} and Gühring et al \cite{gühring2019nn}, 
 even though it is worth noting, that Yarotsky
 only provides the special case $s=0, B=1$, since the proof only shows an estimation with a Taylor expansion
-regarding the $L_\infty$ norm, missing the crucial step of the interpolation bound to change the norm to the
+regarding the $L^\infty$ norm, missing the crucial step of the interpolation bound to change the norm to the
 Sobolev expanded counterpart and additionally
-uses the $L_\infty$ norm to approximate multiplication by a neural network. 
+uses the $L^\infty$ norm to approximate multiplication by a neural network. 
 
 
 Tho we will use the statement of
@@ -436,8 +554,8 @@ theoretical setting, which will not be of much use in the actual results present
     Then we also know that, using the Bramble-Hilbert lemma in one-dimension \cite{bramble1970}, 
     the fact that $f''(x) = 2$ for all $x \in (0,1)$, and $h = 1/2^m$, that
     \begin{align*}
-        \norm{R_\rho(\Phi_m) - f}_{L_\infty((0,1))} \leq \max\limits_{k = 0, \dots, 2^m - 1} \, 
-        C h^2 \norm{f''}_{L_\infty([\frac{k}{2^m}, \frac{k+1}{2^m}])} = C' 2^{-2m}.
+        \norm{R_\rho(\Phi_m) - f}_{L^\infty((0,1))} \leq \max\limits_{k = 0, \dots, 2^m - 1} \, 
+        C h^2 \norm{f''}_{L^\infty([\frac{k}{2^m}, \frac{k+1}{2^m}])} = C' 2^{-2m}.
     \end{align*}
     Hence setting $m = \ceil{\ln(1/\varepsilon)}$, with $C, C' > 0$ constants, only dependent on
     the domain, we achieve the wanted bound from the statement for the neural network
@@ -508,13 +626,13 @@ as given by the first binomial formula.
     \end{align*}
     Now with the deviation from each of the square approximation we get,
     \begin{align*}
-        \norm{R_\rho(\tilde{\times}) - \times}_{L_\infty((0,1)^2)} 
+        \norm{R_\rho(\tilde{\times}) - \times}_{L^\infty((0,1)^2)} 
         &\leq 2M^2 \left( 3 \cdot \sup\limits_{\frac{\vert x \vert}{2M}\, : \, x \in (-M, M)}\vert \, R_\rho(\Phi^\text{sq}_\delta) 
         (\tilde{x}) - \tilde{x}^2 \, \vert \right) \\
         &\leq 6M^2 \delta = \varepsilon.
     \end{align*}
     We note a few things happening here for clarity; it is possible to simply use the reverse triangle equality
-    to get all three term errors added, and then put them together. This can be done, since the $L_\infty((0,1)^2)$ norm 
+    to get all three term errors added, and then put them together. This can be done, since the $L^\infty((0,1)^2)$ norm 
     appreciates only the maximal value of the error across all possible elements of the $(0,1)^2$ domain, but because
     the inner function is bijective, these are just the same. Additionally we use the, trivial by definition, statement
     \begin{equation*}
@@ -822,7 +940,7 @@ $1 \leq p \leq \infty$ and $B > 0$ and the norm, to which we assert the precisio
 This extension is presented by Gühring et al. \cite{gühring2019nn}.
 
 \begin{theorem}[Gühring Theorem] \label{theo: gühring}
-    Let $d \in \N, n \in \N_{\geq 2}, B > 0$ and $f \in \Fcal_{n ,d , p, B}$ some arbitrary function.
+    Let $d \in \N, n \in \N_{\geq 2}, B > 0$ and $0 \leq s \leq 1$ and $f \in \Fcal_{n ,d , p, B}$ some arbitrary function.
     Then there is a constant $c = c(d, n, p, B, s) > 0$ with the following properties:
     
     For any $\varepsilon \in (0, 1)$, there is a neural network architecture 
@@ -850,7 +968,7 @@ This extension is presented by Gühring et al. \cite{gühring2019nn}.
         we need to bound $\vert\,R_\rho(\tilde{\times})\, \vert_{W^{1, \infty}}((0,1)^2)$, since this is required in
         for the bound on the collective error under the Taylor expanded function in the end.
         \item The most import additional step is to bound the switch of norms from $W^{1, p}((0,1)^d)$ to 
-        $W^{n, p}((0,1)^d)$ of a function being approximated by the partition of unity, that we discussed
+        $W^{s, p}((0,1)^d)$ of a function being approximated by the partition of unity, that we discussed
         in Lemma (\ref{lemma: partition of unity}). This gives
         \begin{equation*}
             \snorm{f - f_N}[s][p][d] \leq C \left( \frac{1}{N} \right)^{n-s} \snorm{f}[n][p][d],
@@ -862,3 +980,5 @@ This extension is presented by Gühring et al. \cite{gühring2019nn}.
         the control of the derivatives.
     \end{enumerate}
 \end{proof}
+
+

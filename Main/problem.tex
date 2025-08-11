@@ -2,31 +2,31 @@
 
 \notdone{Describe basic already existing techniques via literature}
 
-\section{Stationary parametric PDE}
-
-\notdone{
-Brief general description of parametric PDEs, no examples. Potentially add convergence rates and computational cost of traditional solvers
-}
-
-\section{Deep-learning based Reduced Order Models}
-
 \notdone{Introduce Proper Orthogonal Decomposition}
 \notdone{Introduce Autoencoders}
 \notdone{Introduce Deep Orthogonal Decomposition}
 
-\section{Non-stationary parametric PDE}
+\section{Time-dependent parametric PDE}
 
 \almostdone{Brief general description of time dependent parametric PDEs regarding existing literature.}
 \notdone{Definitely add traditional convergence and computational cost.}
 
-Let $\Theta \subset \R^{p}$ and $\Theta' \subset \R^q$ denote the geometric and physical parameter spaces respectively. Further we let $\Omega \subset \R^d$ be some Lipschitz domain and $\Gamma = [0, T]$ for some $T > 0$ be the trial space of a parametric time-dependent PDE, i.e. $u(t; \mu, \nu) = u(x, t; \mu, \nu)$ is the solution of the PDE, if
+Let $\Theta \subset \R^{p}$ and $\Theta' \subset \R^q$ denote the geometric and physical parameter spaces 
+respectively. 
+Further we let $\Omega \subset \R^d$ be some Lipschitz domain and $\Gamma = [0, T]$ 
+for some $T > 0$ be the trial space of a parametric time-dependent PDE, 
+i.e. $u^{\mu, \nu}(x, t) := u(x, t; \mu, \nu)$ is the solution of the PDE, if
 \begin{equation*}\begin{cases}
-    \partial_t u(t; \mu, \nu) + \mathcal{L}(\mu, \nu)u(t; \mu, \nu) + \mathcal{N}(u(\mu, \nu), \mu, \nu) = f(t; \mu, \nu), \quad &(x, t) \in \Omega \times \Gamma, \\
-    \mathcal{B}(\mu, \nu) u(t; \mu, \nu) = g_N(t; \mu, \nu) &(x, t) \in \partial \Omega \times \Gamma, \\
-    u(t; \mu, \nu) = u_0(\mu, \nu) &(x, t) \in \Omega \times \{0 \}. \\
+    \partial_t u^{\mu, \nu}(x, t) + \mathcal{L}(\mu, \nu)u^{\mu, \nu}(x, t) + \mathcal{N}(u^{\mu, \nu}(x, t), \mu, \nu) 
+    = f(x, t; \mu, \nu), \quad &(x, t) \in \Omega \times \Gamma, \\
+    \mathcal{B}(\mu, \nu) u^{\mu, \nu}(x, t) = g_N(x, t; \mu, \nu) &(x, t) \in \partial \Omega \times \Gamma, \\
+    u^{\mu, \nu}(x, t) = u_0^{\mu, \nu}(x) &(x, t) \in \Omega \times \{0 \}. \\
 \end{cases}
 \end{equation*}
-Assume we half-discretize the problem in the spacial domain $\Omega$ with $N_h$ degrees of freedom. Note that we refer to this discrete grid space on $\Omega$ as $\Omega^h$ and its boundary grid points as $\partial \Omega^{h}$. Then the resulting full order model can be seen as the solution to 
+Assume we half-discretize the problem in the spacial domain $\Omega$ with $N_h$ degrees of freedom. 
+Note that we refer to this discrete grid space on $\Omega$ as $\Omega^h$ and 
+its boundary grid points as $\partial \Omega^{h}$. 
+Then the resulting full order model can be seen as the solution to 
 \begin{equation*} \begin{cases}
     M(\mu, \nu) \partial_{t} u_h(t; \mu, \nu) + A(\mu, \nu) u_h(t; \mu, \nu) + N(u_h(\mu, \nu), \mu, \nu)= f(t; \mu, \nu)  \quad &(x, t) \in \Omega^{h} \times \Gamma, \\
     u_h(0; \mu, \nu) = u_0(\mu, \nu) \quad &(x, t) \in \Omega^{h} \times \{0\}, \end{cases} 

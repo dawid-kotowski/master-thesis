@@ -1,20 +1,9 @@
-\chapter{Introduction}
-
-\notdone{Write an Introduction}
-
-\section{Time Dependent PDEs}
-
-\section{Neural networks}
-
-\section{Motivation}
-
-\section{Literature review}
-
-\section{Outline}
 
 \section{Notation}
 
-We set $\N := \{1, 2, \dots \}$, $\N_0 := \{0, 1, \dots\}$ and $\N_{\geq n} := \{n, n+1, \dots \}$ for $n \in \N$. Furthermore for any set $A$, we will
+We set $\N := \{1, 2, \dots \}$, $\N_0 := \{0, 1, \dots\}$ and $\N_{\geq n} := \{n, n+1, \dots \}$ for $n \in \N$. 
+Next the set $\R^+:= \{x \in \R \, \vert \, x \geq 0 \}$ will define all real numbers, which are non-negative.
+Furthermore for any set $A$, we will
 write $\vert A \vert$ to denote its cardinality. If $x \in \R$, the gaussian ceiling function is given via
 $\ceil{x} := \min\{k \in \mathbb{Z} \, : \, k \geq x\}$.
 
@@ -63,7 +52,8 @@ We further denote with
     L^p(\Omega) := \left\{f: \Omega \to \R \, \vert \, f \text{ is measurable, and } 
     \int_\Omega \vert f(x) \vert^p d \mu(x) < \infty \right\}
 \end{equation*}
-the Lebesgue space, and if not specified otherwise we write $\norm{\cdot}_p := 
+the Lebesgue space and $L^p_\text{loc}$ as the space of $L^p(\Omega)$ functions with local support.
+If not specified otherwise we write $\norm{\cdot}_p := 
 \norm{\cdot}_{L^p(\Omega)}$ for all $1 \leq p \leq \infty$. Note that in critical situations we tend to
 be explicit about the norms.
 
@@ -87,4 +77,90 @@ Let $B \in \R^{d_1 \times d_3}$ be some other matrix for $d_3 \in \N$. Then we w
 for the stacking of matrices, where the latter notation is meant to symbolize a strong delineation between
 blocks. Similar applies to vertical stacking, if $A \in \R^{d_1 \times d_2}$ and $B \in \R^{d_3 \times d_2}$.
 As a special case, this applies to vectors as well. 
+
+
+
+\chapter{Introduction}
+
+\notdone{Write an Introduction}
+
+
+
+\section{Time Dependent PDEs}
+
+
+The study and analysis of partial differential equations (PDEs) started with the works of Euler, d'Alembert, Lagrange
+and Laplace (see \cite{brezis1998} for this introduction). As so often in mathematics it started off with a set of simple problems, such as
+the vibrating string in one dimension as modelled
+by d'Alembert (1752)
+\begin{equation*}
+    \frac{\partial^2}{\partial t^2} u(x, t) = \frac{\partial^2}{\partial x^2}u(x, t), \quad \text{for }u \in C^2(\R \times \R^+), x \in \R \text{ and }
+    t \in \R^+,
+\end{equation*} the extension to three dimensions by Euler (1759) and Bernoulli (1762),
+the Laplace equation for gravitational fields (1780) 
+\begin{equation*}
+    \Delta u(x) = 0, \quad \text{for }u \in C^2(\R^3) \text{ and } x \in \R^3,
+\end{equation*} and finally the heat equation, as introduced
+by Fourier (1810 - 1822)
+\begin{equation*}
+    \frac{\partial}{\partial t} u(x, t) = \Delta u(x, t), \quad \text{for }u \in C^2(\R^3 \times \R^+), x \in \R^3
+    \text{ and }t \in \R^+.
+\end{equation*}
+
+As any posed problem calls for a solution to it, there have been simultaneous developments with regard to the
+calculation methods; the method of seperation of variables was given by Euler and d'Alembert for the study of spherical
+harmonics and Fourier introduced similar ideas for the heat equation. For the Laplace equation, the Green functions
+were introduced in 1835. Green also discovered an important principle for solvability of the (later so called) 
+Dirichlet problem
+\begin{equation*}\begin{cases}
+    \Delta u(x) = 0, \quad &\text{for } x \in \Omega \subset \R^3, \\
+    u(x) = g(x), \quad &\text{for } x \in \partial \Omega, \\
+\end{cases}
+\end{equation*}
+for some function $g \in C^0(\R^3)$, which revolved around minimizing an energy functional $E: C^2(\R^3) \to \R^+$, thus
+founding the variational principle.
+
+Though these were first attempts at solving such problems, the idea of Green in particular led to a few analytical
+problems, by the lack of mathematical rigor. Together with the contribution of Cauchy on the \emph{initial value} problem, this
+laid the groundwork for the field of \emph{Existence Theory}, which tries to establish existence results for PDEs.
+
+Notable here are the alternating method of Schwarz (1870) using the idea of domain decomposition and especially
+Neumanns method of integral equations developed in 1877, which would go on to be the starting point for the weak
+form and subsequently the Sobolev spaces. These were a necessity after B. Levi showed in 1906, that 
+a general minimizing sequence for the Dirichlet integral was a Cauchy sequence and would therefore converge in 
+the right space, which was then given due to the Sobolev embedding theorems.
+
+To tackle the problem arising from "exotic" examples and the complicated nature of some PDEs, Hadamard proposed
+a classification of the most common linear PDEs using its characteristic polynomial, 
+which is given by replacing all partial derivatives
+$\partial / \partial x_j$ by the algebraic variable $\xi_j$. In that case the PDE is called
+\begin{enumerate}
+    \item \emph{elliptic}, if after a change of varibles the polynomial can be written as $\xi_1^2 + \xi_2^2 + \dots + \xi_n^2$,
+    \item \emph{parabolic}, if after a change of varibles the polynomial can be written as $\xi_1 + \xi_2^2 + \dots + \xi_n^2$,
+    \item \emph{hyperbolic}, if after a change of varibles the polynomial can be written as $\xi_1^2 -(\xi_2^2 + \dots + \xi_n^2)$.
+\end{enumerate}
+
+These analytical results can be expanded a lot more, but what is most interesting in terms of this paper, are
+the Sobolev spaces. They, and the closely connected Bochner spaces, are the relevant solution spaces
+to the limits of all, in some sense, consistent numerical schemes, since the solutions are at least embedded in them.
+This follows quite natural, as any numerical scheme is basically bounded by the necessity of being ran on a computer
+and thus having a finite dimensional
+space it defines its approximation on, and at the very least
+the Sobolev and Bochner spaces admit any piecewise smooth function.
+
+
+
+\section{Neural networks}
+
+
+
+\section{Motivation}
+
+
+
+\section{Literature review}
+
+
+
+\section{Outline}
 
