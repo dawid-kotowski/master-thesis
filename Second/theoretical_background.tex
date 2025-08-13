@@ -73,7 +73,7 @@ from $W^{1, p}(\Omega)$ onto $W^{1-(1/p), p}(\partial \Omega)$ and
 \begin{equation*}
     \norm{u \vert_{\partial \Omega}}_{W^{1-(1/p), p}(\partial \Omega)} \leq C \norm{u}_{W^{1, p}(\Omega)},
 \end{equation*}
-for some $C > 0$ independent of $p$ and $u$.
+for some $C > 0$ independent of $p$ and $u$, see \cite[p. 315]{brezis2011}.
 This of course only makes sense in light of the next definition.
 
 \begin{definition}[Sobolev-Slobodeckij Space]
@@ -97,26 +97,21 @@ This of course only makes sense in light of the next definition.
 \end{definition}
 
 
-\subsection{Existence and Uniqueness}
-
-
-
-The following subsection is meant as a summary of any literature concerning 
-the existence of actual solutions for a subclass of 
-time-dependent partial differential equations, to give the reader a feeling for the
-current developments in the field. Note 
-here, that this is of course not general for all time-dependend problems since the existence of
-a solution to equations such as the incompressible 
-Navier-Stokes equation are still a pending research question.
-
-
-
-\begin{theorem}[Hille-Yosida]
-    Let $A$ be a maximal monotone operator. Then, given any $u_0 \in D(A)$ there is a unique function
+\begin{theorem}[Sobolev Embedding Theorem]
+    Let $m_1, m_2 \in \N_0$, $1 \leq p < \infty$ and $\alpha \in (0, 1)$. If we choose 
     \begin{equation*}
-        u \in C^1([0, \infty]; H^1_0(\Omega))
+        m_1 - \frac{d}{p} = m_2 + \alpha,
     \end{equation*}
+    then the identity defines a continuous embedding
+    \begin{equation*}
+        W^{m_1, p}(\Omega) \hookrightarrow C^{m_2, \alpha}(\bar{\Omega}).
+    \end{equation*}
+    If even $m_1 - \frac{d}{p} > m_2 + \alpha$, then the embedding is compact.
 \end{theorem}
+\begin{proof}
+    See \cite[p. 10-13]{alt2016}.
+\end{proof}
+
 
 \subsection{Reduced Order Modelling}
 

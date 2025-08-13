@@ -8,34 +8,110 @@
 
 \section{Time-dependent parametric PDE}
 
-\almostdone{Brief general description of time dependent parametric PDEs regarding existing literature.}
 \notdone{Definitely add traditional convergence and computational cost.}
 
-Let $\Theta \subset \R^{p}$ and $\Theta' \subset \R^q$ denote the geometric and physical parameter spaces 
+Let $\Theta \subset \R^{p}$ and $\Theta' \subset \R^q$ be compact and denote the geometric and physical parameter spaces 
 respectively. 
-Further we let $\Omega \subset \R^d$ be some Lipschitz domain and $\Gamma = [0, T]$ 
-for some $T > 0$ be the trial space of a parametric time-dependent PDE, 
-i.e. $u^{\mu, \nu}(x, t) := u(x, t; \mu, \nu)$ is the solution of the PDE, if
+Further we let $\Omega \subset \R^d$ be some Lipschitz domain and $[0, T]$ be a time interval
+for some $T > 0$ of a parametric time-dependent PDE, 
+i.e. for any $\mu \in \Theta$ and $\nu \in \Theta'$
+\begin{equation*}
+    u^{\mu, \nu} := u(\mu, \nu) \in \Hcal, \quad \text{in a sufficiently smooth space } \Hcal,
+\end{equation*}
+is the (classical) solution of the PDE, for the choice of the space depending on the given
+specified problem, if
 \begin{equation*}\begin{cases}
-    \partial_t u^{\mu, \nu}(x, t) + \mathcal{L}(\mu, \nu)u^{\mu, \nu}(x, t) + \mathcal{N}(u^{\mu, \nu}(x, t), \mu, \nu) 
-    = f(x, t; \mu, \nu), \quad &(x, t) \in \Omega \times \Gamma, \\
-    \mathcal{B}(\mu, \nu) u^{\mu, \nu}(x, t) = g_N(x, t; \mu, \nu) &(x, t) \in \partial \Omega \times \Gamma, \\
-    u^{\mu, \nu}(x, t) = u_0^{\mu, \nu}(x) &(x, t) \in \Omega \times \{0 \}. \\
+    \displaystyle
+    \frac{\partial}{\partial t} u^{\mu, \nu}(x, t) + \mathcal{L}(\mu, \nu)u^{\mu, \nu}(x, t) + 
+    \mathcal{N}(u^{\mu, \nu}(x, t), \mu, \nu) 
+    = f(x, t; \mu, \nu), \quad &(x, t) \in \Omega \times [0, T], \\[0.8em]
+    \displaystyle
+    \mathcal{B}(\mu, \nu) u^{\mu, \nu}(x, t) = g_N(x, t; \mu, \nu) &(x, t) \in \partial \Omega \times [0, T], \\[0.8em]
+    \displaystyle
+    u^{\mu, \nu}(x, t) = u_0^{\mu, \nu}(x) &(x, t) \in \Omega \times \{0 \}, \\
 \end{cases}
 \end{equation*}
-Assume we half-discretize the problem in the spacial domain $\Omega$ with $N_h$ degrees of freedom. 
-Note that we refer to this discrete grid space on $\Omega$ as $\Omega^h$ and 
-its boundary grid points as $\partial \Omega^{h}$. 
-Then the resulting full order model can be seen as the solution to 
+where $\mathcal{L}$ represents a linear, and $\mathcal{N}$ represents a non-linear integro-differential operator.
+Using calculus of variation or distribution theory, 
+one can then formulate a weak form of the problem and find a general space, most commonly
+Sobolev (for elliptic problems with coersive properties), Bochner (for parabolic problems with coersive properties
+on the stationary part) or discontinuous Galerkin spaces (for hyperbolic problems with enough regularity), on which
+a weak solution can be defined.
+
+This weak solution will have less regularity imposed than the strong formulation, 
+but this sometimes allows us to retrieve existence and uniqueness results. 
+Quite famously, there are counter examples of course; the Navier-Stokes Equation in three 
+dimensions poses one such result, where a weak form exists and numerical methods have been developed, which
+can provide a solution in special cases, but existence remains unproven in general. 
+As mentioned beforehand, we will completely omit the exact transformation
+of the strong PDE formulation into a weak one, and simple assume that this can be done:
+
+Say we (can) discretize the problem in the spacial domain $\Omega$ with $N_h$ degrees of freedom, such that 
+the resulting full order model can be seen as the solution $u_h^{\mu, \nu} \in C^1([0, T]; \R^{N_h})$ to 
 \begin{equation*} \begin{cases}
-    M(\mu, \nu) \partial_{t} u_h(t; \mu, \nu) + A(\mu, \nu) u_h(t; \mu, \nu) + N(u_h(\mu, \nu), \mu, \nu)= f(t; \mu, \nu)  \quad &(x, t) \in \Omega^{h} \times \Gamma, \\
-    u_h(0; \mu, \nu) = u_0(\mu, \nu) \quad &(x, t) \in \Omega^{h} \times \{0\}, \end{cases} 
+    \displaystyle
+    M(\mu, \nu) \frac{\partial}{\partial{t}} \uh(t) + A(\mu, \nu) \uh(t) + 
+    N(\uh(t), \mu, \nu)= f(t; \mu, \nu)  \quad &t \in [0, T], \\[0.8em]
+    \displaystyle
+    \uh(0) = u_0(\mu, \nu) \quad &t=0, \end{cases} 
 \end{equation*}
-where we assume $M: \Theta \times \Theta' \to \R^{N_h \times N_h}$ to send the parameter set to a mass matrix, $A: \Theta \times \Theta' \to \R^{N_h \times N_h}$ to a symmetric positive definite stiffness matrix, $N: \R^{N_h} \to \R^{N_h}$ to be some non-linear term and $f: \Gamma \times \R^{N_h} \times \Theta \times \Theta' \to \R^{N_h}$ to be the corresponding source term of the equation. Additionally we assume to have initial conditions via the function $u_0: \Theta \times \Theta' \to \Omega^{N_h}$.
+where we assume 
+\begin{enumerate}
+    \item[$\bullet$] $M: \Theta \times \Theta' \to \R^{N_h \times N_h}$ to send the parameter set to a mass matrix,
+    \item[$\bullet$] $A: \Theta \times \Theta' \to \R^{N_h \times N_h}$ to send the set to a symmetric positive definite stiffness matrix,
+    \item[$\bullet$] $N: \R^{N_h} \times \Theta \times \Theta' \to \R^{N_h}$ to be some non-linear term,
+    \item[$\bullet$] $f: [0, T] \times \R^{N_h} \times \Theta \times \Theta' \to \R^{N_h}$ 
+    to be the corresponding source term of the equation.
+\end{enumerate}    
+Additionally let $u_0: \Theta \times \Theta' \to \R^{N_h}$ be the inital data.
+
+Note that it is indeed possible to arrive at that discretization without skipping to a weak formulation, e.g.
+using finite differences or finite volume schemes, but since any existence statement needs a more general space
+than $C^n$ to guarantee completeness, we need only to infer such a procedure.
+
+This formulation establishes smoothness with regard to time, 
+however we will implicitly further discretize in time using
+$\{t_k\}_{k=1}^{N_t} := \Tcal$ time steps by gathering data only at these points. This is called
+\emph{method of lines approach} \cite[p. 278]{hesthaven2022rb}. Following this, we may
+denote with
+\begin{equation*}
+    \uht := u_h(\mu, \nu, t) \in \R^{N_h}, \quad \text{for }\mu \in \Theta, \nu \in \Theta' \text{ and all } t \in \Tcal,
+\end{equation*}
+any finite dimensional \emph{solution snapshot} and
+\begin{equation*}
+    \uh := [u_h(\mu, \nu, t)]_{t \in \Tcal} \in \R^{N_h \times N_t}, 
+    \quad \text{for }\mu \in \Theta \text{ and } \nu \in \Theta',
+\end{equation*}
+with $N_t := \vert \Tcal \vert$ a finite dimensional \emph{solution trajectory} of the discretized parametric PDE.
+
+We remark, that the choice of regularity above, can be relaxed to $L^p$ spaces and their weak derivative
+extensions, like the Sobolev and Bochner space, for specified problems, 
+when considering $u(\mu, \nu)$ as a solution to a weak formulation of the problem for given $\mu \in \Theta$ and
+$\nu \in \Theta'$. Mainly, we stated the problem framework, 
+to know with which class of
+of PDEs we will be working, thus any regularity assumption is only given here in order to assert an outlook on the
+use of $L^p$ norms for the error between the weak solution $u$, the finite dimenisonal solution $u_h$ and the
+approximation of that solution $\hat{u}_h$ using ROM methods.
+
+It is the latter ones, we will be concerned with in this thesis, 
+which are however clearly embedded in $L^p$, since they are finite dimensional and bounded by an upcoming assumption.
+
+From this point forward, we want to consistenly rely on the following few assumptions, which regulate the 
+discrete problem above. The first Assumption (\ref{assumption KnW decay}) justifies a nuanced approach regarding the
+geometric parameter $\mu$ and the physical parameter $\nu$. The second Assumption (\ref{assumption sample}) is necessary
+for the derivation of any convergence result to a true parameter-to-solution map, 
+when sampling an ever growing number of examples, while the third Assumption (\ref{assumption parameter-to-solution map})
+imposes regularity on the mentioned parameter-to-solution map. Interestingly enough, it is that Assumption, which ensures
+the existence of a true solution of the discrete problem for any specified parameter choice. Observing of course, that
+this does not translate into the solvability for the upstream general problem.
+The last Assumption (\ref{assumption perfect embedding}) gives us the ability to later use an Autoencoder for a reduction.
 
 
 \begin{assumption} \label{assumption KnW decay}
-    Let $\mathcal{S} := \{ u(\mu, \nu, t) \, \vert \, (\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal \}$ denote the total solution manifold and $\mathcal{S}_{\mu, t} := \{ u(\mu, \nu, t) \, \vert \, \nu \in \Theta' \}$ denote the solution submanifold for a fixed set $(\mu, t) \in \Theta \times \Tcal$, then we assume that
+    Let $\mathcal{S} := \{ \uht \in \R^{N_h} \, \vert \, (\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal \}$ 
+    denote the \emph{total solution manifold} and $\mathcal{S}_{\mu, t} := 
+    \{ \uht \in \R^{N_h} \, \vert \, \nu \in \Theta' \}$ denote the \emph{solution 
+    submanifold} for a fixed set $(\mu, t) \in \Theta \times \Tcal$, then we assume that
     \begin{enumerate}
         \item the linear KnW of $\mathcal{S}$ decays slowly, i.e. 
         \begin{equation*}
@@ -50,12 +126,87 @@ where we assume $M: \Theta \times \Theta' \to \R^{N_h \times N_h}$ to send the p
     \end{enumerate}
 \end{assumption}
 
+This is mostly satisfied for problems in which the transport dominated or non-linear part is chained
+to the parameter $\mu$, and
+any coersive or elliptic operator is most heavily influence by $\nu$.
+
+\begin{assumption} \label{assumption sample}    
+    Let $\Theta, \Theta'$ and $[0, T]$
+    for $T > 0$ as above. We assume that all $N_s \in \N_{\geq 2}$ data snapshots are sampled uniformly and 
+    iid in the joint parameter space $\Theta \times \Theta'$, 
+    while a uniform grid is employed for the time variable, 
+    $\Tcal = \{\Delta t, 2 \Delta t, \dots, N_t \Delta t \}$, 
+    where $N_t \in \mathbb{N}_{\geq 2}$, $N_{s_1}$ and $N_{s_2}$ 
+    are the respective number of random samples in the parameter spaces $\Theta$ and $\Theta'$,
+    $N_s = N_{s_1} N_{s_2} \in \mathbb{N}$ is the total sample size, and $\Delta t = T / N_t$.
+\end{assumption}
+
+We remark, that the equidistant spacing of the time samples is a matter of convenience, 
+and could be loosened under some constraints.
+
+\begin{assumption} \label{assumption parameter-to-solution map}
+    Let $\mathcal{G}: \Theta \times \Theta' \times [0, T] \to \R^{N_h}$ be the parameter-to-solution map, 
+    mapping $(\mu, \nu, t) \mapsto \uht$. Here we assume that
+    \begin{enumerate}
+        \item $m = 
+        \underset{(\mu, \nu, t) \in \Theta \times \Theta' \times \mathcal{T}}{\operatorname{ess}\, \sup}
+        \norm{u_h(\mu, \nu, t)} > 0, \, M = 
+        \underset{(\mu, \nu, t) \in \Theta \times \Theta' \times \mathcal{T}}{\operatorname{ess}\, \inf}
+        \norm{u_h(\mu, \nu, t)} < \infty$,
+        \item $\mathcal{G}$ is Lipschitz-continuous with the constant $L > 0$.
+    \end{enumerate}
+\end{assumption}
+
+\begin{assumption} \label{assumption perfect embedding}
+    We assume that for $s, s'$ sufficiently large, there are two maps 
+    $\psi_*: \R^n \to \R^N$ and $\psi_*': \R^N \to \R^n$ 
+    which attain the perfect nonlinear Kolmogorov $n$-width of the reduced solution manifold of the problem, 
+    as given in (\ref{def: nonlinear kolmogorov}) for any $n \leq 2(p + q) + 3$, i.e.
+    for $\mathcal{S}_N := \{ q(\mu, \nu, t) = V^T u(\mu, \nu, t) \, \vert \, (\mu, \nu, t) 
+    \in \Theta \times \Theta' \times \Tcal \}$, where $V \in \R^{N_h \times N}$ is the POD matrix,
+    \begin{equation*}
+        \delta_n(\mathcal{S}_N) = 0.
+    \end{equation*}
+\end{assumption}
+
+
+
+
+
+\section{Classical Reduced Order Models}
+
+
+
+In this section we want to introduce some classical methods for the dimensionality reduction of the finite
+dimensional parametric PDE. All of the following methods will be discussed broadly, as the thesis concerns itself mostly
+with the later deep learning based ROMs.
+
+
+
+
+\subsection{Greedy Proper Orthogonal Decomposition}
+
+
+
+An introduction to this method in the stationary and well-posed case can be found in \cite{siena2022pod}.
+The solution manifold $\Scal$ as defined in Assumption (\ref{assumption KnW decay}) gives us the clear idea, to cut down
+on dimensions using a POD of the some collected solution snapshots. However it is not that obvious, how we could create
+a basis from the point of arbitrary many data points regarding the parameters, i.e. $\mathbb{P}_h$ can be arbitrarily
+large and 
+
+
+
 
 \section{Deep-learning based Reduced Order Models}
 
 \notdone{Introduce POD-DL-ROM}
 
-A general Deep learning based reduced order model (DL-ROM) firstly appeared in architecture and training in the paper \cite{DL-ROM}; to properly approximate the potentially non-linear solution manifold of the high fidelity FOM, we employ an Autoencoder (AE), and on the reduced manifold we employ some other Deep Learning architecture, like the proposed Deep Feed-Forward Neural Network (DFNN), to learn the latent dynamics of the parametric PDE. This concludes in the following approximation of the FOM solution $u_h$
+A general Deep learning based reduced order model (DL-ROM) firstly appeared in architecture and 
+training in the paper \cite{DL-ROM}; to properly approximate the potentially 
+non-linear solution manifold of the high fidelity FOM, we employ an Autoencoder (AE), 
+and on the reduced manifold we employ some other Deep Learning architecture, 
+like the proposed Deep Feed-Forward Neural Network (DFNN), to learn the latent dynamics of the parametric PDE.
+This concludes in the following approximation of the FOM solution $u_h$
 \begin{equation}
     \hat{u}_h(t; \mu, \nu) = \Psi_h(\Phi_n(t; \mu, \nu, \theta_{DF}), \theta_{D}) \in \R^{N_h},
 \end{equation}
@@ -82,13 +233,19 @@ For Options A and B: To use the same loss function as in the (POD-)DL-ROM, we do
 
 \subsection{DOD+DNN} \label{subsec: DOD+DNN}
 
-Let $\Phi_n^{DLNN}: \Gamma \times \Theta \times \Theta' \times \Theta_{DLNN} \to \R^{N}$ be some Deep Feed-Forward Neural Network, then the overall workflow can be summed up by
+Let $\Phi_n^{DLNN}: \Gamma \times \Theta \times \Theta' \times \Theta_{DLNN} \to \R^{N}$ 
+be some Deep Feed-Forward Neural Network, then the overall workflow can be summed up by
 \begin{equation}
-    \hat{u}_h(t; \mu, \nu, \theta_{DOD}, \theta_{DFNN}) = \A \Tilde{V}_{N_A}(t; \mu, \theta_{DOD}) \cdot \Phi_n^{DFNN}(t; \mu, \nu, \theta_{DFNN}).
+    \hat{u}_h(t; \mu, \nu, \theta_{DOD}, \theta_{DFNN}) = 
+    \A \Tilde{V}_{N_A}(t; \mu, \theta_{DOD}) \cdot \Phi_n^{DFNN}(t; \mu, \nu, \theta_{DFNN}).
 \end{equation}
-This is a rather obvious extension of \cite{DOD}, but works surprisingly well. It will be the basic benchmark to overcome for the following algorithms. As for training a general comparison between the projection of a true solution and the prediction of the Feed Forward Network works well, i.e. for $\theta = \theta_{DFNN}$ let the optimal weights be given by
+This is a rather obvious extension of \cite{DOD}, but works surprisingly well. 
+It will be the basic benchmark to overcome for the following algorithms. 
+As for training a general comparison between the projection of a true solution and the prediction of the 
+Feed Forward Network works well, i.e. for $\theta = \theta_{DFNN}$ let the optimal weights be given by
 \begin{equation}
-    \theta^* = \argmin_\theta \frac{1}{N_s} \sum_{i, j = 1}^{N_{train}} \sum_{k = 1}^{N_t} \norm{V^T(t^k; \mu_i, \theta^*_{DOD}) u_h(t^k; \mu_i, \nu_j) - \Phi_n^{DFNN}(t^k; \mu_i, \nu_j, \theta_{DFNN})}.
+    \theta^* = \argmin_\theta \frac{1}{N_s} \sum_{i, j = 1}^{N_{train}} \sum_{k = 1}^{N_t} 
+    \norm{V^T(t^k; \mu_i, \theta^*_{DOD}) u_h(t^k; \mu_i, \nu_j) - \Phi_n^{DFNN}(t^k; \mu_i, \nu_j, \theta_{DFNN})}.
 \end{equation}
 
 \subsection{DOD-DL-ROM}

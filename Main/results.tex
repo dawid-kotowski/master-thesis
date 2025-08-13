@@ -2,34 +2,6 @@
 
 \almostdone{Include proof and discussion for general DL-ROMs}
 
-The main goal of all error estimates can be generally hindered by two rather obvious circumstances: bad sampling and a completely rigid parameter-to-solution map. Thus two main assumptions will be assumed throughout the following section.
-
-\begin{assumption} \label{assumption sample}    
-    Let $p,q > 0$, assume that $\Theta \subset \R^p$ and $\Theta' \subset \R^q$ are compact and denote $\mathcal{T} = [0, T]$ for some $T > 0$. We assume that all $N_s$ data snapshots are sampled uniformly and iid in the parameter spaces $\Theta, \Theta'$, while a uniform grid is employed for the time variable, $t \in \{\Delta t, 2 \Delta t, \dots, N_t \Delta t \}$, where $N_t \in \mathbb{N}_{\geq 2}$, $N_{s_1}$ and $N_{s_2}$ are the respective number of random samples in the parameter spaces and $N_s = N_{s_1} N_{s_2} \in \mathbb{N}$ the total sample size, and $\Delta t = T / N_t$.
-\end{assumption}
-
-We remark, that the equidistant spacing of the time samples is a matter of convenience, and could be loosened under some constraints.
-
-\begin{assumption} \label{assumption parameter-to-solution map}
-    Let $\mathcal{G}: \Theta \times \Theta' \to \R^{N_h}$ be the parameter-to-solution map, mapping $(\mu, \nu, t) \mapsto u_h(\mu, \nu, t)$. Here we assume that
-    \begin{enumerate}
-        \item $m = 
-        \underset{(\mu, \nu, t) \in \Theta \times \Theta' \times \mathcal{T}}{\operatorname{ess}\, \sup}\norm{u_h(\mu, \nu, t)} > 0, \, M = 
-        \underset{(\mu, \nu, t) \in \Theta \times \Theta' \times \mathcal{T}}{\operatorname{ess}\, \inf}\norm{u_h(\mu, \nu, t)} < \infty$,
-        \item $\mathcal{G}$ is Lipschitz-continuous with the constant $L > 0$.
-    \end{enumerate}
-\end{assumption}
-
-\begin{assumption} \label{assumption perfect embedding}
-    We assume that for $s, s'$ sufficiently large, there are two maps $\psi_*: \R^n \to \R^N$ and $\psi_*': \R^N \to \R^n$ which attain the perfect nonlinear Kolmogorov $n$-width of the reduced solution manifold of the problem, as given in (\ref{def: nonlinear kolmogorov}) for any $n \leq 2(p + q) + 3$, i.e.
-    for $\mathcal{S}_N := \{ q(\mu, \nu, t) = V^T u(\mu, \nu, t) \, \vert \, (\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal \}$, where $V \in \R^{N_h \times N}$ is the POD matrix,
-    \begin{equation*}
-        \delta_n(\mathcal{S}_N) = 0.
-    \end{equation*}
-\end{assumption}
-
-
-
 \begin{proposition} \label{prop: order of convergence for sample}
     Let $f \in L^2(\Theta \times \Theta' \times \mathcal{T})$. Under Assumption (\ref{assumption sample}), it is true, that
     \begin{equation*}
