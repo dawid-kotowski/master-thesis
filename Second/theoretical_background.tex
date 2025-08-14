@@ -1,8 +1,7 @@
 \chapter{Theoretical Background}
 
 
-\section{Parametric Partial Differential Equations} \label{section: background for PDE solutions}
-
+\section{Parametric Partial Differential Equations}
 
 
 
@@ -65,7 +64,7 @@ From now on, let $d \in \N$ and, if not given otherwise, $\Omega \subset \R^d$ b
 It is possible to extend this definition for $0 < n < 1$ to that of the \emph{Sobolev-Slobodeckij spaces}. In the 
 analysis of partial differential equations these are used to characterize the regularity of Sobolev functions,
 which are restricted to the boundary $\partial \Omega$. This restriction itself is called a trace operator.
-One of the statements of relevance under the following definition is this:
+One of the statements of relevance for such fractal Sobolev spaces is the following:
 
 If $\Omega \subset \R^d$ is a regular open set (for example, if $\Omega$ is a Lipschitz domain), and if 
 $u \in W^{1, p}(\Omega)$, then in fact $u \mapsto u \vert_{\partial \Omega}$ as a trace operator is surjective
@@ -113,29 +112,121 @@ This of course only makes sense in light of the next definition.
 \end{proof}
 
 
-\subsection{Reduced Order Modelling}
+\subsection{Existence and Uniqueness}
+
+This subsection provides a brief introduction to one specific statement of existence and uniqueness, which we coincidentally
+can apply well to the projected version of our finite dimensional problem. Note, that of course, this does not justify any existence
+result for highly non-linear equations on a lot of upstream classical or even weak problems, like the famous 
+incompressible Navier-Stokes Equation.
+
+We start by defining the differential operator class, to which we can then apply the Hille-Yosida Theorem. Most notable, 
+we know with that subclass, that any monotone operator, which acts on a finite dimensional space, is in that class, as
+will be shown afterwards. 
+
+\begin{definition}[Maximal Monotone Operator] \label{def: maximal monotone operator}
+    Let $A: D(A) \subset H \to H$ be an unbounded linear operator. It is \emph{monotone}, if
+    \begin{equation*}
+        \langle Av, v \rangle_H \geq 0, \quad \text{for all } v \in D(A),
+    \end{equation*}
+    and \emph{maximal monotone}, if additionally for all $f \in H$ there is $u \in D(A)$ such that
+    \begin{equation*}
+        u + Au = f.
+    \end{equation*}
+\end{definition}
+
+
+\begin{lemma} \label{lemma: finite dimensional monotone operator}
+    Let $H$ be a finite dimensional real Hilbert space, and $A: H \to H$ a monotone operator according to Definition
+    (\ref{def: maximal monotone operator}). Then $A$ is maximal monotone.
+\end{lemma}
+\begin{proof}
+    By obvious identification with a basis, we know, that $H \cong \R^N$ for some $N < \infty$. Thus any element 
+    $u \in H$ can be expressed as 
+    \begin{equation*}
+        u = \sum_{j=1}^N u_j \varphi_j,
+    \end{equation*}
+    where $u_j \in \R$ and $\varphi_j \in H$ for all $j=1, \dots, N$, and
+    similarily for $i,j, k = 1, \dots, N$ there are $a_{ik} \in \R$ such that
+    \begin{equation*}
+        Au = \sum_{i=1}^N \sum_{j=1}^N \sum_{k=1}^N a_{ik} u_j \langle \varphi_j, \varphi_i \rangle \varphi_k.
+    \end{equation*}
+    Thus the condition for $A$ being maximal monotone
+    simplyfies to finding $[u_j]_{j=1}^N \in R^N$ for an arbitrary $[f_j]_{j=1}^N \in \R^N$ where
+    \notdone{doesnt work}
+    \begin{equation*}
+        u_j + \sum_{i=1}^N a_{ij} u_j = f_j
+    \end{equation*} 
+    for all $j=1, \dots, N$, which can obviously be done in general.
+\end{proof}
+
+
+\begin{theorem}[Hille-Yosida Theorem] \label{theo: hille-yosida}
+    Let $A$ be a maximal monotone operator, $H$ some Hilbert space and $D(A) \subset H$. 
+    Then, given any $u_0 \in D(A)$ there is a unique function
+    \begin{equation*}
+        u \in C^1([0, \infty); H) \cap C([0, \infty); D(A))
+    \end{equation*}
+    satisfying
+    \begin{equation*}
+        \begin{cases}
+            \frac{\partial u}{\partial t} + Au = 0 \quad &\text{on }[0, \infty), \\
+            u(0) = u_0 \quad &\text{on }\{0\}.
+        \end{cases}
+    \end{equation*}
+    Moreover,
+    \begin{equation*}
+        \norm{u(t)}_H \leq \norm{u_0}_H,
+    \end{equation*}
+    for all $t \geq 0$.
+\end{theorem}
+\begin{proof}
+    See \cite[p. 185-191]{brezis2011}.
+\end{proof}
+
+
+\subsection{Reduced Basis Framework}  \label{subsec: reduced basis framework}
 
 
 
-
+\notdone{Give a reasonable weak formulation framework to appreciate gram matrix}
 \almostdone{Introduce the general notion of the POD}
 \almostdone{Introduce KnW and its relation to the continous case}
 
-For this subsection we define $u(\mu_j, t_k) \in \R^{N_h}$ for $\mu_j \in \Pcal$ and $t_k \in \mathcal{T}$ to be some vectors, later representing the solutions to a parametric PDE for a given parameter and time point in a given discrete subspace of the solution manifold, sampled uniformly and iid from their respective spaces. Here $\Pcal$ represents and arbitrary compact subspace of $\R^{p + q}$, where $p, q > 0$ and $\Tcal = [0, T]$ for some $T > 0$. Further we let $I \subset \N$ define some index set. Additionally we let $N_s := \vert I \vert$ and $N_t$ denote the number of time samples $t_k$.
+For this subsection we define $u(\mu_j, t_k) \in \R^{N_h}$ for $(\mu_j)_{j = 1}^{N_s} \subset \Pcal$ and 
+$(t_k)_{k = 1}^{N_t} \subset \Tcal$ to be some vectors, later representing the solutions to a parametric PDE for a 
+given parameter and time point in a given discrete subspace of the coefficient solution manifold. Here $\Pcal$ represents and arbitrary parameter space, 
+$\Tcal$ some arbitrary time space, and $N_s, N_t \in \N$ be the parameter and time sample size respectively. It is assumed,
+that we sample the parameters and time points uniformly and iid from their respective spaces. Let also 
+\begin{equation*}
+    N_\text{data} := N_s \cdot N_t,
+\end{equation*}
+be the total sample size.
 
-Here we will discuss prerequisites to the Proper Orthogonal Decomposition and related concepts, such as the Kolmogorov $n$-width, which is closely related to the partial sums of the eigenvalues of the POD matrix. This is among the results, this section will cover. We base this chapter on \cite{quarteroni2015rb}.
+Here we will discuss prerequisites to the Proper Orthogonal Decomposition and related concepts, such as the 
+Kolmogorov $n$-width, which lets us derive many key concepts and is an important quantity in the field of ROM methods. 
+We base this subsection on \cite{quarteroni2015rb}.
 
 \begin{definition}[Proper Orthogonal Decomposition] \label{def: POD}
-    Assuming $N_{data} = N_s N_t < \infty$, we define by $U_j = [u(\mu_j, t_k)]_{k = 1}^{N_t} \in \R^{N_h \times N_t}$ the snapshot matrix for a given $j \in I$ and consequently $U = [U_j]_{j \in I} \in \R^{N_h \times N_{data}}$ the collective snapshot matrix. Then the (discrete) correlation matrix is given by
+    Assuming $N_\text{data} < \infty$, we define by $U_j = [u(\mu_j, t_k)]_{k = 1}^{N_t} \in \R^{N_h \times N_t}$ 
+    the snapshot matrix for a given $\mu_j \in \Pcal$ and consequently $U = [U_j]_{j=1}^{N_s}
+    \in \R^{N_h \times N_\text{data}}$ 
+    the collective snapshot matrix. Then the \emph{(discrete) correlation matrix} is given by
     \begin{equation} \label{eq: discrete correlation matrix}
         K = \frac{\vert \Pcal \times \mathcal{T} \vert}{N_{data}} U U^T \in \R^{N_h \times N_h}.
     \end{equation}
-    $K$ is symmetric and semi-positive definite and thus has real and positive eigenvalues $\sigma^2_1 \geq \dots \geq \sigma^2_r$. We further call $\psi_k$ the eigenvectors of the correlation matrix $K$. With these, the corresponding POD basis of dimension $N < N_h$ is given via
-    \begin{equation}
+    $K$ is symmetric and semi-positive definite and thus has real and 
+    positive eigenvalues $\sigma^2_1 \geq \dots \geq \sigma^2_r$. 
+    We further call $\psi_k$ the eigenvectors of the correlation matrix $K$. 
+    With these, the corresponding POD basis of dimension $N < N_h$ is given via
+    \begin{equation*}
         \xi_k = \frac{1}{\sigma_k} K \psi_k, \quad 1 \leq k \leq N,
-    \end{equation}
-    for the $N$ largest eigenvalues and their corresponding eigenvectors.
-    Further, if $N_s, N_t = \infty$, we define the continuous counterpart to the correlation matrix via
+    \end{equation*}
+    for the $N$ largest eigenvalues and their corresponding eigenvectors. Then stacking these eigenvectors gives us
+    the \emph{POD matrix}
+    \begin{equation*}
+        \A := \left[\xi_k\right]_{k=1}^N \in \R^{N_h \times N}.
+    \end{equation*}
+    Further, if $N_s, N_t = \infty$, we define the \emph{continuous correlation matrix} via
     \begin{equation} \label{eq: continuous correlation matrix}
         K_\infty = \int_{\Pcal \times \mathcal{T}} u(\mu, t) u^T(\mu, t) d(\mu, t) \in \R^{N_h \times N_h},
     \end{equation}
@@ -143,41 +234,51 @@ Here we will discuss prerequisites to the Proper Orthogonal Decomposition and re
 \end{definition}
 
 \begin{proposition} \label{prop: existence and convergence to sigma infty}
-    Let $K$ and $K_\infty$ and their respective eigenvalues be defined as in (\ref{def: POD}), then letting $N_s, N_t \to \infty$, we get 
+    Let $K$ and $K_\infty$ and their respective eigenvalues be defined as in Definition (\ref{def: POD}), 
+    then letting $N_s, N_t \to \infty$, we get 
     \begin{equation*}
         \sum_{k > N} \sigma_k^2 \longrightarrow \sum_{k > N} \sigma_{k, \infty}^2, \quad \mbox{ a.s.}
     \end{equation*}
 \end{proposition}
 \begin{proof}
-
-    \notdone{Insert adequate consideration.}
-    
-    By some consideration there exists a matrix $V_\infty \in \R^{N_h \times N_h}$ such that 
+    Let $N_s, N_t < \infty$, conforming to the sampling assumption as before (see introduction in this Section 
+    (\ref{subsec: reduced basis framework})).
+    Taking a variational approach on this finite dimensional space, we know, that 
+    there exists a matrix $V_\infty \in \R^{N_h \times N}$ such that 
     \begin{align*}
         \sum_{k > N} \sigma^2_{k, \infty} &= \int_{\Pcal \times \mathcal{T}} \norm{u(\mu, t) - V_\infty V^T_\infty u(\mu, t)}^2 d(\mu, t) \\
         &= \underset{W \in \R^{N_h \times N}: W^T W = I}{\min} \, \int_{\mu \times \mathcal{T}} \norm{u(\mu, t) - W W^T u(\mu, t) }^2 d(\mu, t).
     \end{align*}
-    Thus, since this is the optimal choice of an approximation matrix for the continuous case and $V \in \R^{N_h \times N}$ is only optimal in the discrete setting and not necessarily the continuous case, we have
+    Thus, since this is the optimal choice of an approximation matrix for the continuous case and 
+    $\A \in \R^{N_h \times N}$ given by Definition (\ref{def: POD}) is only optimal in the discrete setting and 
+    not necessarily the continuous case, we have
     \begin{equation}
-        \sum_{k > N} \sigma^2_{k, \infty} \leq \int_{\Pcal \times \mathcal{T}} \norm{u(\mu, t) - V V^T u(\mu, t)}^2 d(\mu, t) = \sum_{k > N} \sigma^2_k.
-    \end{equation}
-    To properly handle the notion of $N_s, N_t \to \infty$ in a regularized fashion, we introduce some arbitrary samples $I_{train} \subset I$ and $\mathcal{T}_{train} \subset \mathcal{T}$, such that $I_{train}$ and $\mathcal{T}_{train}$ are finite. Note, that in general this does rely on the axiom of choice in the theoretical setting, but since the test samples are already known in practice, this is rather an unnecessary remark. We then write entry-wise for $m, l = 1, \dots N_h$
+        \sum_{k > N} \sigma^2_{k, \infty} \leq \int_{\Pcal \times \mathcal{T}} 
+        \norm{u(\mu, t) - V V^T u(\mu, t)}^2 d(\mu, t) = \sum_{k > N} \sigma^2_k.
+    \end{equation} 
+    We then write entry-wise for $m, l = 1, \dots N_h$
     \begin{equation*}
-        [K_\infty - K]_{ml} = \int_{\Pcal \times \Tcal} [u(\mu, t)]_m [u(\mu, t)]_l d(\mu, t) - \frac{\vert \Pcal \times \Tcal \vert}{N_{data}} \sum_{j \in I_{train}} \sum_{k \in \Tcal_{train}} [u(\mu_j, t_k)]_m [u(\mu_j, t_k)]_l.
+        [K_\infty - K]_{ml} := \int_{\Pcal \times \Tcal} [u(\mu, t)]_m [u(\mu, t)]_l d(\mu, t) - 
+        \frac{\vert \Pcal \times \Tcal \vert}{N_{data}} \sum_{j=1}^{N_s} 
+        \sum_{k=1}^{N_t} [u(\mu_j, t_k)]_m [u(\mu_j, t_k)]_l.
     \end{equation*}
-    By the uniform iid sampling assumed in the introduction to Section (\ref{section: background for PDE solutions}), we know that with the entry-wise boundedness of the PDE solutions, the resulting matrix is subject to the strong law of large numbers, and thus converges to zero, given the entry-wise matrix norm $\norm{ \cdot }_1$ as $N_t, N_s \to \infty$ almost surely.
+    By the uniform iid sampling assumed before, 
+    we know that with the entry-wise boundedness of the PDE solutions, 
+    the resulting matrix is subject to the strong law of large numbers, 
+    and thus converges to zero, given the entry-wise matrix norm $\opnorm{\cdot}$ as 
+    $N_t, N_s \to \infty$ almost surely.
     
     \notdone{Why is the boundedness clear here? Independent of the specific PDE?}
     
     Now using Bauer-Fike's Theorem with the 1-norm, we have upon ordering, that for each $\sigma^2_{k,\infty}$ there is a $\sigma^2_k$ in the spectrum of $K$, such that
     \begin{equation*}
-        \vert \sigma_{k, \infty}^2 - \sigma_k^2  \vert \leq \kappa(V) \norm{K_\infty - K}_1,
+        \vert \sigma_{k, \infty}^2 - \sigma_k^2  \vert \leq \kappa(V) \opnorm{K_\infty - K},
     \end{equation*}
     where $\kappa(V)$ denotes the condition number of the eigenvector matrix of $K$. 
     
     \notdone{Why is this sufficient? Does the condition number always stay bounded even throughout growing Ns, Nt?}
     
-    Now by convergence of $\norm{K_\infty - K} \to 0$ almost surely for $N_s, N_t \to \infty$, we conclude the proof. 
+    Now by convergence of $\opnorm{K_\infty - K} \to 0$ almost surely for $N_s, N_t \to \infty$, we conclude the proof. 
 \end{proof}
 
 \begin{proposition} \label{prop: eigenvalues and optimal projection under sampling}

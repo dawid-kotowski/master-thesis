@@ -76,8 +76,9 @@
   \lVert\, #1 \,\rVert_{W^{#2,#3}((0,1)^{#4})}%
 }
 \newcommand{\inftynorm}[1]{\norm{#1}_{L_\infty((0,1)^d)}}
-\newcommand\norm[1]{\lVert \, #1 \, \rVert}
-\newcommand{\lzeronorm}[1]{\lVert \, #1 \, \rVert_{\ell^0}}
+\newcommand{\norm}[1]{\lVert \, #1 \, \rVert}
+\newcommand{\lzeronorm}[1]{\norm{#1}_{\ell^0}}
+\newcommand{\opnorm}[1]{\norm{#1}_\text{op}}
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\R}{\mathbb{R}}

@@ -16,7 +16,7 @@ Further we let $\Omega \subset \R^d$ be some Lipschitz domain and $[0, T]$ be a 
 for some $T > 0$ of a parametric time-dependent PDE, 
 i.e. for any $\mu \in \Theta$ and $\nu \in \Theta'$
 \begin{equation*}
-    u^{\mu, \nu} := u(\mu, \nu) \in \Hcal, \quad \text{in a sufficiently smooth space } \Hcal,
+    u^{\mu, \nu} := u(\mu, \nu) , \quad \text{in a sufficiently smooth space},
 \end{equation*}
 is the (classical) solution of the PDE, for the choice of the space depending on the given
 specified problem, if
@@ -36,7 +36,8 @@ Using calculus of variation or distribution theory,
 one can then formulate a weak form of the problem and find a general space, most commonly
 Sobolev (for elliptic problems with coersive properties), Bochner (for parabolic problems with coersive properties
 on the stationary part) or discontinuous Galerkin spaces (for hyperbolic problems with enough regularity), on which
-a weak solution can be defined.
+a weak solution can be defined. Such a space $\Hcal$ is generally some Banach space, most often a subspace of
+$L^2$.
 
 This weak solution will have less regularity imposed than the strong formulation, 
 but this sometimes allows us to retrieve existence and uniqueness results. 
@@ -46,8 +47,15 @@ can provide a solution in special cases, but existence remains unproven in gener
 As mentioned beforehand, we will completely omit the exact transformation
 of the strong PDE formulation into a weak one, and simple assume that this can be done:
 
-Say we (can) discretize the problem in the spacial domain $\Omega$ with $N_h$ degrees of freedom, such that 
-the resulting full order model can be seen as the solution $u_h^{\mu, \nu} \in C^1([0, T]; \R^{N_h})$ to 
+Say we (can) discretize the problem in the spacial domain $\Omega$ with $N_h$ degrees of freedom, i.e. 
+let $\Hcal_h \subset \Hcal$ be a Hilbert space with $\Hcal_h \cong \R^{N_h}$ and a scalar product 
+$\langle \cdot, \cdot \rangle_{\Hcal_h}$ such that
+the resulting full order model solution can be identitfied using the formulation
+\begin{equation}
+    u_h(x, t; \mu, \nu) = \sum_{j = 1}^{N_h} [\uh(t)]_j \varphi_j(x) \in C^1([0, T]; \Hcal_h) 
+\end{equation}
+with $\{\varphi_j\}_{j=1}^{N_h}$ the basis of $\Hcal_h$ and $\uh(t) \in \R^{N_h}$ for each $t \in [0, T]$ and the underlying
+problem for the coefficients
 \begin{equation*} \begin{cases}
     \displaystyle
     M(\mu, \nu) \frac{\partial}{\partial{t}} \uh(t) + A(\mu, \nu) \uh(t) + 
@@ -67,31 +75,37 @@ Additionally let $u_0: \Theta \times \Theta' \to \R^{N_h}$ be the inital data.
 
 Note that it is indeed possible to arrive at that discretization without skipping to a weak formulation, e.g.
 using finite differences or finite volume schemes, but since any existence statement needs a more general space
-than $C^n$ to guarantee completeness, we need only to infer such a procedure.
+than $C^n$ to guarantee completeness and hence imposes some identity using a basis, 
+we need only to infer such a procedure. For the interested reader, an explicit discretization using finite volume
+schemes can be seen in \cite{haasdonk2008pod}.
 
 This formulation establishes smoothness with regard to time, 
 however we will implicitly further discretize in time using
 $\{t_k\}_{k=1}^{N_t} := \Tcal$ time steps by gathering data only at these points. This is called
-\emph{method of lines approach} \cite[p. 278]{hesthaven2022rb}. Following this, we may
-denote with
-\begin{equation*}
-    \uht := u_h(\mu, \nu, t) \in \R^{N_h}, \quad \text{for }\mu \in \Theta, \nu \in \Theta' \text{ and all } t \in \Tcal,
-\end{equation*}
-any finite dimensional \emph{solution snapshot} and
-\begin{equation*}
-    \uh := [u_h(\mu, \nu, t)]_{t \in \Tcal} \in \R^{N_h \times N_t}, 
-    \quad \text{for }\mu \in \Theta \text{ and } \nu \in \Theta',
-\end{equation*}
-with $N_t := \vert \Tcal \vert$ a finite dimensional \emph{solution trajectory} of the discretized parametric PDE.
+\emph{method of lines approach} \cite[p. 278]{hesthaven2022rb}. 
 
-We remark, that the choice of regularity above, can be relaxed to $L^p$ spaces and their weak derivative
-extensions, like the Sobolev and Bochner space, for specified problems, 
-when considering $u(\mu, \nu)$ as a solution to a weak formulation of the problem for given $\mu \in \Theta$ and
-$\nu \in \Theta'$. Mainly, we stated the problem framework, 
+
+\begin{definition}[Solution Data] \label{def: solution data}    
+    Following this, we may denote with
+    \begin{equation*}
+        \uht := \uh(t) \in \R^{N_h}, \quad \text{for }\mu \in \Theta, \nu \in \Theta' \text{ and all } t \in \Tcal,
+    \end{equation*}
+    a finite dimensional \emph{solution snapshot} and
+    \begin{equation*}
+        \uh := [\uh(t)]_{t \in \Tcal} \in \R^{N_h \times N_t}, 
+        \quad \text{for }\mu \in \Theta \text{ and } \nu \in \Theta',
+    \end{equation*}
+    with $N_t := \vert \Tcal \vert$ a finite dimensional \emph{solution trajectory} of the discretized parametric PDE.
+    Furthermore, let $\mathbb{P}_1 \subset \Theta$, $\mathbb{P}_2 \subset \Theta'$ and $\mathbb{P} = \mathbb{P}_1 \times
+    \mathbb{P}_2$ be some finite parameter data with respective sizes $N_{s_1}, N_{s_2}$ and $N_s = N_{s_1} N_{s_2}$.
+\end{definition}
+
+
+Mainly, we stated the problem framework, 
 to know with which class of
-of PDEs we will be working, thus any regularity assumption is only given here in order to assert an outlook on the
-use of $L^p$ norms for the error between the weak solution $u$, the finite dimenisonal solution $u_h$ and the
-approximation of that solution $\hat{u}_h$ using ROM methods.
+of PDEs we will be working with. Hence any regularity assumption is only given here in order to assert an outlook on the
+use of $L^p$ norms for the error between the weak solution $u \in \Hcal$, the finite dimenisonal solution $u_h \in \Hcal_h$ 
+and the approximation of that solution $\hat{u}_h \in \Hcal_h$ (of reduced order) using ROM methods.
 
 It is the latter ones, we will be concerned with in this thesis, 
 which are however clearly embedded in $L^p$, since they are finite dimensional and bounded by an upcoming assumption.
@@ -132,7 +146,8 @@ any coersive or elliptic operator is most heavily influence by $\nu$.
 
 \begin{assumption} \label{assumption sample}    
     Let $\Theta, \Theta'$ and $[0, T]$
-    for $T > 0$ as above. We assume that all $N_s \in \N_{\geq 2}$ data snapshots are sampled uniformly and 
+    for $T > 0$ as above. We assume that all $N_s \in \N_{\geq 2}$ parameter data points according to 
+    Definition (\ref{def: solution data}) are sampled uniformly and 
     iid in the joint parameter space $\Theta \times \Theta'$, 
     while a uniform grid is employed for the time variable, 
     $\Tcal = \{\Delta t, 2 \Delta t, \dots, N_t \Delta t \}$, 
@@ -158,12 +173,12 @@ and could be loosened under some constraints.
 \end{assumption}
 
 \begin{assumption} \label{assumption perfect embedding}
-    We assume that for $s, s'$ sufficiently large, there are two maps 
+    Let $N \in \N$ be fixed. We assume that for $s, s'$ sufficiently large, there are two maps 
     $\psi_*: \R^n \to \R^N$ and $\psi_*': \R^N \to \R^n$ 
-    which attain the perfect nonlinear Kolmogorov $n$-width of the reduced solution manifold of the problem, 
-    as given in (\ref{def: nonlinear kolmogorov}) for any $n \leq 2(p + q) + 3$, i.e.
-    for $\mathcal{S}_N := \{ q(\mu, \nu, t) = V^T u(\mu, \nu, t) \, \vert \, (\mu, \nu, t) 
-    \in \Theta \times \Theta' \times \Tcal \}$, where $V \in \R^{N_h \times N}$ is the POD matrix,
+    which attain the perfect nonlinear embedding of the reduced solution manifold, 
+    as given in Definition (\ref{def: nonlinear kolmogorov}) for any $n \leq 2(p + q) + 3$, i.e.
+    for $\mathcal{S}_N := \{ q(\mu, \nu, t) = \A^T u(\mu, \nu, t) \, \vert \, (\mu, \nu, t) 
+    \in \Theta \times \Theta' \times \Tcal \}$, where $\A \in \R^{N_h \times N}$ is the POD matrix,
     \begin{equation*}
         \delta_n(\mathcal{S}_N) = 0.
     \end{equation*}
