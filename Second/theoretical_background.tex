@@ -1,6 +1,37 @@
 \chapter{Theoretical Background}
 
 
+
+
+\section{Linear Algebra}
+
+
+As preparation for the comming Bauer Fike Theorem, we want to define a matrix norm for the space $\R^{N \times N}$,
+where $N \in \N$, as follows
+\begin{equation*}
+    \opnorm{A} := N \cdot \max\limits_{1 \leq i,j \leq N} \left\vert \, [A]_{ij} \,  \right\vert.
+\end{equation*}
+This satifies the wanted property mentioned in the origional paper \cite[p. 137-141]{bauer1960la}; any operator norm
+such that
+\begin{equation*}
+    \norm{Ax} \leq \opnorm{A} \norm{x}, \quad \text{for all } x \in \R^N
+\end{equation*}
+for some norm $\norm{\cdot}$ on $\R^N$ can be used for the statement of the following theorem:
+
+\begin{theorem}[Bauer-Fike Theorem] \label{theo: bauer fike}
+    Let $K \in \R^{N \times N}$ be some diagonalizable matrices with $\sigma_k$ eigenvalues and 
+    $V = (\xi_1, \dots, \xi_N) \in \R^{N \times N}$ be the stacked eigenvectors matrix of $K$ 
+    and $\delta K \in \R^{N \times N}$ some symmetric matrix. Then if $\lambda_{k}$ are the eigenvalues of 
+    $K + \delta K$, we have 
+    \begin{equation*}
+        \min\limits_{k} \vert \lambda_k - \sigma_k \vert \leq \kappa(V) \opnorm{(K + \delta K) - K},
+    \end{equation*}
+    where $\kappa(V) = \opnorm{V} \opnorm{V^{-1}}$.
+\end{theorem}
+\notdone{add prove}
+
+
+
 \section{Parametric Partial Differential Equations}
 
 
@@ -140,7 +171,7 @@ will be shown afterwards.
     (\ref{def: maximal monotone operator}). Then $A$ is maximal monotone.
 \end{lemma}
 \begin{proof}
-    By obvious identification with a basis, we know, that $H \cong \R^N$ for some $N < \infty$. Thus any element 
+    By obvious identification with a basis, we know, that $H \cong \R^N$ for some $N \in \N$. Thus any element 
     $u \in H$ can be expressed as 
     \begin{equation*}
         u = \sum_{j=1}^N u_j \varphi_j,
@@ -169,7 +200,9 @@ will be shown afterwards.
     satisfying
     \begin{equation*}
         \begin{cases}
+            \displaystyle
             \frac{\partial u}{\partial t} + Au = 0 \quad &\text{on }[0, \infty), \\
+            \displaystyle
             u(0) = u_0 \quad &\text{on }\{0\}.
         \end{cases}
     \end{equation*}
@@ -192,11 +225,12 @@ will be shown afterwards.
 \almostdone{Introduce the general notion of the POD}
 \almostdone{Introduce KnW and its relation to the continous case}
 
-For this subsection we define $u(\mu_j, t_k) \in \R^{N_h}$ for $(\mu_j)_{j = 1}^{N_s} \subset \Pcal$ and 
-$(t_k)_{k = 1}^{N_t} \subset \Tcal$ to be some vectors, later representing the solutions to a parametric PDE for a 
-given parameter and time point in a given discrete subspace of the coefficient solution manifold. Here $\Pcal$ represents and arbitrary parameter space, 
-$\Tcal$ some arbitrary time space, and $N_s, N_t \in \N$ be the parameter and time sample size respectively. It is assumed,
-that we sample the parameters and time points uniformly and iid from their respective spaces. Let also 
+For this subsection we define $u(\mu_j, t_k) \in \R^{N_h}$ for $(\mu_j)_{j = 1}^{N_s} =: \Pcal \subset \mathbb{P}$ and 
+$(t_k)_{k = 1}^{N_t} =: \Tcal \subset \mathbb{T}$ to be some vectors, later representing the solutions to a parametric PDE for a 
+given parameter and time point in a given discrete subspace of the coefficient solution manifold. Here $\mathbb{P}$ represents and arbitrary parameter space, 
+$\mathbb{T}$ some arbitrary time space, and $N_s, N_t \in \N$ be the parameter and time sample size respectively. It is assumed,
+that we sample the parameters and time points uniformly and iid from their respective spaces and that 
+$\norm{u(\mu, t)} < \infty$ for all $\mu \in \mathbb{P}$ and $t \in \mathbb{T}$. Let also 
 \begin{equation*}
     N_\text{data} := N_s \cdot N_t,
 \end{equation*}
@@ -241,7 +275,13 @@ We base this subsection on \cite{quarteroni2015rb}.
     \end{equation*}
 \end{proposition}
 \begin{proof}
-    Let $N_s, N_t < \infty$, conforming to the sampling assumption as before (see introduction in this Section 
+    Let $N_s, N_t < \infty$, conforming to the sampling assumption, and 
+    \begin{equation*}
+        M := 
+        \underset{(\mu, t) \in \Theta \times \mathcal{T}}{\operatorname{ess}\, \sup}
+        \norm{u(\mu, t)} < \infty
+    \end{equation*} 
+    as before (see introduction in this Section 
     (\ref{subsec: reduced basis framework})).
     Taking a variational approach on this finite dimensional space, we know, that 
     there exists a matrix $V_\infty \in \R^{N_h \times N}$ such that 
@@ -252,41 +292,39 @@ We base this subsection on \cite{quarteroni2015rb}.
     Thus, since this is the optimal choice of an approximation matrix for the continuous case and 
     $\A \in \R^{N_h \times N}$ given by Definition (\ref{def: POD}) is only optimal in the discrete setting and 
     not necessarily the continuous case, we have
-    \begin{equation}
+    \begin{equation*}
         \sum_{k > N} \sigma^2_{k, \infty} \leq \int_{\Pcal \times \mathcal{T}} 
-        \norm{u(\mu, t) - V V^T u(\mu, t)}^2 d(\mu, t) = \sum_{k > N} \sigma^2_k.
-    \end{equation} 
+        \norm{u(\mu, t) - \A \A^T u(\mu, t)}^2 d(\mu, t) = \sum_{k > N} \sigma^2_k.
+    \end{equation*} 
     We then write entry-wise for $m, l = 1, \dots N_h$
     \begin{equation*}
         [K_\infty - K]_{ml} := \int_{\Pcal \times \Tcal} [u(\mu, t)]_m [u(\mu, t)]_l d(\mu, t) - 
         \frac{\vert \Pcal \times \Tcal \vert}{N_{data}} \sum_{j=1}^{N_s} 
         \sum_{k=1}^{N_t} [u(\mu_j, t_k)]_m [u(\mu_j, t_k)]_l.
     \end{equation*}
-    By the uniform iid sampling assumed before, 
+    By the uniform iid sampling assumed and the general bound on $\norm{u(\mu, t)} \leq M$ before, 
     we know that with the entry-wise boundedness of the PDE solutions, 
     the resulting matrix is subject to the strong law of large numbers, 
     and thus converges to zero, given the entry-wise matrix norm $\opnorm{\cdot}$ as 
     $N_t, N_s \to \infty$ almost surely.
     
-    \notdone{Why is the boundedness clear here? Independent of the specific PDE?}
-    
-    Now using Bauer-Fike's Theorem with the 1-norm, we have upon ordering, that for each $\sigma^2_{k,\infty}$ there is a $\sigma^2_k$ in the spectrum of $K$, such that
+    Now using Bauer-Fike's Theorem (\ref{theo: bauer fike}) with the $\opnorm{\cdot}$-norm, we have upon ordering, 
+    that for each $\sigma^2_{k, \infty}$ there is a $\sigma^2_{k}$ in the spectrum of $K$, such that
     \begin{equation*}
-        \vert \sigma_{k, \infty}^2 - \sigma_k^2  \vert \leq \kappa(V) \opnorm{K_\infty - K},
+        \vert \sigma_k^2  - \sigma_{k, \infty}^2 \vert \leq \kappa(\A_\infty) \opnorm{K - K_\infty},
     \end{equation*}
-    where $\kappa(V)$ denotes the condition number of the eigenvector matrix of $K$. 
-    
-    \notdone{Why is this sufficient? Does the condition number always stay bounded even throughout growing Ns, Nt?}
-    
-    Now by convergence of $\opnorm{K_\infty - K} \to 0$ almost surely for $N_s, N_t \to \infty$, we conclude the proof. 
+    where $\kappa(\A_\infty)$ denotes the condition number of the stacked eigenvector matrix of 
+    $K_\infty$, i.e. $A_\infty = (\xi_{1, \infty}, \dots, \xi_{N_h, \infty})$. This number is independent of $N_s$ and $N_t$.
+    Now by convergence of $\opnorm{K - K_\infty} \to 0$ almost surely for $N_s, N_t \to \infty$, we conclude the proof. 
 \end{proof}
 
 \begin{proposition} \label{prop: eigenvalues and optimal projection under sampling}
     Let $\mathcal{V}_N = \{ W \in \R^{N_h \times N} \, \vert \, W^T W = I_N \}$ be the set of all $N$-dimensional orthonormal bases, 
-    $N_{data} := N_t N_s$ and $V = [\xi]_{i=1}^N$ be the POD matrix, then
+    $N_{data} := N_t N_s$ and $\A = [\xi]_{i=1}^N$ be the POD matrix according to Definition
+    (\ref{def: POD}), then
     \begin{multline*}
         \frac{\vert \, \Pcal \times \Tcal \, \vert}{N_{data}} 
-        \sum\limits_{i \in I, k = 1, \dots, N_t} \norm{u(\mu_j, t_k) - V V^T u(\mu_j, t_k)}_2^2 \\
+        \sum\limits_{i \in I, k = 1, \dots, N_t} \norm{u(\mu_j, t_k) - \A \A^T u(\mu_j, t_k)}_2^2 \\
         = \min\limits_{W \in \mathcal{V}_N} \frac{\vert \, \Pcal \times \Tcal \, \vert}{N_{data}} 
         \sum\limits_{i \in I, k = 1, \dots, N_t} 
         \norm{u(\mu_j, t_k) - W W^T u(\mu_j, t_k)}_2^2 
@@ -295,16 +333,21 @@ We base this subsection on \cite{quarteroni2015rb}.
 \end{proposition}
 
 \begin{definition}[Linear Kolmogorov $N$-width] \label{def: linear kolmogorov}
-    Let $\mathcal{S}_{N_h} = \{ u(\mu, t) \in \R^{N_h} \, \vert \, (\mu, t) \in \Pcal \times \Tcal \}$ be some manifold. The linear Kolmogorov $N$-width of $\mathcal{S}_{N_h}$ is defined as
+    Let $N \in \N$, $N \leq N_h$ and $\mathcal{S}_{N_h} = \{ u(\mu, t) \in \R^{N_h} \, 
+    \vert \, (\mu, t) \in \Pcal \times \Tcal \}$ 
+    be some manifold. The linear Kolmogorov $N$-width of $\mathcal{S}_{N_h}$ is defined as
     \begin{equation*}
         d_N(S_{N_h}) = \inf\limits_{V \in \R^{N_h \times N}} \sup\limits_{u \in S_{N_h}} \norm{u - V V^T u}.
     \end{equation*}
 \end{definition}
 
-\begin{definition}[Nonlinear Kolmogorov $n$-width] \label{def: nonlinear kolmogorov}
-    The nonlinear Kolmogorov $n$-width of the reduced manifold $\mathcal{S}_N = \{ q(\mu, t) = V^T u(\mu, t) \, \vert \, (\mu, t) \in \Pcal \times \Tcal \}$ is defined as 
+\begin{definition}[Nonlinear Kolmogorov $N$-width] \label{def: nonlinear kolmogorov}
+    Let $N \in \N$, $N \leq N_h$ and $\mathcal{S}_{N_h}= \{ u(\mu, t) \in \R^{N_h} \, 
+    \vert \, (\mu, t) \in \Pcal \times \Tcal \}$ 
+    be some manifold. The nonlinear Kolmogorov $N$-width of $\mathcal{S}_{N_h}$ is defined as 
     \begin{equation*}
-        \delta_n(\mathcal{S}_N) = \inf\limits_{\psi \in C(\R^N, \R^n), \psi' \in C(\R^n, \R^N)} \sup\limits_{u \in S_{N_h}} \norm{u - \psi(\psi'(u))}.
+        \delta_N(\mathcal{S}_{N_h}) = \inf\limits_{\psi \in C(\R^{N_h}, \R^N), 
+        \psi' \in C(\R^N, \R^{N_h})} \sup\limits_{u \in S_{N_h}} \norm{u - \psi(\psi'(u))}.
     \end{equation*}
 \end{definition}
 

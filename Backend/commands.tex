@@ -21,6 +21,10 @@
 % Micro typography
 \usepackage{microtype}
 
+% Algorithms
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
 % Math environments
 \usepackage{mathtools,amssymb,amsthm}
 \renewcommand{\arraystretch}{1.3} % default is 1.0
@@ -51,8 +55,7 @@
 \mdfdefinestyle{thmstyle}{
   linewidth=0.8pt,
   roundcorner=3mm,                
-  linecolor=black!70,
-  backgroundcolor=gray!10,        
+  linecolor=black!70,        
   innertopmargin=3mm,
   innerbottommargin=3mm,
   innerleftmargin=3mm,
@@ -103,12 +106,14 @@
 \newcommand{\id}{\operatorname{id}}
 \newcommand{\uht}{u_h^{\mu, \nu, t}}
 \newcommand{\uh}{u_h^{\mu, \nu}}
+\newcommand{\uhthat}{\hat{u}_h^{\mu, \nu, t}}
+\newcommand{\uhhat}{\hat{u}_h^{\mu, \nu}}
 
 % Hyperlinks
 \usepackage[hidelinks]{hyperref}
 \usepackage{cleveref}
 
 % References
-\usepackage[backend=biber,style=alphabetic]{biblatex}
+\usepackage[backend=biber,style=apa]{biblatex}
 \addbibresource{Backend/references.bib}
 

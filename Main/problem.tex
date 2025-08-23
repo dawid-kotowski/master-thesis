@@ -6,6 +6,9 @@
 \notdone{Introduce Autoencoders}
 \notdone{Introduce Deep Orthogonal Decomposition}
 
+
+
+
 \section{Time-dependent parametric PDE}
 
 \notdone{Definitely add traditional convergence and computational cost.}
@@ -56,13 +59,14 @@ the resulting full order model solution can be identitfied using the formulation
 \end{equation}
 with $\{\varphi_j\}_{j=1}^{N_h}$ the basis of $\Hcal_h$ and $\uh(t) \in \R^{N_h}$ for each $t \in [0, T]$ and the underlying
 problem for the coefficients
-\begin{equation*} \begin{cases}
+\begin{equation} \label{eq: fom ppde}
+    \begin{cases}
     \displaystyle
     M(\mu, \nu) \frac{\partial}{\partial{t}} \uh(t) + A(\mu, \nu) \uh(t) + 
     N(\uh(t), \mu, \nu)= f(t; \mu, \nu)  \quad &t \in [0, T], \\[0.8em]
     \displaystyle
     \uh(0) = u_0(\mu, \nu) \quad &t=0, \end{cases} 
-\end{equation*}
+\end{equation}
 where we assume 
 \begin{enumerate}
     \item[$\bullet$] $M: \Theta \times \Theta' \to \R^{N_h \times N_h}$ to send the parameter set to a mass matrix,
@@ -96,8 +100,8 @@ $\{t_k\}_{k=1}^{N_t} := \Tcal$ time steps by gathering data only at these points
         \quad \text{for }\mu \in \Theta \text{ and } \nu \in \Theta',
     \end{equation*}
     with $N_t := \vert \Tcal \vert$ a finite dimensional \emph{solution trajectory} of the discretized parametric PDE.
-    Furthermore, let $\mathbb{P}_1 \subset \Theta$, $\mathbb{P}_2 \subset \Theta'$ and $\mathbb{P} = \mathbb{P}_1 \times
-    \mathbb{P}_2$ be some finite parameter data with respective sizes $N_{s_1}, N_{s_2}$ and $N_s = N_{s_1} N_{s_2}$.
+    Furthermore, let $\Pcal_1 \subset \Theta$, $\Pcal_2 \subset \Theta'$ and $\Pcal = \Pcal_1 \times
+    \Pcal_2$ be some finite parameter data with respective sizes $N_{s_1}, N_{s_2} \in \N \cup \{\infty\}$ and $N_s = N_{s_1} N_{s_2}$.
 \end{definition}
 
 
@@ -122,19 +126,19 @@ The last Assumption (\ref{assumption perfect embedding}) gives us the ability to
 
 
 \begin{assumption} \label{assumption KnW decay}
-    Let $\mathcal{S} := \{ \uht \in \R^{N_h} \, \vert \, (\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal \}$ 
+    Let $\mathcal{S} := \{ \uht \in \R^{N_h} \, \vert \, (\mu, \nu, t) \in \Theta \times \Theta' \times [0, T] \}$ 
     denote the \emph{total solution manifold} and $\mathcal{S}_{\mu, t} := 
     \{ \uht \in \R^{N_h} \, \vert \, \nu \in \Theta' \}$ denote the \emph{solution 
-    submanifold} for a fixed set $(\mu, t) \in \Theta \times \Tcal$, then we assume that
+    submanifold} for a fixed set $(\mu, t) \in \Theta \times [0, T]$, then we assume that
     \begin{enumerate}
         \item the linear KnW of $\mathcal{S}$ decays slowly, i.e. 
         \begin{equation*}
             d_N(\mathcal{S}) \leq C N^{-\alpha},
         \end{equation*}
         where $0 < \alpha \leq 1$ and $C > 0$ some constant.
-        \item the linear KnW of $\mathcal{S}_{\mu, t}$ decays quickly for all $\mu \in \Theta$ and $t \in \Tcal$, i.e. 
+        \item the linear KnW of $\mathcal{S}_{\mu, t}$ decays quickly for all $\mu \in \Theta$ and $t \in [0, T]$, i.e. 
         \begin{equation*}
-            \sup_{(\mu, t) \in \Theta \times \Tcal} d_N(\mathcal{S}_{\mu, t}) \leq C' N^{-\beta},    
+            \sup_{(\mu, t) \in \Theta \times [0, T]} d_N(\mathcal{S}_{\mu, t}) \leq C' N^{-\beta},    
         \end{equation*}
         where $\beta > 1$ and $C' > 0$ some constant.
     \end{enumerate}
@@ -164,13 +168,17 @@ and could be loosened under some constraints.
     mapping $(\mu, \nu, t) \mapsto \uht$. Here we assume that
     \begin{enumerate}
         \item $m = 
-        \underset{(\mu, \nu, t) \in \Theta \times \Theta' \times \mathcal{T}}{\operatorname{ess}\, \sup}
-        \norm{u_h(\mu, \nu, t)} > 0, \, M = 
         \underset{(\mu, \nu, t) \in \Theta \times \Theta' \times \mathcal{T}}{\operatorname{ess}\, \inf}
+        \norm{u_h(\mu, \nu, t)} > 0, \, M = 
+        \underset{(\mu, \nu, t) \in \Theta \times \Theta' \times \mathcal{T}}{\operatorname{ess}\, \sup}
         \norm{u_h(\mu, \nu, t)} < \infty$,
         \item $\mathcal{G}$ is Lipschitz-continuous with the constant $L > 0$.
     \end{enumerate}
 \end{assumption}
+
+A very important fact follows directly from the presumably allowed statement of such a well-defined map; the solution 
+$u_h(\cdot, \cdot \, ; \mu, \nu)$ exists and is unique, in at least an $L^2$-embedded sense, since the time-derivate can
+be relaxed using a variational argument. 
 
 \begin{assumption} \label{assumption perfect embedding}
     Let $N \in \N$ be fixed. We assume that for $s, s'$ sufficiently large, there are two maps 
@@ -188,13 +196,99 @@ and could be loosened under some constraints.
 
 
 
-\section{Classical Reduced Order Models}
+\section{Projection-based Reduced Order Models}
 
 
 
-In this section we want to introduce some classical methods for the dimensionality reduction of the finite
-dimensional parametric PDE. All of the following methods will be discussed broadly, as the thesis concerns itself mostly
-with the later deep learning based ROMs.
+In this section we want to introduce some projection based methods for the dimensionality reduction of the finite
+dimensional parametric PDE. Such methods are all located in the (hierarchically) bigger group of \emph{intrusive}
+ROMs, since they require one to explicitly know the parametric PDE at hand. Since we have embraced a very
+broad group of PDEs in the introduction, for this section, there will be some specification of the PDE needed.
+
+
+All of the following methods will be discussed broadly, as the thesis concerns itself mostly
+with the later deep learning based ROMs. 
+
+For all of the methods, we remind ourselves of the starting situation: $\Hcal_h \subset \Hcal$ is a finite dimensional
+approximation space of our weak problem. As mentioned before, we also have employed discretized time-steps.
+We therefore have something along the lines of
+\begin{equation} \label{eq: full discrete ppde}
+    \begin{cases}
+    \displaystyle
+    M(\mu, \nu) \hat{\partial}_t \uh(t) + A(\mu, \nu) \uh(t) + 
+    N(\uh(t), \mu, \nu)= f(t; \mu, \nu)  \quad &t \in \Tcal, \\[0.8em]
+    \displaystyle
+    \uh(0) = u_0(\mu, \nu) \quad &t=0,
+    \end{cases}
+\end{equation}
+for $\hat{\partial}_t$ being a discrete approximation of the time-derivative and $\uh(t) \in \R^{N_h}$ for
+$t \in [t_k, t_{k+1})$ and some $k = 0, \dots, N_t - 1$ the piecewise constant coefficient vector for the true solution
+\begin{equation*}
+    u_h(x, t; \mu, \nu) = \sum_{j = 1}^{N_h} [\uh(t)]_j \, \varphi_j(x) \in \Hcal_h, \text{ for each } t \in  [t_k, t_{k+1}). 
+\end{equation*}
+
+\begin{definition}[Reduced Basis]
+    Let $\Hcal_n \subset \operatorname{span}(u_h(\cdot, t; \mu, \nu) \in \Hcal_h \, \vert \,
+    (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal)$ be an $n$-dimensional subspace
+    of $\Hcal_h$, then if $\{\hat{\varphi}_j\}_{j=1}^n$ is an orthonormalized basis of $\Hcal_n$, we call this the
+    \emph{reduced basis}.
+\end{definition}
+
+From this starting point, the goal of all \emph{reduced basis methods} is to find a reduced basis $\{\hat{\varphi}_j\}_{j=1}^n$ 
+and $\uhhat(t) \in \R^n$ for $n \ll N_h$, such that
+\begin{equation*}
+    \hat{u}_h(x, t; \mu, \nu) = \sum_{j=1}^{n} [\uhhat(t)]_j \, \hat{\varphi}_j(x) \in \Hcal_n \subset \Hcal_h,
+\end{equation*}
+where, in a yet vague formulation,
+\begin{equation*}
+    \hat{u}_h(\cdot, t; \mu, \nu) \approx u_h(\cdot, t; \mu, \nu) \quad \text{for all } \mu \in \Theta, \nu \in \Theta'
+    \text{ and } t \in [0, T].
+\end{equation*}
+Two prominent examples of such reduced basis methods can be found in the following.
+
+
+\subsection{Galerkin Proper Orthogonal Decomposition}
+
+As a prerequisit for Galerkin orthogonality, we assume here that the weak form giving rise to the equation at hand derives
+from an abstract bilinear form in the stationary part. This is justified if the non-linear summand is zero. The source
+for this subsection is \cite{quarteroni2015rb}.
+
+The POD as introduced in Definition (\ref{def: POD}) is one of the most common methods for a reduction in
+a classical sense. We can use the system above to solve for the solution using a Galerkin projection for the following
+Ansatz:
+\begin{equation} \label{eq: identity for pod galerkin}
+    \hat{u}_h(x, t; \mu, \nu) = \sum_{j=1}^n [\uhhat(t)]_j \, \xi_j(x),
+\end{equation}
+where $\xi_j$ for $1 \leq j \leq n$ are the POD modes, as given by the construction of the POD, and $\uhhat(t) \in \R^n$
+is the coefficient vector, that solves the following reduced equation
+\begin{equation} \label{eq: reduced full discrete ppde}
+    \begin{cases}
+        \A^T M(\mu, \nu) \A \hat{\partial}_t \uhhat(t) + \A^T A(\mu, \nu) \A \uhhat(t)
+        = \A^T f(t; \mu, \nu) \quad &t \in \Tcal, \\
+        \uhhat(0) = u_0(\mu, \nu) \quad &t = 0.
+    \end{cases}
+\end{equation}
+
+The parameter-to-solution map can thus be recovered by the following algorithm.
+
+\begin{algorithm}
+    \caption{POD-Galerkin}
+    \begin{algorithmic}[1]
+        \State \textbf{Input:} $\left(\mu_j, \nu_j\right)_{j=1}^{N_s}$ data sample
+        and $n < N_h$ reduced dimension
+        \State \textbf{Output:} approximated parameter-to-solution-map $(\mu, \nu) \mapsto 
+        \hat{u}_h(\cdot, \cdot \, ; \mu, \nu)$
+        \State Compute $\{u_h^{\mu_j, \nu_j, t_{k_m}}\}_{m=1}^{N_t}$ from 
+        Equation (\ref{eq: full discrete ppde}) (with $N = 0$)
+        \State $(\xi_j, \sigma_j)_{j=1}^n \gets \text{POD}\!\left(u_h^{\mu_j,\nu_j,t_{k_m}}, n\right)$
+        \State $\A \gets \text{stack}(\xi_j, j=1, \dots, n)$
+        \State Build reduced Equation (\ref{eq: reduced full discrete ppde}) 
+        \State For each $(\mu, \nu)$ solve Equation (\ref{eq: reduced full discrete ppde})
+        \State Recover $\hat{u}_h(\cdot, \cdot \, ; \mu, \nu)$ via Equation (\ref{eq: identity for pod galerkin})
+    \end{algorithmic}
+\end{algorithm}
+\notdone{Rework with regard to gram matrix}
+
 
 
 
@@ -203,16 +297,45 @@ with the later deep learning based ROMs.
 
 
 
-An introduction to this method in the stationary and well-posed case can be found in \cite{siena2022pod}.
-The solution manifold $\Scal$ as defined in Assumption (\ref{assumption KnW decay}) gives us the clear idea, to cut down
-on dimensions using a POD of the some collected solution snapshots. However it is not that obvious, how we could create
-a basis from the point of arbitrary many data points regarding the parameters, i.e. $\mathbb{P}_h$ can be arbitrarily
-large and 
+
+
+An introduction to this method in the stationary and well-posed case can be found in \cite{siena2022pod}. As done
+previously in the subsection above, we assume $N = 0$ in Equation (\ref{eq: full discrete ppde}). This gives us a 
+coersive abstract bilinear form for the stationary part. Additionally let $\eta : \Theta \times \Theta' \to \R$ be 
+a function estimating the error of projection under a specific parameter set, i.e. such that
+\begin{equation*}
+    \sup\limits_{t \in \Tcal} \, \norm{u_h(\mu, \nu, t) - \hat{u}_h(\mu, \nu, t)} \leq \eta(\mu, \nu).
+\end{equation*}
+
+Purely using POD-Galerkin can encounter major pitfalls, namely if the range of $\Pcal$ is extensive, 
+since then calculating a singluar value decomposition for the correlation matrix might get too cumbersome to provide all
+areas of interest in the set. Moreover, to obtain the snapshots for fixed parameters, a complete time-trajectory must
+be computed, which entails a lot of overhead of otherwise useless information.
+
+\begin{algorithm}
+    \caption{The greedy algorithm}
+    \begin{algorithmic}[1]
+        \State \textbf{Input:} $\mu_1$, tolerance
+        \State \textbf{Output:} $V_{rb}$
+        \State Compute $u_h(\mu_1)$
+        \State $V_{rb} = \text{span}\{u_h(\mu_1), \dots, u_h(\mu_n)\}$
+        \For{$\mu \in \mathcal{P}_h$}
+            \State compute $u_h(\mu)$
+            \State evaluate $\eta(\mu)$
+        \EndFor
+        \State $\mu_{n+1} = \arg\max\limits_{\mu \in \mathcal{P}} [\eta(\mu)]$
+        \If{$\eta(\mu_{n+1}) > \text{tolerance}$}
+            \State $n = n + 1$
+        \Else
+            \State \textbf{break}
+        \EndIf
+    \end{algorithmic}
+\end{algorithm}
 
 
 
 
-\section{Deep-learning based Reduced Order Models}
+\section{Data-driven Reduced Order Models}
 
 \notdone{Introduce POD-DL-ROM}
 
