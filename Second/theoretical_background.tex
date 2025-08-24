@@ -253,7 +253,7 @@ We base this subsection on \cite{quarteroni2015rb}.
     We further call $\psi_k$ the eigenvectors of the correlation matrix $K$. 
     With these, the corresponding POD basis of dimension $N < N_h$ is given via
     \begin{equation*}
-        \xi_k = \frac{1}{\sigma_k} K \psi_k, \quad 1 \leq k \leq N,
+        \xi_k = \frac{1}{\sigma_k} U \psi_k, \quad 1 \leq k \leq N,
     \end{equation*}
     for the $N$ largest eigenvalues and their corresponding eigenvectors. Then stacking these eigenvectors gives us
     the \emph{POD matrix}
@@ -266,6 +266,29 @@ We base this subsection on \cite{quarteroni2015rb}.
     \end{equation}
     and its real eigenvalues by $\sigma^2_{k, \infty}$.
 \end{definition}
+
+\begin{algorithm}
+    \caption{Proper Orthogonal Decomposition (POD)}
+    \begin{algorithmic}[1]
+        \State \textbf{Input: } snapshot matrix $U = [U_j]_{j=1}^{N_s} \in \R^{N_h \times N_\text{data}}$, 
+        reduction $N < N_h$
+        \State \textbf{Output: } POD basis matrix $\A = [\xi_1, \dots, \xi_N] \in \R^{N_h \times N}$
+        \If{$N_\text{data} \leq N_h$}
+            \State Form the correlation matrix $C = \frac{\vert \Pcal \times \mathcal{T} \vert}{N_{data}} U^T U
+            \in \R^{N_\text{data} \times N_\text{data}}$
+            \State Solve the eigenvalue problem $C \psi_i = \sigma_i^2 \psi_i$, \quad $i=1,\dots,r$
+            \State Set $\xi_i = \tfrac{1}{\sigma_i} U \psi_i$, \quad $i=1,\dots,r$
+        \Else
+            \State Form the correlation matrix $K = \frac{\vert \Pcal \times \mathcal{T} \vert}{N_{data}} 
+            U U^T \in \R^{N_h \times N_h}$
+            \State Solve the eigenvalue problem $K \xi_i = \sigma_i^2 \xi_i$, \quad $i=1,\dots,r$
+        \EndIf
+        \State $\A \gets \text{stack}(\xi_1, \dots, \xi_N)$
+    \end{algorithmic}
+\end{algorithm}
+
+\notdone{include theorem 6.1 from quarteroni2015rb}
+
 
 \begin{proposition} \label{prop: existence and convergence to sigma infty}
     Let $K$ and $K_\infty$ and their respective eigenvalues be defined as in Definition (\ref{def: POD}), 

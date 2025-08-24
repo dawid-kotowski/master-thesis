@@ -51,8 +51,8 @@ As mentioned beforehand, we will completely omit the exact transformation
 of the strong PDE formulation into a weak one, and simple assume that this can be done:
 
 Say we (can) discretize the problem in the spacial domain $\Omega$ with $N_h$ degrees of freedom, i.e. 
-let $\Hcal_h \subset \Hcal$ be a Hilbert space with $\Hcal_h \cong \R^{N_h}$ and a scalar product 
-$\langle \cdot, \cdot \rangle_{\Hcal_h}$ such that
+let $\Hcal_h \subset \Hcal$ be a Hilbert space with $\Hcal_h \cong \R^{N_h}$, a scalar product 
+$\langle \cdot, \cdot \rangle_{\Hcal_h}$ and a corresponding norm $\norm{\cdot} := \norm{\cdot}_{\Hcal_h}$ such that
 the resulting full order model solution can be identitfied using the formulation
 \begin{equation}
     u_h(x, t; \mu, \nu) = \sum_{j = 1}^{N_h} [\uh(t)]_j \varphi_j(x) \in C^1([0, T]; \Hcal_h) 
@@ -244,14 +244,21 @@ where, in a yet vague formulation,
     \hat{u}_h(\cdot, t; \mu, \nu) \approx u_h(\cdot, t; \mu, \nu) \quad \text{for all } \mu \in \Theta, \nu \in \Theta'
     \text{ and } t \in [0, T].
 \end{equation*}
-Two prominent examples of such reduced basis methods can be found in the following.
+Two prominent examples of such reduced basis methods can be found in the following. 
+Both will enhibit intrinsically an \emph{offline}
+and an \emph{online} part in the algorithm, whose separation we will mostly neglect. However, when remarking something
+about the offline procedure, we usually talk about the part of the algorithm that can be collected a priori to 
+its purposed deployment. Here this is the collection and reduction of dimension using a reduced basis via samples. 
+On the other hand, online refers to its counterpart; the many-query element of the procedure, such as the evaluation of the 
+best-guess parameter-to-solution map. This terminology is used often throughout the literature as it instinctively 
+makes sense in a software development environment.
 
 
 \subsection{Galerkin Proper Orthogonal Decomposition}
 
 As a prerequisit for Galerkin orthogonality, we assume here that the weak form giving rise to the equation at hand derives
 from an abstract bilinear form in the stationary part. This is justified if the non-linear summand is zero. The source
-for this subsection is \cite{quarteroni2015rb}.
+for this subsection is \cite[p. 137]{quarteroni2015rb}.
 
 The POD as introduced in Definition (\ref{def: POD}) is one of the most common methods for a reduction in
 a classical sense. We can use the system above to solve for the solution using a Galerkin projection for the following
@@ -280,7 +287,7 @@ The parameter-to-solution map can thus be recovered by the following algorithm.
         \hat{u}_h(\cdot, \cdot \, ; \mu, \nu)$
         \State Compute $\{u_h^{\mu_j, \nu_j, t_{k_m}}\}_{m=1}^{N_t}$ from 
         Equation (\ref{eq: full discrete ppde}) (with $N = 0$)
-        \State $(\xi_j, \sigma_j)_{j=1}^n \gets \text{POD}\!\left(u_h^{\mu_j,\nu_j,t_{k_m}}, n\right)$
+        \State $(\xi_j, \sigma_j)_{j=1}^n \gets \text{POD}(u_h^{\mu_j,\nu_j,t_{k_m}}, n)$
         \State $\A \gets \text{stack}(\xi_j, j=1, \dots, n)$
         \State Build reduced Equation (\ref{eq: reduced full discrete ppde}) 
         \State For each $(\mu, \nu)$ solve Equation (\ref{eq: reduced full discrete ppde})
@@ -302,40 +309,78 @@ The parameter-to-solution map can thus be recovered by the following algorithm.
 An introduction to this method in the stationary and well-posed case can be found in \cite{siena2022pod}. As done
 previously in the subsection above, we assume $N = 0$ in Equation (\ref{eq: full discrete ppde}). This gives us a 
 coersive abstract bilinear form for the stationary part. Additionally let $\eta : \Theta \times \Theta' \to \R$ be 
-a function estimating the error of projection under a specific parameter set, i.e. such that
+a function estimating the error of projection under a specific parameter set, i.e. such that 
 \begin{equation*}
-    \sup\limits_{t \in \Tcal} \, \norm{u_h(\mu, \nu, t) - \hat{u}_h(\mu, \nu, t)} \leq \eta(\mu, \nu).
+    \sup\limits_{t \in \Tcal} \, \norm{u_h(\mu, \nu, t) - \hat{u}_h(\mu, \nu, t)} \leq \eta(\mu, \nu),
 \end{equation*}
 
-Purely using POD-Galerkin can encounter major pitfalls, namely if the range of $\Pcal$ is extensive, 
+for $(\mu, \nu) \in \Pcal$. Purely using POD-Galerkin can encounter major pitfalls, namely if the range of $\Pcal$ is extensive, 
 since then calculating a singluar value decomposition for the correlation matrix might get too cumbersome to provide all
 areas of interest in the set. Moreover, to obtain the snapshots for fixed parameters, a complete time-trajectory must
-be computed, which entails a lot of overhead of otherwise useless information.
+be computed, which entails a lot of overhead of otherwise useless information. To overcome this \cite{grepl2005rb} proposed,
+and later \cite{haasdonk2008pod} improved upon, the mixed POD-Greedy approach, which takes a POD over the time-trajectories
+(or, in the improved version, the error trajectories) while using the Greedy approach to handle the parameter samples.
+It follows a similar workflow, as the POD-Galerkin, since the only thing, that changes is the choice of basis, and the fact that the size
+of the basis is chosen according to the tolerance in the offline part of the algorithm, i.e.
+\begin{equation} \label{eq: identity for pod greedy galerkin}
+    \hat{u}_h(x, t; \mu, \nu) = \sum_{j=1}^N [\uhhat(t)]_j \, \xi_j(x),
+\end{equation}
+identifies the reduced solution of dimension $N$, where $\xi_j$ are the basis functions for $1 \leq j \leq N$ and the
+coefficient vector being the solution to 
+\begin{equation} \label{eq: reduced full discrete ppde greedy}
+    \begin{cases}
+        \V_\text{rb}^T M(\mu, \nu) \V_\text{rb} \hat{\partial}_t \uhhat(t) + \V_\text{rb}^T A(\mu, \nu) \V_\text{rb} \uhhat(t)
+        = \V_\text{rb}^T f(t; \mu, \nu) \quad &t \in \Tcal, \\
+        \uhhat(0) = u_0(\mu, \nu) \quad &t = 0.
+    \end{cases}
+\end{equation}
+
+The complexity of the offline computation for this algorithm is additive, and not multplicative, in the number of 
+training data $\Pcal$, which is a huge advantage when compared to the direct POD-Galerkin approach. 
 
 \begin{algorithm}
-    \caption{The greedy algorithm}
+    \caption{POD-Greedy-Galerkin}
     \begin{algorithmic}[1]
-        \State \textbf{Input:} $\mu_1$, tolerance
-        \State \textbf{Output:} $V_{rb}$
-        \State Compute $u_h(\mu_1)$
-        \State $V_{rb} = \text{span}\{u_h(\mu_1), \dots, u_h(\mu_n)\}$
-        \For{$\mu \in \mathcal{P}_h$}
-            \State compute $u_h(\mu)$
-            \State evaluate $\eta(\mu)$
+        \State \textbf{Input: } \texttt{tol}, $\mathcal{Z} = 0$, $N = 0$, $(\mu_j, \nu_j)_{j=1}^{N_s}$, $N_1$ and $N_2$
+        \State \textbf{Output: } approximated parameter-to-solution-map $(\mu, \nu) \mapsto 
+        \hat{u}_h(\cdot, \cdot \, ; \mu, \nu)$
+        \For{$j = 1,\dots,N_s$}
+            \State Compute $\{u_h^{\mu_j, \nu_j, t_{k_m}}\}_{m=1}^{N_t}$ from 
+            Equation (\ref{eq: full discrete ppde}) (with $N = 0$)
+            \State $(\zeta_j, \lambda_j)_{j=1}^{N_1} \gets 
+            \text{POD}(\{u_h^{\mu_j,\nu_j,t_{k_m}}\}_{m=1}^{N_t}, N_1)$
+            \State $\mathcal{Z} \gets \{\mathcal{Z}, \{\zeta_1, \dots, \zeta_{N_1}\}\}$
+            \State $N \gets N + N_2$ 
+            \State Compress: $(\xi_j, \sigma_j)_{j=1}^n \gets \text{POD}(\mathcal{Z}, N)$
+            \State $(\mu_{j+1}, \nu_{j+1}) \gets \underset{(\mu, \nu) \in \Pcal}{\operatorname{arg\,max}} \, \eta(\mu, \nu)$
+            \If{$\eta(\mu_{j+1}, \nu_{j+1}) > \texttt{tol}$}
+                \State $j \gets j + 1$
+            \Else
+                \State \textbf{break}
+            \EndIf
         \EndFor
-        \State $\mu_{n+1} = \arg\max\limits_{\mu \in \mathcal{P}} [\eta(\mu)]$
-        \If{$\eta(\mu_{n+1}) > \text{tolerance}$}
-            \State $n = n + 1$
-        \Else
-            \State \textbf{break}
-        \EndIf
+        \State $\V_\text{rb} \gets \text{stack}(\xi_1, \dots, \xi_N)$
+        \State Build reduced Equation (\ref{eq: reduced full discrete ppde greedy}) 
+        \State For each $(\mu, \nu)$ solve Equation (\ref{eq: reduced full discrete ppde greedy})
+        \State Recover $\hat{u}_h(\cdot, \cdot \, ; \mu, \nu)$ via Equation (\ref{eq: identity for pod greedy galerkin})
     \end{algorithmic}
 \end{algorithm}
+
+\begin{remark}
+    It would be possible to include the physical parameter into the first POD scheme in each iteration, which could 
+    give a high yield for this specific problem as the Kolmogorov
+    $n$-width decay as imposed by Assumption (\ref{assumption KnW decay}) implies. However since we lose generality 
+    by setting $N = 0$ in both projection-based algorithm, this is only an argument for divergent discussions.
+\end{remark}
+
 
 
 
 
 \section{Data-driven Reduced Order Models}
+
+
+
 
 \notdone{Introduce POD-DL-ROM}
 

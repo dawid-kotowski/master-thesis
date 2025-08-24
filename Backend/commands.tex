@@ -24,6 +24,9 @@
 % Algorithms
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{setspace}
+\AtBeginEnvironment{algorithmic}{\setstretch{1.2}}
+
 
 % Math environments
 \usepackage{mathtools,amssymb,amsthm}
@@ -116,4 +119,5 @@
 % References
 \usepackage[backend=biber,style=apa]{biblatex}
 \addbibresource{Backend/references.bib}
+\let\cite\parencite
 
