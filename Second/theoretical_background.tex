@@ -225,12 +225,22 @@ will be shown afterwards.
 \almostdone{Introduce the general notion of the POD}
 \almostdone{Introduce KnW and its relation to the continous case}
 
-For this subsection we define $u(\mu_j, t_k) \in \R^{N_h}$ for $(\mu_j)_{j = 1}^{N_s} =: \Pcal \subset \mathbb{P}$ and 
+For this subsection we define $u(\mu_j, t_k) \in \R^{N_h}$ for $(\mu_j)_{j = 1}^{N_s} =: \Pcal \subset \Theta$ and 
 $(t_k)_{k = 1}^{N_t} =: \Tcal \subset \mathbb{T}$ to be some vectors, later representing the solutions to a parametric PDE for a 
-given parameter and time point in a given discrete subspace of the coefficient solution manifold. Here $\mathbb{P}$ represents and arbitrary parameter space, 
-$\mathbb{T}$ some arbitrary time space, and $N_s, N_t \in \N$ be the parameter and time sample size respectively. It is assumed,
+given parameter and time point in a given discrete subspace of the coefficient solution manifold. Here $\Theta$ represents and arbitrary parameter space, 
+$\mathbb{T}$ some arbitrary time space, and $N_s, N_t \in \N$ be the parameter and time sample size respectively. 
+Let the norm on $\R^{N_h}$ be defined here, using a symmetric positive definite matrix $\G \in \R^{N_h \times N_h}$, as
+follows 
+\begin{equation*}
+    \norm{u(\mu, t)} := \sqrt{u(\mu, t)^T \, \G \, u(\mu, t)}.
+\end{equation*}
+This is meant to result from a choice of an inner product stemming from the coefficient vectors $u(\mu, t)$ 
+representing that space, in other words, given by the choice of a basis
+on the corresponding Hilbert space, when viewing $u(\mu, t) \in \R^{N_h}$ as the coefficients identifying an element in
+that space. 
+It is assumed,
 that we sample the parameters and time points uniformly and iid from their respective spaces and that 
-$\norm{u(\mu, t)} < \infty$ for all $\mu \in \mathbb{P}$ and $t \in \mathbb{T}$. Let also 
+$\norm{u(\mu, t)} < \infty$ for all $\mu \in \Theta$ and $t \in \mathbb{T}$. Let also 
 \begin{equation*}
     N_\text{data} := N_s \cdot N_t,
 \end{equation*}
@@ -238,19 +248,22 @@ be the total sample size.
 
 Here we will discuss prerequisites to the Proper Orthogonal Decomposition and related concepts, such as the 
 Kolmogorov $n$-width, which lets us derive many key concepts and is an important quantity in the field of ROM methods. 
-We base this subsection on \cite{quarteroni2015rb}.
+We base this subsection on \cite{quarteroni2015rb}, but import the generalizations to arbitrary inner products from
+\cite{franco2024}. Note, that in practice, the performing of a POD for each $\mu$ seperately would be unfeasible,
+but we want to keep the choice of basis parameter sensitive, as it will open the door for some interesting facts down the road.
 
-\begin{definition}[Proper Orthogonal Decomposition] \label{def: POD}
-    Assuming $N_\text{data} < \infty$, we define by $U_j = [u(\mu_j, t_k)]_{k = 1}^{N_t} \in \R^{N_h \times N_t}$ 
+\begin{definition}[Generalized Proper Orthogonal Decomposition] \label{def: POD}
+    Assuming $N_\text{data} < \infty$ and let $\G \in \R^{N_h \times N_h}$ be a mass matrix, 
+    we define by $U_j = [u(\mu_j, t_k)]_{k = 1}^{N_t} \in \R^{N_h \times N_t}$ 
     the snapshot matrix for a given $\mu_j \in \Pcal$ and consequently $U = [U_j]_{j=1}^{N_s}
     \in \R^{N_h \times N_\text{data}}$ 
     the collective snapshot matrix. Then the \emph{(discrete) correlation matrix} is given by
     \begin{equation} \label{eq: discrete correlation matrix}
-        K = \frac{\vert \Pcal \times \mathcal{T} \vert}{N_{data}} U U^T \in \R^{N_h \times N_h}.
+        K = \frac{\vert \Pcal \times \mathcal{T} \vert}{N_{data}} U \G U^T \in \R^{N_h \times N_h}.
     \end{equation}
     $K$ is symmetric and semi-positive definite and thus has real and 
-    positive eigenvalues $\sigma^2_1 \geq \dots \geq \sigma^2_r$. 
-    We further call $\psi_k$ the eigenvectors of the correlation matrix $K$. 
+    positive eigenvalues $\sigma^2 \geq \dots \geq \sigma_r^2$. 
+    We further call $\psi^\mu_k$ the eigenvectors of the correlation matrix $K$. 
     With these, the corresponding POD basis of dimension $N < N_h$ is given via
     \begin{equation*}
         \xi_k = \frac{1}{\sigma_k} U \psi_k, \quad 1 \leq k \leq N,
@@ -260,27 +273,29 @@ We base this subsection on \cite{quarteroni2015rb}.
     \begin{equation*}
         \A := \left[\xi_k\right]_{k=1}^N \in \R^{N_h \times N}.
     \end{equation*}
+    This matrix is $\G$-orthonormal by construction.
     Further, if $N_s, N_t = \infty$, we define the \emph{continuous correlation matrix} via
     \begin{equation} \label{eq: continuous correlation matrix}
-        K_\infty = \int_{\Pcal \times \mathcal{T}} u(\mu, t) u^T(\mu, t) d(\mu, t) \in \R^{N_h \times N_h},
+        K_\infty = \int_{\Pcal \times \mathcal{T}} u(\mu, t) \G u^T(\mu, t) d(\mu, t) \in \R^{N_h \times N_h},
     \end{equation}
-    and its real eigenvalues by $\sigma^2_{k, \infty}$.
+    and its real eigenvalues by $\sigma_{k, \infty}^2$.
 \end{definition}
 
 \begin{algorithm}
-    \caption{Proper Orthogonal Decomposition (POD)}
+    \caption{Generalized Proper Orthogonal Decomposition (POD)} \label{algo: pod}
     \begin{algorithmic}[1]
         \State \textbf{Input: } snapshot matrix $U = [U_j]_{j=1}^{N_s} \in \R^{N_h \times N_\text{data}}$, 
+        mass matrix $\G \in \R^{N_h \times N_h}$,
         reduction $N < N_h$
-        \State \textbf{Output: } POD basis matrix $\A = [\xi_1, \dots, \xi_N] \in \R^{N_h \times N}$
+        \State \textbf{Output: } POD basis matrix $\A^\mu = [\xi^\mu_1, \dots, \xi^\mu_N] \in \R^{N_h \times N}$
         \If{$N_\text{data} \leq N_h$}
-            \State Form the correlation matrix $C = \frac{\vert \Pcal \times \mathcal{T} \vert}{N_{data}} U^T U
+            \State Form the correlation matrix $C = \frac{\vert \Pcal \times \mathcal{T} \vert}{N_{data}} U^T \G U
             \in \R^{N_\text{data} \times N_\text{data}}$
             \State Solve the eigenvalue problem $C \psi_i = \sigma_i^2 \psi_i$, \quad $i=1,\dots,r$
             \State Set $\xi_i = \tfrac{1}{\sigma_i} U \psi_i$, \quad $i=1,\dots,r$
         \Else
             \State Form the correlation matrix $K = \frac{\vert \Pcal \times \mathcal{T} \vert}{N_{data}} 
-            U U^T \in \R^{N_h \times N_h}$
+            U \G U^T \in \R^{N_h \times N_h}$
             \State Solve the eigenvalue problem $K \xi_i = \sigma_i^2 \xi_i$, \quad $i=1,\dots,r$
         \EndIf
         \State $\A \gets \text{stack}(\xi_1, \dots, \xi_N)$
@@ -307,24 +322,24 @@ We base this subsection on \cite{quarteroni2015rb}.
     as before (see introduction in this Section 
     (\ref{subsec: reduced basis framework})).
     Taking a variational approach on this finite dimensional space, we know, that 
-    there exists a matrix $V_\infty \in \R^{N_h \times N}$ such that 
+    there exists a $\G$-orthognormal matrix $V_\infty \in \R^{N_h \times N}$ such that 
     \begin{align*}
-        \sum_{k > N} \sigma^2_{k, \infty} &= \int_{\Pcal \times \mathcal{T}} \norm{u(\mu, t) - V_\infty V^T_\infty u(\mu, t)}^2 d(\mu, t) \\
-        &= \underset{W \in \R^{N_h \times N}: W^T W = I}{\min} \, \int_{\mu \times \mathcal{T}} \norm{u(\mu, t) - W W^T u(\mu, t) }^2 d(\mu, t).
+        \sum_{k > N} \sigma^2_{k, \infty} &= \int_{\Pcal \times \mathcal{T}} \norm{u(\mu, t) - V_\infty V^T_\infty \G u(\mu, t)}^2 d(\mu, t) \\
+        &= \underset{W \in \R^{N_h \times N}: W^T \G W = I}{\min} \, \int_{\mu \times \mathcal{T}} \norm{u(\mu, t) - W W^T \G u(\mu, t) }^2 d(\mu, t).
     \end{align*}
     Thus, since this is the optimal choice of an approximation matrix for the continuous case and 
     $\A \in \R^{N_h \times N}$ given by Definition (\ref{def: POD}) is only optimal in the discrete setting and 
     not necessarily the continuous case, we have
     \begin{equation*}
         \sum_{k > N} \sigma^2_{k, \infty} \leq \int_{\Pcal \times \mathcal{T}} 
-        \norm{u(\mu, t) - \A \A^T u(\mu, t)}^2 d(\mu, t) = \sum_{k > N} \sigma^2_k.
+        \norm{u(\mu, t) - \A \A^T \G u(\mu, t)}^2 d(\mu, t) = \sum_{k > N} \sigma^2_k.
     \end{equation*} 
     We then write entry-wise for $m, l = 1, \dots N_h$
-    \begin{equation*}
-        [K_\infty - K]_{ml} := \int_{\Pcal \times \Tcal} [u(\mu, t)]_m [u(\mu, t)]_l d(\mu, t) - 
-        \frac{\vert \Pcal \times \Tcal \vert}{N_{data}} \sum_{j=1}^{N_s} 
-        \sum_{k=1}^{N_t} [u(\mu_j, t_k)]_m [u(\mu_j, t_k)]_l.
-    \end{equation*}
+    \begin{align*}
+        [K_\infty - K]_{ml} :=& \int_{\Pcal \times \Tcal} [\G^{1/2}u(\mu, t)]_m [\G^{1/2}u(\mu, t)]_l d(\mu, t) \\
+        &- \frac{\vert \Pcal \times \Tcal \vert}{N_{data}} \sum_{j=1}^{N_s} 
+        \sum_{k=1}^{N_t} [\G^{1/2}u(\mu_j, t_k)]_m [\G^{1/2}u(\mu_j, t_k)]_l.
+    \end{align*}
     By the uniform iid sampling assumed and the general bound on $\norm{u(\mu, t)} \leq M$ before, 
     we know that with the entry-wise boundedness of the PDE solutions, 
     the resulting matrix is subject to the strong law of large numbers, 
@@ -342,15 +357,16 @@ We base this subsection on \cite{quarteroni2015rb}.
 \end{proof}
 
 \begin{proposition} \label{prop: eigenvalues and optimal projection under sampling}
-    Let $\mathcal{V}_N = \{ W \in \R^{N_h \times N} \, \vert \, W^T W = I_N \}$ be the set of all $N$-dimensional orthonormal bases, 
+    Let $\mathcal{V}_N = \{ W \in \R^{N_h \times N} \, \vert \, W^T \G W = I_N \}$ be the set of all 
+    $N$-dimensional $\G$-orthonormal bases, 
     $N_{data} := N_t N_s$ and $\A = [\xi]_{i=1}^N$ be the POD matrix according to Definition
     (\ref{def: POD}), then
     \begin{multline*}
         \frac{\vert \, \Pcal \times \Tcal \, \vert}{N_{data}} 
-        \sum\limits_{i \in I, k = 1, \dots, N_t} \norm{u(\mu_j, t_k) - \A \A^T u(\mu_j, t_k)}_2^2 \\
+        \sum\limits_{i \in I, k = 1, \dots, N_t} \norm{u(\mu_j, t_k) - \A \A^T \G u(\mu_j, t_k)}_2^2 \\
         = \min\limits_{W \in \mathcal{V}_N} \frac{\vert \, \Pcal \times \Tcal \, \vert}{N_{data}} 
         \sum\limits_{i \in I, k = 1, \dots, N_t} 
-        \norm{u(\mu_j, t_k) - W W^T u(\mu_j, t_k)}_2^2 
+        \norm{u(\mu_j, t_k) - W W^T \G u(\mu_j, t_k)}_2^2 
         = \sum_{j=N+1}^r \sigma_k^2.
     \end{multline*}
 \end{proposition}
@@ -358,19 +374,20 @@ We base this subsection on \cite{quarteroni2015rb}.
 \begin{definition}[Linear Kolmogorov $N$-width] \label{def: linear kolmogorov}
     Let $N \in \N$, $N \leq N_h$ and $\mathcal{S}_{N_h} = \{ u(\mu, t) \in \R^{N_h} \, 
     \vert \, (\mu, t) \in \Pcal \times \Tcal \}$ 
-    be some manifold. The linear Kolmogorov $N$-width of $\mathcal{S}_{N_h}$ is defined as
+    be some parametric manifold. The linear Kolmogorov $N$-width of $\mathcal{S}_{N_h}$ is defined as
     \begin{equation*}
-        d_N(S_{N_h}) = \inf\limits_{V \in \R^{N_h \times N}} \sup\limits_{u \in S_{N_h}} \norm{u - V V^T u}.
+        d_N(S_{N_h}) = \inf\limits_{V \in \R^{N_h \times N}} \sup\limits_{u(\mu, t) \in S_{N_h}} 
+        \norm{u(\mu, t) - V V^T \G u(\mu, t)}.
     \end{equation*}
 \end{definition}
 
 \begin{definition}[Nonlinear Kolmogorov $N$-width] \label{def: nonlinear kolmogorov}
     Let $N \in \N$, $N \leq N_h$ and $\mathcal{S}_{N_h}= \{ u(\mu, t) \in \R^{N_h} \, 
     \vert \, (\mu, t) \in \Pcal \times \Tcal \}$ 
-    be some manifold. The nonlinear Kolmogorov $N$-width of $\mathcal{S}_{N_h}$ is defined as 
+    be some parametric manifold. The nonlinear Kolmogorov $N$-width of $\mathcal{S}_{N_h}$ is defined as 
     \begin{equation*}
         \delta_N(\mathcal{S}_{N_h}) = \inf\limits_{\psi \in C(\R^{N_h}, \R^N), 
-        \psi' \in C(\R^N, \R^{N_h})} \sup\limits_{u \in S_{N_h}} \norm{u - \psi(\psi'(u))}.
+        \psi' \in C(\R^N, \R^{N_h})} \sup\limits_{u \in S_{N_h}} \euknorm{u - \psi(\psi'(u))}.
     \end{equation*}
 \end{definition}
 
@@ -416,7 +433,7 @@ concatenations of perceptrons, which are a specific subclass of networks, the so
 
 \begin{remark}
     As a note, we can rewrite known neural network architectures, such as a convolutional autoencoder, 
-    as a neural network according to Definition (\ref{def: neural network}).
+    as a neural network according to Definition (\ref{def: neural network}), see also \cite[p. 22]{gühring2020nn}.
 \end{remark}
 \notdone{Motivate this with some example.}
 
@@ -1144,3 +1161,89 @@ This extension is presented by Gühring et al. \cite{gühring2019nn}.
 \end{proof}
 
 
+
+
+\subsection{Statistical Learning} \label{subsec: statistical learning}
+
+
+
+
+We have now introduced the framework for analytical discussion regarding complexity and potential of neural networks.
+What is clearly missing however, is the practical "achievement" of a true neural network $\Phi$ fitting the 
+function in question from some
+architecture $\Acal_\Phi$, that a machine learning engineer thought of. This crucial step in the process of 
+development is refered to as \emph{learning}. This subsection is my own work, if not cited otherwise.
+
+In order to quantify the "falseness" of a potential attribution, we need a function, that compares a true solution
+to an output of the network operating with the true parameters connected to the true solution. We remark that
+the following two definitions are based upon the paper \cite{ciampiconi2024}, where the interested reader
+can find extensive terminology and currently used loss functions and their optimization techniques. 
+
+\begin{definition}[Feature and Label Space] \label{def: feature and label space}
+    Let $\mathcal{X}$ be the so-called \emph{feature space} and $\mathcal{Y}$ the \emph{label space} of the underlying
+    unknown function
+    \begin{equation*}
+        f: \mathcal{X} \to \mathcal{Y},
+    \end{equation*}
+    classifying each feature with a label. 
+\end{definition}
+The general goal of all machine learning problems is to closely approximate that classification function $f$.
+
+\begin{definition}[Loss Function]
+    Given $f_\theta: \mathcal{X} \to \mathcal{Y}$ arbitrarily and a feature and label space as in Definition (\ref{def: feature and label space}) and a sample
+    $\{x_i, y_i\}_{i=1}^N \subset \mathcal{X} \times \mathcal{Y}$ for some $N \in \N$, we define
+    the general loss function as a mapping of $f(x_i)$ with its corresponding $y_i$ to a non-negative real number, i.e.
+    \begin{equation*}
+        \Lcal(f_\theta \vert \{x_1, \dots, x_N\}, \{y_1, \dots, y_N\}) \in \R^+,
+    \end{equation*}
+    such that for $f$ being the function from Definition (\ref{def: feature and label space}) for all $N \in \N$
+    \begin{equation*}
+        \Lcal(f \vert \{x_1, \dots, x_N\}, \{y_1, \dots, y_N\}) = 0.
+    \end{equation*}
+\end{definition}
+
+\begin{definition}[Neural Network Weights] \label{def: neural network weights}
+    Suppose for some $d, L \in \N$ we have a neural network architecture $\Acal_\Phi$ 
+    of input dimension $d$, $L$ layers and output 
+    dimension $N_L$ according to Definition (\ref{def: neural network}) and $\Phi$ be a neural network of
+    that architecture (see Definition (\ref{def: neural network architecture})). Further let $f: \R^d \to \R^{N_L}$ 
+    be some arbitrary function. 
+    Define the \emph{masks of $\Acal_\Phi$} via
+    \begin{equation*}
+        I_l := \{ (i, j) \, : \, [A_l]_{ij} = 1 \}, \quad J_l := \{i \, : \, [b_l]_i = 1\},
+    \end{equation*}
+    for each layer $1 \leq l \leq L$. We further set the \emph{admissible weight space} as
+    \begin{equation*}
+        \Theta(\Acal_\Phi) := \prod_{l=1}^L \left( \R^{I_l} \times \R^{J_l} \right),
+    \end{equation*}
+    and its elements $\theta \in \Theta(\Acal_\Phi)$ with
+    \begin{equation*}
+        \theta = \left( (\theta_{l, ij}^A)_{(i, j) \in I_l}, (\theta_{l, i}^b)_{i \in J_l} \right)_{l=1}^L.
+    \end{equation*}
+    Then in each layer of $\Phi(\theta) = ((\hat A_1(\theta), \hat b_1(\theta)), \dots, (\hat A_L(\theta), \hat b_L(\theta)))$
+    the affine transformation can be uniquely retrieved via the lifting
+    \begin{equation*}
+        \hat A_l(\theta)_{ij} = 
+        \begin{cases}
+            \theta^A_{l,ij}, & (i,j)\in I_l,\\
+            0, & \text{otherwise},
+        \end{cases}
+        \qquad
+        \hat b_l(\theta)_{i} =
+        \begin{cases}
+            \theta^b_{l,i}, & i\in J_l,\\
+            0, & \text{otherwise}.
+        \end{cases}
+    \end{equation*}
+
+
+    Then the network $\Phi$ will be called a \emph{fitting network with regard to $f$}, if 
+    $\Phi := \Phi(\theta^*)$ is given such that
+    \begin{equation*}
+        \theta^* = \underset{\theta \in \Theta(\Acal_\Phi)}{\operatorname{arg \, min}} \,\, 
+        \Lcal\left(R_\rho(\Phi(\theta)) \vert \{x_1, \dots, x_N\}, \{f(x_1), \dots, f(x_N)\}\right)
+    \end{equation*}
+    for some sample $\{x_1, \dots, x_N\}_{i=1}^N \subset \R^d$ with $N \in \N$ and
+    a suitable choice of a loss function $\Lcal$. Note, that this minimizing condition and the architecture 
+    are what, not necessarily uniquely, determines the fitting network.
+\end{definition}

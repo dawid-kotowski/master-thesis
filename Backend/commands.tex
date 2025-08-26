@@ -79,10 +79,11 @@
 % Shortcuts
 \usepackage{xparse}
 \NewDocumentCommand{\snorm}{m O{0} O{\infty} O{d}}{%
-  \lVert\, #1 \,\rVert_{W^{#2,#3}((0,1)^{#4})}%
+  \lVert #1 \rVert_{W^{#2,#3}((0,1)^{#4})}%
 }
 \newcommand{\inftynorm}[1]{\norm{#1}_{L_\infty((0,1)^d)}}
-\newcommand{\norm}[1]{\lVert \, #1 \, \rVert}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand{\euknorm}[1]{\lvert #1 \rvert }
 \newcommand{\lzeronorm}[1]{\norm{#1}_{\ell^0}}
 \newcommand{\opnorm}[1]{\norm{#1}_\text{op}}
 \newcommand{\E}{\mathbb{E}}
@@ -92,6 +93,7 @@
 \newcommand{\U}{\mathbb{U}}
 \newcommand{\V}{\mathbb{V}}
 \newcommand{\A}{\mathbb{A}}
+\newcommand{\I}{\mathbb{I}}
 \newcommand{\Acal}{\mathcal{A}}
 \newcommand{\Ocal}{\mathcal{O}}
 \newcommand{\Tcal}{\mathcal{T}}
@@ -100,6 +102,7 @@
 \newcommand{\Fcal}{\mathcal{F}}
 \newcommand{\Hcal}{\mathcal{H}}
 \newcommand{\Scal}{\mathcal{S}}
+\newcommand{\Lcal}{\mathcal{L}}
 \newcommand{\bs}[1]{\boldsymbol{#1}}
 \newcommand{\prob}{\mathbb{P}}
 \newcommand{\cost}{\text{cost}}
