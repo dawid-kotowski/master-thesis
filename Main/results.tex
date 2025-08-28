@@ -293,8 +293,7 @@ neural network weights. As a next step, one can do the same for the DOD+DNN neur
 an auxilary statement, that precidents the similarity of definition of the DOD projection error to the POD projection
 error, since the former depends on architecture. 
 
-The key idea here being, that one can employ Horniks Theorem (or equivalently Yarotsky for a more sophisticated
-analysis including complexity) to ensure existence of a neural network architecture and corresponding neural 
+The key idea here being, that one can employ Horniks Theorem to ensure existence of a neural network architecture and corresponding neural 
 network of such architecture, such that the objective functional 
 \begin{equation*}
     (\mu, t, \V) \mapsto \int_{\Theta'} \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht} d (\nu),
@@ -303,6 +302,15 @@ is close to the "perfect one". Under triangle equality for the distance to the "
 into the mistake, which is arbitrarily small, and the total size of the perfect objective functional, that is nothing
 but the Kolmogorov $N$-width under fixed $(\mu, t)$. And that KnW decays exponentially fast by Assumption 
 (\ref{assumption KnW decay}), in contrast to the general one. 
+
+\begin{remark}
+    Generally we can \emph{not} employ Yarotsky Theorem (\ref{theo: yarotsky}) here, since the optimal objective
+    functional, as described above, can only be shown to be Lipschitz continous under our current 
+    assumptions, as given above, and Yarotsky
+    does require $C^2$-smoothness. However, we will set up the proof for the following lemma in such a way,
+    that Yarotsky can be directly interchanged, if a higher regularity for the optimal objective functional is
+    imposed.
+\end{remark}
 
 The source for the following lemma is generally \cite{franco2024}.
 
@@ -322,23 +330,35 @@ The source for the following lemma is generally \cite{franco2024}.
     \end{equation*}
 \end{lemma}
 \begin{proof}
-    \notdone{fix proof}
     Let $N, N_A, N_h \in \N$ be fixed by Assumption (\ref{assumption: dimension hierarchy}). 
     Assuming we have $\mu \in \Theta, t \in [0, T]$ and $\V = \A \tilde{\V} \in [0, 1]^{N_h \times N}$, with
     $\A \in [0, 1]^{N_h \times N_A}$ being $\G$ orthonormal, and $\tilde{\V} \in [0, 1]^{N_A \times N}$, then 
     we define $J: \Theta \times [0, T] \times [0, 1]^{N_h \times N} \to \R$ via
     \begin{equation*}
-        J(\mu, t, \V) := \int_{\Theta'} \norm{\uht - \V \V^T \G \uht} d(\nu),
+        J(\mu, t, \V) := \int_{\Theta'} \norm{\uht - \V \V^T \G \uht} d(\nu) = \int_{\Theta'} \euknorm{\uhtprered - 
+        \tilde{\V} \tilde{\V}^T \uhtprered} d(\nu),
     \end{equation*}
-    and let some $\varepsilon > 0$ be fixed. 
+    for $u_\text{pre-red}^{\mu, \nu, t} := \A^T \G \uht \in \R^{N_A}$ for each $\mu \in \Theta, \nu \in \Theta'$
+    and $t \in [0, T]$, and let some $\varepsilon > 0$ be fixed. 
     Under Assumption (\ref{assumption parameter-to-solution map}), one can infer the Lipschitz continuity of $J$
     by the Lipschitz continuity of $\Gcal$, i.e. let $\mu, \mu' \in \Theta$, $t, t' \in [0, T]$ 
     and $\V = \A \tilde{\V}, \V' = \A \tilde{\V}' \in \R^{N_h \times N}$ such that for some $\delta > 0$
     \begin{equation*}
-        \euknorm{\mu - \mu'} + \euknorm{t - t'} + \opnorm{\V - \V'} < \delta,
+        \euknorm{\mu - \mu'} + \euknorm{t - t'} + \opnorm{\V - \V'} < \delta.
     \end{equation*}
-    then we can calculate with $u_\text{pre-red}^{\mu, \nu, t} := \A^T \G \uht$ for each $\mu \in \Theta, \nu \in \Theta'$
-    and $t \in [0, T]$, and the reverse triangle inequality
+    For the following calculation, we compose the preliminary identity for 
+    $u := \uhtprered$ and $u' := u_\text{pre-red}^{\mu', \nu, t'}$, and the projectors $P := \tilde{\V} \tilde{\V}^T$, $P'$ 
+    analogously:
+    \begin{equation} \label{eq: optimal dod help equation}
+        \begin{aligned}
+            (\I_{N_A} - P)u - (\I_{N_A} - P')u' &= u - Pu - u' + P'u' \\
+            &= u - Pu - u' + P'u' + Pu' - Pu' \\
+            &= u - u' - Pu + Pu' + P'u' - Pu' \\
+            &= (\I_{N_A} - P)(u - u') + (P' - P)u'.
+        \end{aligned}
+    \end{equation}
+    Then we can calculate with, the reverse triangle inequality, and our auxiliary 
+    Equation (\ref{eq: optimal dod help equation}),
     \begin{align*}
         \euknorm{J(\mu, t, \V) - J(\mu', t', \V')} &= \int_{\Theta'} \euknorm{\norm{\uht - \V \V^T \G \uht} - 
         \norm{u_h^{\mu', \nu, t} - \V' (\V')^T \G u_h^{\mu', \nu, t}}} d(\nu) \\
@@ -346,64 +366,98 @@ The source for the following lemma is generally \cite{franco2024}.
         \tilde{\V}^T u_\text{pre-red}^{\mu, \nu, t}} - 
         \euknorm{u_\text{pre-red}^{\mu', \nu, t'} - \tilde{\V}' (\tilde{\V}')^T 
         u_\text{pre-red}^{\mu', \nu, t'}} \, \right\vert d(\nu) \\
-        &\leq \int_{\Theta'} \left\vert \, u_\text{pre-red}^{\mu, \nu, t} - u_\text{pre-red}^{\mu', \nu, t'} \, \right\vert
-        + \left\vert \, \tilde{\V} \tilde{\V}^T u_\text{pre-red}^{\mu, \nu, t} - 
-        \tilde{\V}' (\tilde{\V}')^T 
-        u_\text{pre-red}^{\mu', \nu, t'} \, \right\vert d(\nu) \\
-        &< 2L \delta \vert \Theta' \vert + \int_{\Theta'} \left\vert \,
-        \tilde{\V}\tilde{\V}^T u_\text{pre-red}^{\mu, \nu, t} - \tilde{\V}' (\tilde{\V}')^T \left( u_\text{pre-red}^{\mu, \nu, t} + 
-        L \delta \right) \, \right\vert d(\nu) \\
-        &\leq L \delta \vert \Theta' \vert +  \vert \Theta' \vert  \cdot \opnorm{\tilde{\V}' (\tilde{\V}')^T}  
-        + L \delta \vert \Theta' \vert  \cdot \opnorm{\tilde{\V}' (\tilde{\V}')^T} \\
-        &< \delta \vert \Theta' \vert \left(1 + L + \delta L \right)
+        &= \int_{\Theta'} \left\vert \, \left(u_\text{pre-red}^{\mu, \nu, t} - \tilde{\V} 
+        \tilde{\V}^T u_\text{pre-red}^{\mu, \nu, t}\right) - 
+        \left(u_\text{pre-red}^{\mu', \nu, t'} - \tilde{\V}' (\tilde{\V}')^T 
+        u_\text{pre-red}^{\mu', \nu, t'}\right) \, \right\vert d(\nu) \\
+        &\leq \int_{\Theta'} \left\vert (\I_{N_A} - \tilde{\V} \tilde{\V}^T)(\uhtprered - 
+        u_\text{pre-red}^{\mu', \nu, t'} )  \right\vert d(\nu) + M \vert \Theta' \vert \opnorm{\tilde{\V} \tilde{\V}^T - 
+        \tilde{\V}' (\tilde{\V}')^T}   \\
+        &< \delta \vert \Theta' \vert (L  + 2  M ),
     \end{align*}
-    Then the continuity of $J$ implies uniform continuity by the compactness 
-    of its pre-image, i.e. there is $\delta > 0$ such that
+    and is thus Lipschitz continous aswell.
+    \notdone{big step here}
+    Hence there is a Borel measurable map $s: \Theta \times [0, T] \to [0, 1]^{N_A \times N}$ 
+    producing w.l.o.g. orthonormal
+    matrices given by
     \begin{equation*}
-        \vert \bs{\mu} - \bs{\mu'} \vert + \norm{\V - \V'}_{\infty} < \delta \implies \vert J(\bs{\mu}, \V) - 
-        J(\bs{\mu'}, \V') \vert < \varepsilon.
+        s: (\mu, t) \mapsto \underset{{\tilde{\V} \in [0, 1]^{N_A \times N}}}{\text{argmin}}  J(\mu, t, \A \tilde{\V}).
     \end{equation*}
-    Then there is a Borel measurable map $s: \Theta \to [-1, 1]^{N_h \times n}$ given by
+    This map is bounded (given by continuity of J and compactness of its image) and therefore 
+    $s \in L^1(\Theta \times [0, T]; \R^{N_A \times N})$, i.e.
     \begin{equation*}
-        s: \bs{\mu} \mapsto \underset{{\V \in [-1, 1]^{N_h \times n}}}{\text{argmin}} J(\bs{\mu}, \V).
+        \norm{s}_{L^1(\Theta \times [0, T]; \R^{N_A \times N})} := 
+        \int_{\Theta \times [0, T]} \opnorm{s(\mu, t)} \, d(\mu, t)  < \infty.
     \end{equation*}
-    This map is bounded (given by continuity of J and compactness of its image) and hence 
-    $s \in L^1(\Theta; \R^{N_h \times n})$, i.e. $\norm{s}_{L^1(\Theta; \R^{N_h \times n})} := 
-    \int_{\Theta} \norm{s(\bs{\mu})}_{\infty} d \mu{(\bs{\mu})} < \infty$. 
-    This means that by Hornik's Theorem \cite{hornik1991nn} there is a deep ReLU neural network 
-    $\bs{V}_0: \Theta \to \R^{N_h \times n}$ such that 
-    $\E_{\bs{\mu}} \vert \bs{V}_0(\bs{\mu}) - s(\bs{\mu}) \vert < \delta$ for all $\delta > 0$. 
-    Now let $\rho$ be a entry-wise ReLU activation function and we consider a three-layered network 
-    $L: \R^{N_h \times n} \to \R^{N_h \times n}$ given by
+    Define $[s]_{ij}$ as the canoncially lifted
+    entry in position $(i, j) \in \{1, \dots, N_A\} \times \{1, \dots, N\}$.
+
+    This means that by Hornik Theorem (\ref{theo: hornik theorem}), there is a neural network architecture 
+    $\Acal^{[\tilde{\V}_0]_{ij}}$ with  $(p+1)$-dimensional input and one-dimensional ouput, 
+    and a neural network of that architecture $[\tilde{\V}_0]_{ij}$, satisfying
     \begin{equation*}
-        L(\bs{x}) := \bs{e} - \mathbb{I}_{N_h \times n} 
-        \rho(- \mathbb{I}_{N_h \times n} \rho(\mathbb{I}_{N_h \times n} \bs{x} + \bs{e}) + 2 \bs{e}),
+        \norm{[s]_{ij} - R_\rho([\tilde{\V}_0]_{ij})}_{L^1(\Theta \times [0, T]; \R)} \leq \varepsilon,
     \end{equation*}
-    where $\mathbb{I}_{N_h \times n}$ is the identity tensor on $\R^{N_h \times n}$, and 
-    $\bs{e}$ is a $N_h \times n$ matrix with ones as entries. Thus for each entry $x_{i,j}$ of $\bs{x}$, 
-    we have $L(x_{i, j}) = 1 - \rho(2 - \rho(x_{i,j} + 1)) \in [-1, 1]$. 
-    Thus, since $L$ is 1-Lipschitz and $L$ only effects values outside $[-1, 1]$, 
-    and hence $L \circ s = s$, we have for $\bs{V(\mu)} := L \circ \bs{V}_0 (\bs{\mu})$
+    for each $(i, j) \in \{1, \dots, N_A\} \times \{1, \dots, N\}$, and then using network parallelization 
+    as in Definition (\ref{def: network parallelization}), we can set the optimal DOD neural network as
     \begin{equation*}
-        \E \vert \bs{V(\mu)} - s(\bs{\mu}) \vert = \E \vert L \circ \bs{V}_0(\bs{\mu}) - 
-        L \circ s(\bs{\mu}) \vert \leq \E \vert \bs{V}_0(\bs{\mu}) - s(\bs{\mu}) \vert < \delta.
+        \tilde{\V}_0 := P\left(P([\tilde{\V}_0]_{1 1}, \dots, [\tilde{\V}_0]_{1 N}), \dots, P([\tilde{\V}_0]_{N_A  1}, \dots,
+        [\tilde{\V}_0]_{N_A N})\right),
     \end{equation*}
-    With this we can take $\bs{V(\mu)}$ to be in the pre-image of $J$ and therefore conforming to its 
-    uniform continuity, i.e. take $\varepsilon > 0$, s.t.
+    since it attains the wanted accuracy
     \begin{equation*}
-        \vert J(\bs{\mu}, s(\bs{\mu})) - J(\bs{\mu}, \bs{V}(\bs{\mu})) \vert < \varepsilon.
+        \norm{s - R_\rho(\tilde{\V}_0)}_{L^1(\Theta \times [0, T]; \R^{N_A \times N})} \leq \varepsilon.
     \end{equation*}
-    In total we calculate with $\E_{\bs{\mu, \nu}} \norm{\bs{u_{\mu, \nu}} - 
-    \bs{V_{\mu} V_{\mu}}^T \G \bs{u_{\mu, \nu}}} = \E_{\bs{\mu}}[J(\bs{\mu}, \bs{V}(\bs{\mu})]$,
-    \begin{align*}
-        \E_{\bs{\mu, \nu}} \norm{\bs{u_{\mu, \nu}} - \bs{V_{\mu} V_{\mu}}^T \G \bs{u_{\mu, \nu}}} &\leq 
-        \E_{\bs{\mu}}[J(\bs{\mu}, \bs{V}(\bs{\mu}))- J(\bs{\mu}, s(\bs{\mu}))] + 
-        \E_{\bs{\mu}}[J(\bs{\mu}, s(\bs{\mu}))] \\
-        &< \varepsilon + \E_{\bs{\mu}} \left[ \min\limits_{\V} J(\bs{\mu}, \V) \right] \\
-        &\leq \varepsilon + \E_{\bs{\mu}} 
-        \left[ \min\limits_{\V} \sup\limits_{\bs{\nu}} \norm{\bs{u_{\mu, \nu}} - \V \V^T \G \bs{u_{\mu, \nu}}} \right]
-    \end{align*}
+    To now ensure, that the provided realization of the DOD neural network are indeed in the pre-image of $J$, 
+    we need to ensure, that there is a network, which indeed attains the accuracy, but is also entrywise $[0,1]$.
+    For this, let $L = ((A_1, b_1), (A_2, b_2))$ be given via
+    \begin{equation*}
+        A_1 := \begin{bmatrix}
+            \I_{\R^{N_A \times N}} \\
+            \I_{\R^{N_A \times N}}
+        \end{bmatrix},
+        \quad
+        b_1 := \begin{pmatrix}
+            0_{\R^{N_A \times N}} \\
+            -\I_{\R^{N_A \times N}}
+        \end{pmatrix},
+        \quad
+        A_2 := \begin{bmatrix}[c|c]
+            \I_{\R^{N_A \times N}} & -\I_{\R^{N_A \times N}} 
+        \end{bmatrix},
+        \quad
+        b_2 := 0.
+    \end{equation*}
+    The realization of this network is equivalent to the entry-wise operator of $x \mapsto \rho(x)-\rho(x-1) \in [0, 1]$
+    for $x \in \R$. Since this realization as a map is bounded by $1$, we can infer with the definition
+    $\V_{\mu, t} := R_\rho(L(\theta^*_\text{DOD})) \circ (\A \cdot R_\rho(\tilde{\V}_0(\theta^*_\text{DOD}))) 
+    (\mu, t)$ a new network with a final
+    architecture $\Phi_{\tilde{\V}}$ and
+    complexity only differing by constants, and a choice of neural network weights $\theta^*_\text{DOD} 
+    \in \Theta(\Phi_{\tilde{\V}})$, such that
+    \begin{equation*}
+        \int_{\Theta \times [0, T]} \opnorm{\V_{\mu, t} - s(\mu, t)} d(\mu, t)
+        = \int_{\Theta \times [0, T]} \underbrace{\opnorm{L}}_{\leq 1} \opnorm{R_\rho(\tilde{\V}_0)(\mu, t) - s(\mu, t)}
+        d(\mu, t)
+        < \varepsilon.
+    \end{equation*}
+    Finally, with the knowledge, that $\V_{\mu, t}$ is $\varepsilon$-close to $s(\mu, t)$ in average, and the fact
+    that this, as a matrix, is indeed in the pre-image of $J$, we can write using the Lipschitz continuity of $J$
+    \begin{multline*}
+        \int_{\Theta \times \Theta' \times [0, T]} 
+        \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht} d(\mu, \nu, t) \\ 
+        \leq \int_{\Theta \times [0, T]}
+        \left\vert J(\mu, t, \V_{\mu, t}) - J(\mu, t, s(\mu, t)) \right\vert d(\mu, t) +
+        \int_{\Theta \times [0, T]} J(\mu, t, s(\mu, t)) d(\mu, t) \\
+        < \varepsilon + \int_{\Theta \times [0, T]} \left( \min\limits_{\V \in \R^{N_h \times N}} J(\mu, t, \V)\right) 
+        d(\mu, t) \\
+        < \varepsilon + \int_{\Theta \times [0, T]} \left( \min\limits_{\V \in \R^{N_h \times N}} 
+        \sup\limits_{\nu \in \Theta'} \norm{\uht - \V \V^T \G \uht} \right) d(\mu, t).
+    \end{multline*}
 \end{proof}
+
+
+
 
 \begin{theorem} \label{theo: relative error DOD+DNN}
     Define the preliminaries such as in the introduction to this Section (\ref{section: error decomposition}). 
@@ -511,7 +565,7 @@ The source for the following lemma is generally \cite{franco2024}.
         &< m^{-1}\varepsilon + m^{-1}\int_{\Theta \times \Tcal} d_N(\mathcal{S}_{\mu, t}) d(\mu, t),
     \end{align*}
     which can be arbitrarily improved for a more complex choice of the inner DOD module architecture. This dependency
-    on the complexity can be infered from Theorem (\ref{theo: yarotsky}), since the $L^\infty$ error correlates with the 
+    on the complexity is suggested by Theorem (\ref{theo: yarotsky}), since the $L^\infty$ error correlates with the 
     $\Hcal_h$ representation error by the compactness of the time-parameter space, that is given
     by Assumption (\ref{assumption sample}).
 \end{proof}

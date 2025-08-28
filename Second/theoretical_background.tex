@@ -482,7 +482,7 @@ Given such an activation function, Kurt Hornik provided in 1990 the first contri
 would emerge centuries later: Approximation theory. He proved for any $L^p(\mu)$ function, for $\mu$ some finite measure, the existence 
 of an arbitrarily close ReLU valued neural network \cite{hornik1991nn}.
 
-\begin{theorem}[Hornik's Theorem]
+\begin{theorem}[Hornik's Theorem] \label{theo: hornik theorem}
     Define for some continuous, unbounded and non-constant actiation function $\rho$ the set of all feedforward neural networks, 
     as
     \begin{equation*}
@@ -937,7 +937,7 @@ of the approximation of polynomials with neural networks.
 With these auxiliary results, we may finally start with the statement and proof of the Yarotsky Theorem.
 
 \begin{theorem}[Yarotsky Theorem] \label{theo: yarotsky}
-    Let $d \in \N, n \in \N_{\geq 2}, B = 1$ and $f \in \Fcal_{n ,d , \infty, B}$ some arbitrary function.
+    Let $d \in \N, n \in \N, B = 1$ and $f \in \Fcal_{n ,d , \infty, B}$ some arbitrary function.
     Then there is a constant $c = c(d, n) > 0$ with the following properties:
     
     For any $\varepsilon \in (0, 1)$, there is a neural network architecture 
