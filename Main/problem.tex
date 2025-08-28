@@ -1,4 +1,4 @@
-\chapter{Formulation of the General Problem}
+\chapter{Formulation of the General Problem} \label{chapter: problem}
 
 
 \notdone{Definitely add traditional convergence and computational cost.}
@@ -497,6 +497,18 @@ thus setting $\G := M(\mu)$ for all $\mu \in \Theta$ as our mass matrix. Under E
 (\ref{eq: definition mass matrix norm}) this also implies a $\mu$-independent norm $\norm{\cdot}$, which in fact
 allow us to use the POD matrix, if constructed with $\G$, as a true projector onto the span of $\A$ in an $L^2$ sense.
 
+For clarity, we formulate the following as an assumption, since from experience, the reduction system across comparable
+architectures can get confusing, and the reader is therefore encouraged to revisit this assumption, whenever
+the general setting appears to be unclear.
+
+\begin{assumption}[Dimension Hierarchy] \label{assumption: dimension hierarchy}
+    Let for all following data-driven Reduced Order Models, the following natural number hierarchy be fixed
+    \begin{equation*}
+        n < N < N_A \ll N_h.
+    \end{equation*}
+    Note, that "$\ll$" is an unspecified relation, meaning to symbolize a "large" difference.
+\end{assumption}
+
 A general Deep Learning based ROM (DL-ROM) first appeared in architecture and 
 training in the paper \cite{fresca2020}; to properly approximate the potentially 
 non-linear solution manifold of the high fidelity FOM, we employ an Autoencoder (AE), 
@@ -507,11 +519,11 @@ $\mu \in \Theta$, $\nu \in \Theta'$ and $t \in \Tcal$
 \begin{equation} \label{eq: dl rom solution}
     \uhthat = \left(R_\rho(\Psi_h(\theta^*_\text{D})) \circ R_\rho(\Phi_n(\theta^*_\text{DF}))\right) (t; \mu, \nu) \in \R^{N_h},
 \end{equation}
-where we set $\Psi_h = f^\text{D}_h$ for the decoder architecture with input dimension $N$ and output dimension $N_h$
-(and $\Psi'_N = f^\text{E}_N$ the corresponding encoder architecture) of a convolutional AE. 
-Then $\Psi'_N$ denotes the projection onto the reduced trial solution manifold and we 
-let $\Phi_N = \Phi_N^\text{DF}$  
-to be the DFNN architecture of input dimension $p + q + 1$ and output dimension $N$, 
+where we set $\Psi_h = f^\text{D}_h$ for the decoder architecture with input dimension $n$ and output dimension $N_h$
+(and $\Psi'_n = f^\text{E}_n$ the corresponding encoder architecture) of a convolutional AE. 
+Then $\Psi'_n$ denotes the projection onto the reduced trial solution manifold and we 
+let $\Phi_n = \Phi_n^\text{DF}$  
+to be the DFNN architecture of input dimension $p + q + 1$ and output dimension $n$, 
 mapping the dynamics of the parametric PDE onto the reduced trial solution manifold.
 
 The subsequent training is then performed via a loss function of a convex combination of both, 
@@ -525,9 +537,9 @@ Definition (\ref{def: neural network weights}) with the loss function
         \sum_{i=1}^{N_{s_1}} \sum_{j=1}^{N_{s_2}} 
         \sum_{k = 1}^{N_t} \, \frac{\omega_h}{2} \, 
         \norm{u_h^{\mu_i, \nu_j, k \Delta t} - 
-        \left(R_\rho(\Psi_h(\theta_\text{D})) \circ R_\rho(\Phi_N(\theta_\text{DF}))\right) (\mu_i, \nu_j, k \Delta t)}^2 \\
-        + \, \frac{1 - \omega_h}{2} \, \euknorm{R_\rho(\Psi'_N(\theta_\text{E}))(u_h^{\mu_i, \nu_j, k \Delta t}) 
-        - R_\rho(\Phi_N^\text{DF}(\theta_\text{DF}))(\mu_i, \nu_j, k \Delta t)}^2.
+        \left(R_\rho(\Psi_h(\theta_\text{D})) \circ R_\rho(\Phi_n(\theta_\text{DF}))\right) (\mu_i, \nu_j, k \Delta t)}^2 \\
+        + \, \frac{1 - \omega_h}{2} \, \euknorm{R_\rho(\Psi'_n(\theta_\text{E}))(u_h^{\mu_i, \nu_j, k \Delta t}) 
+        - R_\rho(\Phi_n^\text{DF}(\theta_\text{DF}))(\mu_i, \nu_j, k \Delta t)}^2.
 \end{multline}
 
 
@@ -554,34 +566,34 @@ on the stacked solution trajectories
     u_h^{\mu_{N_{s_1}}, \nu_{N_{s_2}}}\right]^T \in \R^{N_h \times N_\text{data}},
 \end{equation*}
 with the solution trajectories of Definition (\ref{def: solution data}), resulting in the POD matrix 
-$\A \in \R^{N_h \times N_A}$ for some $N_A \leq N_h$. Then we can
+$\A \in \R^{N_h \times N}$ for the $N < N_h$ from Assumption (\ref{assumption: dimension hierarchy}). Then we can
 define the pre-reduced solution snapshots by computing
 \begin{equation*}
-    u_\text{red}^{\mu, \nu, t} := \A^T \G \uht \in \R^{N_A} \qquad \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal.
+    u_\text{red}^{\mu, \nu, t} := \A^T \G \uht \in \R^{N} \qquad \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal.
 \end{equation*}
 By $\G$-orthonormality of $\A$, we can thus define the FOM approximate coefficient solution $\uhthat \in \R^{N_h}$ for each 
 $\mu \in \Theta$, $\nu \in \Theta'$ and $t \in \Tcal$
 \begin{equation} \label{eq: pod-dl-rom solution}
     \uhthat = \A \cdot \left(R_\rho(\Psi_A(\theta^*_\text{D})) \circ R_\rho(\Phi_n(\theta^*_\text{DF}))\right) (t; \mu, \nu) \in \R^{N_h},
 \end{equation}
-where we set $\Psi_A = f^\text{D}_{A}$ for the decoder architecture with input dimension $N$ and output dimension $N_A$
-(and $\Psi'_N = f^\text{E}_N$ the corresponding encoder architecture) of a convolutional AE. 
-Then $f^\text{E}_N$ denotes the projection onto the reduced trial solution manifold and we 
-let $\Phi_N = \Phi_N^\text{DF}$  
-to be the DFNN architecture of input dimension $p + q + 1$ and output dimension $N$ same as before.
+where we set $\Psi_N = f^\text{D}_{N}$ for the decoder architecture with input dimension $n$ and output dimension $N$
+(and $\Psi'_n = f^\text{E}_n$ the corresponding encoder architecture) of a convolutional AE. 
+Then $f^\text{E}_n$ denotes the projection onto the reduced trial solution manifold and we 
+let $\Phi_n = \Phi_n^\text{DF}$  
+to be the DFNN architecture of input dimension $p + q + 1$ and output dimension $n$ same as before.
 
-The loss function has now the attribute of being fed only at most $N_A$ dimensional training data, and only
-evaluating at most $N_A$ dimensional euklidian norms, hence greatly 
+The loss function has now the attribute of being fed only at most $N$ dimensional training data, and only
+evaluating at most $N$ dimensional euklidian norms, hence greatly 
 increasing performance, i.e. with $P$ being the network parallelization operator
 \begin{multline} \label{eq: loss function pod dl rom}
-    \Lcal_\text{POD-DL-ROM}\left(R_\rho(P(\Psi_h \odot \Phi_N, \Psi'_N)(\theta)) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
+    \Lcal_\text{POD-DL-ROM}\left(R_\rho(P(\Psi_N \odot \Phi_n, \Psi'_n)(\theta)) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
     \{u_\text{red}^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) =  \\
         \frac{1}{N_\text{data}} \sum_{i=1}^{N_{s_1}} \sum_{j=1}^{N_{s_2}} 
         \sum_{k = 1}^{N_t} \, \bigg( \frac{\omega_h}{2} \, 
         \euknorm{u_\text{red}^{\mu_i, \nu_j, k \Delta t} - 
-        \left(R_\rho(\Psi_A(\theta_\text{D})) \circ R_\rho(\Phi_N(\theta_\text{DF}))\right) (\mu_i, \nu_j, k \Delta t)}^2 \\
-        + \, \frac{1 - \omega_h}{2} \, \euknorm{R_\rho(\Psi'_N(\theta_\text{E}))(u_\text{red}^{\mu_i, \nu_j, k \Delta t}) 
-        - R_\rho(\Phi_N^\text{DF}(\theta_\text{DF}))(\mu_i, \nu_j, k \Delta t)}^2 \bigg).
+        \left(R_\rho(\Psi_N(\theta_\text{D})) \circ R_\rho(\Phi_n(\theta_\text{DF}))\right) (\mu_i, \nu_j, k \Delta t)}^2 \\
+        + \, \frac{1 - \omega_h}{2} \, \euknorm{R_\rho(\Psi'_n(\theta_\text{E}))(u_\text{red}^{\mu_i, \nu_j, k \Delta t}) 
+        - R_\rho(\Phi_n(\theta_\text{DF}))(\mu_i, \nu_j, k \Delta t)}^2 \bigg).
 \end{multline}
 
 \notdone{add a justification of the use of the reduced space and euklidian norm as done in franco2024}
@@ -652,18 +664,18 @@ The following technically depicts a RB method.
 
 Nonetheless this does not warrant a "good" DOD, just a defined one. 
 For this one needs to assert a qualitative loss function and some data, which we will get by pre-reduction
-in the same manner as before, i.e.
+in the same manner as before, even though in contrast $N_A > N$ in general, i.e.
 \begin{equation*}
-    u_\text{red}^{\mu, \nu, t} := \A^T \G \uht \in \R^{N_A} \qquad \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal.
+    u_\text{pre-red}^{\mu, \nu, t} := \A^T \G \uht \in \R^{N_A} \qquad \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal.
 \end{equation*}
 Then the loss function with regard to that data can be defined as follows
 \begin{multline} \label{eq: loss dod}
     \Lcal_\text{DOD}\left(R_\rho(\Phi_{\tilde{\V}}(\theta_\text{DOD})) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,k}, 
-    \{u_\text{red}^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) \\
+    \{u_\text{pre-red}^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) \\
     = \frac{1}{N_\text{data}}\sum_{i=1}^{N_{s_1}} \sum_{j=1}^{N_{s_2}} 
-    \sum_{k = 1}^{N_t} \, \euknorm{u_\text{red}^{\mu_i, \nu_j, k \Delta t} - 
+    \sum_{k = 1}^{N_t} \, \euknorm{u_\text{pre-red}^{\mu_i, \nu_j, k \Delta t} - 
     \tilde{\V}_{\mu_i, k \Delta t}(\theta_\text{DOD}) \tilde{\V}^T_{\mu_i, k \Delta t}(\theta_\text{DOD}) 
-    u_\text{red}^{\mu_i, \nu_j, k \Delta t}}^2.
+    u_\text{pre-red}^{\mu_i, \nu_j, k \Delta t}}^2.
 \end{multline}
 Note, that this is indeed again a $N_A$-dimensional loss function, thanks to the $\G$-orthonormality
 of the POD matrix.
@@ -701,7 +713,7 @@ Definition (\ref{def: neural network weights}) can be given for each $(\mu, \nu,
 Subsequently the training is done in series and not in parallel, as the optimal DOD parameter $\theta^*_\text{DOD}$
 needs to be found first. Secondly, the $\G$-orthonormality of the DOD can be leveraged with
 \begin{equation*}
-    u_{\text{red}^2}^{\mu, \nu, t} := \V_{\mu, t}(\theta^*_\text{DOD})^T \A^T \G \uht \in \R^{N} 
+    u_{\text{red}^2}^{\mu, \nu, t} := \V_{\mu, t}(\theta^*_\text{DOD})^T \G \uht \in \R^{N} 
     \qquad \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal,
 \end{equation*}
 to further reduce the training data and finally define the loss function for the DOD+DNN architecture
@@ -741,7 +753,7 @@ Definition (\ref{def: neural network weights}) can be given for each $(\mu, \nu,
 Same, as for the DOD+DNN, the training is done in series. One observes, that the training data can be again
 reduced with
 \begin{equation*}
-    u_{\text{red}^2}^{\mu, \nu, t} := \V_{\mu, t}(\theta^*_\text{DOD})^T \A^T \G \uht \in \R^{N} \qquad 
+    u_{\text{red}^2}^{\mu, \nu, t} := \V_{\mu, t}(\theta^*_\text{DOD})^T \G \uht \in \R^{N} \qquad 
     \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal,
 \end{equation*}
 and then used to define the DOD-DL-ROM loss function utilizing the $\G$-orthonormality of the DOD, hence

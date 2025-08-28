@@ -1,281 +1,534 @@
-\chapter{Approximation Theory for Reduced Order Models} \label{section: Error estimates}
+\chapter{Approximation Theory for Reduced Order Models} \label{chapter: results}
 
-\almostdone{Include proof and discussion for general DL-ROMs}
+
+
+
+This chapter provides the main results of this thesis based on the data-driven ROMs 
+introduced in Chapter (\ref{chapter: problem}). As such we repeat, that in order to
+execute the reduction for the norm $\norm{\cdot}$ defined in that chapter,
+we require a mass matrix, that is independent of $\mu \in \Theta$, since otherwise the orthonormality 
+with regard to it cannot be computed under the generalized POD Algorithm (\ref{algo: pod}). However, we note, 
+that the paper \cite{brivio2023} we base most of this chapter on, and severall other works dealing with a similar setup, instead
+neglect the representation in the underlying Hilbert space and use a simple euklidian norm for the
+coefficient vectors. For our sitution though, we let
+\begin{equation} \label{eq: representation uhat}
+    \hat{u}_h(x, t; \mu, \nu) = \sum_{j=1}^{N_h} [\uhhat(t)]_j \varphi_j(x),
+\end{equation}  
+for all $x \in \Omega$, $t \in [0, T]$ and parameters $(\mu, \nu) \in \Theta \times \Theta'$, which simultaneously 
+specifies $[\G]_{ij} = \langle \varphi_i, \varphi_j \rangle = [M(\mu)]_{ij}$ as the mass matrix. The norm for
+this chapter will be, if not stated otherwise, the norm from Equation (\ref{eq: definition mass matrix norm}), so
+here
+\begin{equation*}
+    \norm{u} := \sqrt{u^T \G u},
+\end{equation*} 
+for all $u \in \R^{N_h}$.
+Furthermore
+the solution vector $\uhhat(t) = \uhthat \in \R^{N_h}$ is set to be constant between the time instants 
+in our model, i.e. for all
+$t \in [(k-1) \Delta t, k \Delta t)$ for some $k = 1, \dots, N_t$.
+As a goal of this chapter, we will provide upper bounds on the complexity of the networks
+making up the data-driven ROMs, where we especially outline a comparison between the POD-DL-ROM and the newly
+introduced DOD-DL-ROM.
+
+In order to analyse any error occuring from a data-based approximation, we need to set up a probability space, in whose
+sense a convergence under an increased data set can be viewed. This is to be regarded as a clarification of 
+Assumption (\ref{assumption sample}).
+\begin{definition}[Sampling] \label{def: sampling}
+    Let $(\Pcal, \mathcal{B}(\Pcal))$ be a Borel-measureable parameter space and
+    $(\Omega_\prob, \Fcal, \prob)$ some underlying probability space. Then we refer to an 
+    \emph{independent sampling of size $N$}, if for each $i \in  \{1, \dots, N\}$ the
+    random variable mapping attaining a sample $(\mu_i, \nu_i)$
+    \begin{equation*}
+        X_i:(\Omega_\prob, \Fcal, \prob) \to (\Pcal, \mathcal{B}(\Pcal))
+    \end{equation*}
+    is measurable, its push forward $\prob^{X_i}$ admits the same distribution $\prob^X$ , i.e.
+    \begin{equation*}
+        \prob[X_i \in A] = \prob^{X_i}[A] = \prob^X[A],
+    \end{equation*}
+    and the samples are independent. We further name it \emph{iid sampling}, if the distribution $\prob^X$
+    is the uniform distribution
+    on $\Pcal$.
+\end{definition}
+
+With this in mind, we can view sampling as the realization of a random variable, that provides an element of the sample
+space. Therefore any mention of a probability space or a probability measure $\prob$ refers to the samplying procedure in the probability space
+as given in Definition (\ref{def: sampling}). 
+
+The upcoming proposition is a necessary result for the following chapters, as it provides us with a practical
+bound on the needed number of samples.
 
 \begin{proposition} \label{prop: order of convergence for sample}
-    Let $f \in L^2(\Theta \times \Theta' \times \mathcal{T})$. Under Assumption (\ref{assumption sample}), it is true, that
+    Let $f \in L^2(\Theta \times \Theta' \times [0, T])$. 
+    Under Assumption (\ref{assumption sample}), it is true, that
     \begin{equation*}
-        \E\left[ \bigg\vert \int_{\Theta \times \Theta' \times \mathcal{T}} f(\mu, \nu, t) d(\mu, \nu, t) - \frac{\vert \Theta \times \Theta' \times \mathcal{T} \vert}{N_{data}} \sum_{i = 1}^{N_{s_1}} \sum_{j = 1}^{N_{s_2}} \sum_{k = 1}^{N_t} f(\mu_i, \nu_j, t_k) \bigg\vert \right] \leq \mathcal{O}(N_s^{-1/2} + N_t^{-1}).
+        \E\left[ \bigg\vert \int_{\Theta \times \Theta' \times [0, T]} f(\mu, \nu, t) d(\mu, \nu, t) 
+        - \frac{\vert \Theta \times \Theta' \times [0, T] \vert}{N_{data}} 
+        \sum_{i = 1}^{N_{s_1}} \sum_{j = 1}^{N_{s_2}} \sum_{k = 1}^{N_t} f(\mu_i, \nu_j, k \Delta t) \bigg\vert \right] 
+        \! \leq \mathcal{O}(N_s^{-1/2} + N_t^{-1}).
     \end{equation*}
 \end{proposition}
+\notdone{prove this}
 
 
-\section{Relative Error of POD+DNNs}
-
-\almostdone{Discuss relative errors for the plain POD+DNN}
 
 
-\begin{theorem} \label{theo: relative error POD+DNN}
-    Let $\mathcal{G}:(\mu, \nu, t) \mapsto u_h(\mu, \nu, t)$ for all $\mu \in \Theta, \nu \in \Theta'$ and $t \in \mathcal{T}$ be the parameter-to-solution map. Here we consider a general POD+DNN structure, thus neglecting the potentially different nature of $\Theta$ and $\Theta'$, i.e. $\mathcal{G}(\mu, \nu, t) \approx V \hat{q}$, where $\hat{q}: \R^{p+q+1} \to \R^N$ is a neural network trained using data $(\mu_i, \nu_i, t_i)_{i=1}^{N_{data}}$ and $V$ is the POD matrix, as described in (\ref{def: POD}). Then under the Assumptions (\ref{assumption sample}) and (\ref{assumption parameter-to-solution map}), we have
+\section{Error Decomposition Formulas} \label{section: error decomposition}
+
+
+
+
+To adequately start analysing the ROMs in question, one needs to recognize the different aspects of "error" 
+inherent to their deployment. Namely, we can subdivide these seperate instances of inaccuracy occuring in the process
+of both, the POD-based data-driven ROM and the DOD-based data-driven ROM, into an error caused by the imperfect
+recollection of the parameter spaces $\Theta$ and $\Theta'$, an error caused by the imperfect 
+projection given by the DOD or POD respectively and an error of imperfect attribution of latent dynamics
+on that projection space by a neural network. This seperation can be achieved in a similar manner for both types of algorithms.
+
+Before we start with the formulation and proof of these decompositions, we want to predefine some elements of the
+corresponding theorems, to make them less cumbersome to read.
+
+Firstly let in general $n, N, N_A$ and $N_h$ be the fixed natural number hierarchy from 
+Assumption (\ref{assumption: dimension hierarchy}). 
+Let the approximate POD-based parameter-to-solution map be defined as follows
+\begin{equation*}
+    \Gcal_\text{POD+DNN}: \Theta \times \Theta' \times [0, T] \to \R^{N_h}; \quad (\mu, \nu, t) \mapsto 
+    \A_\text{P} \cdot \hat{q}_\text{P}(\mu, \nu, t),
+\end{equation*}
+where we let $\A_\text{P} \in \R^{N_h \times N}$ be a POD computed by Algorithm (\ref{algo: pod}) for the dimension $N$ 
+with the mass matrix $\G$,
+and
+\begin{equation*}
+    \hat{q}_\text{P} := R_\rho(\Phi^\text{P}_N(\theta_\text{PDNN}))
+\end{equation*}
+be the realization of some neural network $\Phi^\text{P}_N$ with input dimension $p + q + 1$ and output dimension $N$,
+and an already fixed weight $\theta_\text{PDNN} \in \Theta(\Phi^\text{P}_N)$. And let similarily the approximate
+DOD-based parameter-to-solution map be defined as follows
+\begin{equation*}
+    \Gcal_\text{DOD+DNN}: \Theta \times \Theta' \times [0, T] \to \R^{N_h}; \quad (\mu, \nu, t) \mapsto 
+    \V_{\mu, t} \cdot \hat{q}_\text{D}(\mu, \nu, t),
+\end{equation*}
+where we let 
+\begin{equation*}
+    \V_{\mu, t} := \A \cdot \tilde{\V}_{\mu, t}(\theta_\text{DOD}),
+\end{equation*}
+for an a priori fixed parameter $\theta_\text{DOD} \in \Theta(\Phi_{\tilde{\V}})$ according to Definition 
+(\ref{def: DOD}) and the used POD matrix $\A \in \R^{N_h \times N_A}$, and
+\begin{equation*}
+    \hat{q}_\text{D} := R_\rho(\Phi_N(\theta_\text{DDNN}))
+\end{equation*}
+be the realization of some neural network $\Phi^\text{D}_N$ with input dimension $p + q + 1$ and output dimension $N$,
+and an already fixed weight $\theta_\text{DDNN} \in \Theta(\Phi^\text{D}_N)$.
+
+Moreover we assume for this section to have after reordering and with $N_\text{data} = N_{s_1} N_{s_2} N_t$
+\begin{equation*}
+    \left\{ (\mu_j, \nu_j, t_j), u_j \right\}_{j=1}^{N_\text{data}} :=
+    \left\{(\mu_i, \nu_j, k \Delta t), u_h^{\mu_i, \nu_j, k \Delta t}\right\}_{(i, j, k)=(1, 1, 1)}^{(N_{s_1}, N_{s_2}, N_t)}
+    \subset \left( \Pcal_1 \times \Pcal_2 \times \Tcal \right) \times \R^{N_h}
+\end{equation*}
+a set of training data conforming to the label and feature notation in Definition (\ref{def: feature and label space}),
+where the labels have been sampled in accordance to Assumption (\ref{assumption sample}). 
+
+For both algorithms, the relative error can be given as
+\begin{equation} \label{eq: relative error}
+    \Ecal_\text{R} := \left( \int_{\Theta \times \Theta' \times [0, T]} \frac{\norm{\uht - \uhthat}}{\norm{\uht}} 
+    d(\mu, \nu, t)\right)^{1/2},
+\end{equation}
+where $\uhthat \in \R^{N_h}$ can be given either with regard to the approximate parameter-to-solution map
+of the DOD+DNN or the POD+DNN.
+
+
+\begin{theorem}[POD+DNN Decomposition] \label{theo: relative error POD+DNN}
+    Define the preliminaries such as in the introduction to this Section (\ref{section: error decomposition}). 
+    Then under the Assumptions (\ref{assumption sample}) and 
+    (\ref{assumption parameter-to-solution map}), we have for the relative error of the POD+DNN
     
-    \begin{equation}
-        \mathcal{E}_R \leq \mathcal{E}_S + \mathcal{E}_{POD} + \mathcal{E}_{NN},
-    \end{equation}
+    \begin{equation*}
+        \mathcal{E}_R^\text{POD+DNN} \leq \mathcal{E}_\text{S} + \mathcal{E}_{\text{POD}} + \mathcal{E}_{\text{NN}},
+    \end{equation*}
     where 
     
     \begin{enumerate}
         \item The sampling error 
         \[
-            \mathcal{E}_S = \mathcal{E}_S\left(\mathcal{G}, (\mu_i, \nu_i, \tau_i)_{i = 1}^{N_{\text{data}}}, N\right)
+            \mathcal{E}_\text{S} = \mathcal{E}_\text{S}\left(\mathcal{G}, (\mu_i, \nu_i, t_i)_{i = 1}^{N_{\text{data}}}, N\right)
         \]
-        satisfies $\mathcal{E}_S \to 0$ as $N_s, N_t \to \infty$, with expectation 
+        satisfies $\mathcal{E}_\text{S} \to 0$ as $N_s, N_t \to \infty$, with expectation 
         \[
-            \E[\mathcal{E}_S] = \mathcal{O}(N_s^{-1/4} + N_t^{-1}).
+            \E[\mathcal{E}_\text{S}] = \mathcal{O}(N_s^{-1/4} + N_t^{-1}).
         \]
     
         \item The POD projection error 
         \[
-            \mathcal{E}_{\text{POD}} = \mathcal{E}_{\text{POD}}\left(\mathcal{G}, (\mu_i, \nu_i, \tau_i)_{i = 1}^{N_{\text{data}}}, N\right)
+            \mathcal{E}_{\text{POD}} = \mathcal{E}_{\text{POD}}
+            \left(\mathcal{G}, (\mu_i, \nu_i, t_i)_{i = 1}^{N_{\text{data}}}, N\right)
         \]
-        satisfies $\mathcal{E}_{\text{POD}} \to \mathcal{E}_{\text{POD}, \infty}$ almost surely as $N_s, N_t \to \infty$, where
+        satisfies $\mathcal{E}_{\text{POD}} \to \mathcal{E}_{\text{POD}, \infty}$ almost surely as 
+        $N_s, N_t \to \infty$, where
         \[
             \mathcal{E}_{\text{POD}, \infty} = \mathcal{E}_{\text{POD}, \infty}(\mathcal{G}, N)
         \]
-        is independent of the data snapshots and proportional to the linear KnW of the manifold $\mathcal{S} = \{ u(\mu, \nu, t) \, \vert \, (\mu, \nu, t) \in \Theta' \times \Tcal \}$, i.e. $d_N(\mathcal{S})$.
+        is independent of the data snapshots and proportional to the linear KnW of the manifold 
+        $\Scal = \{ \uht \, \vert \, (\mu, \nu, t) \in \Theta' \times [0, T] \}$.
     
         \item The neural network approximation error
         \[
-            \mathcal{E}_{\text{NN}} = \mathcal{E}_{\text{NN}}\left(\mathcal{G}, N, \hat{q}\right)
+            \mathcal{E}_{\text{NN}} = \mathcal{E}_{\text{NN}}\left(\mathcal{G}, N, \theta_{PDNN}, \Phi_N^\text{P}\right)
         \]
-        is arbitrarily small depending on the complexity and structure of the neural network $\hat{q}$.
+        is arbitrarily small depending on the size and choice of weights of the neural network $\Phi^\text{P}_N$.
     \end{enumerate} 
 
 \end{theorem}
 \begin{proof}
-    With the knowledge of $\norm{ \cdot }_{L^2_\omega}$ being a norm, we know it must be subject to the triangle inequality, thus
-    \begin{align}
-        \mathcal{E}_R &= \left( \int_{\Theta \times \Theta' \times \mathcal{T}} \frac{\norm{u(\mu, \nu, t) - V \hat{q}(\mu, \nu, t)}}{\norm{u(\mu, \nu, t)}} d(\mu, \nu, t) \right)^{1/2} \\ \label{eq: decomposed errors poddnn}
-        &\leq \norm{u(\mu, \nu, t) - V V^T u(\mu, \nu, t)}_{L_\omega^2} + \norm{V V^T u(\mu, \nu, t) - V \hat{q}(\mu, \nu, t)}_{L^2_\omega}.
-    \end{align}
-    Let $q(\mu, \nu, t) := V^T u(\mu, \nu, t)$ be a reduced solution according to the POD basis. Then the natural definition of the neural network approximation error is
-    \begin{equation}
-        \mathcal{E}_{NN} = \left( \int_{\Theta \times \Theta' \times \mathcal{T}} \frac{\norm{V q (\mu, \nu, t) - V \hat{q}(\mu, \nu, t)}^2}{\norm{u(\mu, \nu, t)}^2} d(\mu, \nu, t) \right)^{1/2}.
-    \end{equation}
-    This marks the second part in (\ref{eq: decomposed errors poddnn}). This is only dependent on the ability of the neural network to identifying the best choice on a given linear sub-manifold of the solution manifold. The first part is concerned with the error generated from the best \emph{possible} approximation of such a linear sub-manifold.
-    
-    For this, we can bound the norm $\norm{ \cdot }_{L^2_\omega} \leq m^{-1} \norm{ \cdot }$, where $m > 0$ is the constant stemming from Assumption (\ref{assumption parameter-to-solution map}). Further we remind ourselves of the definition of the discrete correlation matrix $K = \vert \Theta \times \Theta \times \mathcal{T} \vert N_{data}^{-1} U U^T$ and its eigenvalues $\sigma_k$ in (\ref{def: POD}). Using $\sqrt{a + b} \leq \sqrt{a} + \sqrt{b}$ for all $a,b \geq 0$, we get
-    \begin{align*}
-        &\norm{u(\mu, \nu, t) - V V^T u(\mu, \nu, t)}_{L^2_\omega} \\
-        &\leq m^{-1} \left( \int_{\Theta \times \Theta' \times \mathcal{T}} \norm{u(\mu, \nu, t) - V V^T u(\mu, \nu, t)}^2 d(\mu, \nu, t) \right)^{1/2} \\
-        &\leq m^{-1} \left( \int_{\Theta \times \Theta' \times \mathcal{T}} \norm{u(\mu, \nu, t) - V V^T u(\mu, \nu, t)}^2 d(\mu, \nu, t) - \sum_{k > N} \sigma_k^2  + \sum_{k > N} \sigma_k^2 \right)^{1/2} \\
-        &\leq m^{-1} \left( \, \bigg\vert \, \int_{\Theta \times \Theta' \times \mathcal{T}} \norm{u(\mu, \nu, t) - V V^T u(\mu, \nu, t)}^2 d(\mu, \nu, t) - \sum_{k > N} \sigma_k^2 \, \bigg\vert + \sum_{k > N} \sigma_k^2 \right)^{1/2} \\
-        &\leq \underbrace{m^{-1} \, \bigg\vert \, \int_{\Theta \times \Theta' \times \mathcal{T}} \norm{u(\mu, \nu, t) - V V^T u(\mu, \nu, t)}^2 d(\mu, \nu, t) - \sum_{k > N} \sigma_k^2 \, \bigg\vert^{1/2}}_{=: \mathcal{E}_S} + \underbrace{m^{-1} \sqrt{\sum_{k > N} \sigma_k^2}}_{=: \mathcal{E}_{POD}}. \\
-    \end{align*}
-    This concludes the estimate up to the facts about the convergence of the errors. Recalling (\ref{prop: eigenvalues and optimal projection under sampling}), we can rewrite the sampling error as follows
-    \begin{multline*}
-        \mathcal{E}_S = m^{-1} 
-        \bigg| \int_{\Theta \times \Theta' \times \mathcal{T}} 
-        \norm{u(\mu, \nu, t) - V V^T u(\mu, \nu, t)}^2 \, d(\mu, \nu, t) - \\
-        \frac{|\Theta \times \Theta' \times \mathcal{T}|}{N_{data}} 
-        \sum_{j=1}^{N_{data}} \norm{u_j - V V^T u_j}^2 \bigg|^{1/2}
-    \end{multline*}
-    Furthermore, we define using the compactness postulated in Assumption (\ref{assumption sample}) and the boundedness in Assumption (\ref{assumption parameter-to-solution map}), the $L^2$-error map via
+    Let 
     \begin{equation*}
-        f(\mu, \nu, t) := \norm{u(\mu, \nu, t) - V V^T u(\mu, \nu, t)}^2 \leq M^2 \norm{I - V V^T}^2 < \infty,
+        \norm{\cdot}_{L^2_\omega} := \left(\int_{\Theta \times \Theta \times [0, T]} \frac{\norm{\cdot}^2}{\norm{\uht}^2} 
+        d(\mu, \nu, t) \right)^{1/2},
     \end{equation*}
-    where we justify neglecting the dependence on $u$ in the mapping, since $\mathcal{G}(\mu, \nu, t)$ is assumed to be known and can be projected onto the $N_h$-dimensional solution manifold. Thus with $f \in L^2(\Theta \times \Theta' \times \mathcal{T})$, we know that by Proposition (\ref{prop: order of convergence for sample}), $\E[\mathcal{E}_S] \leq \mathcal{O}(N_s^{-1/4} + N_t^{-1/2})$.
+    define a map $\norm{\cdot}_{L^2_\omega}: L^2(\Theta \times \Theta' \times [0, T]; \R^{N_h}) \to \R^+$. Then this is
+    a norm. We coarsely proof this, by remarking the inheritance of the triangle inequality from the $\norm{\cdot}$ under 
+    the usage of the Minkowski inequality, i.e. for arbitrary $v, w \in L^2(\Theta \times \Theta' \times [0, T]; \R^{N_h})$
+    \begin{align*}
+        \norm{v + w}_{L^2_\omega}^2 &= \int_{\Theta \times \Theta' \times [0, T]} 
+        \frac{\norm{v(\mu, \nu, t) + w(\mu, \nu, t)}^2}{\norm{\uht}^2}
+        d(\mu, \nu, t) \\
+        &\leq  \int_{\Theta \times \Theta' \times [0, T]} 
+        \frac{\norm{v(\mu, \nu, t)}^2 + \norm{w(\mu, \nu, t)}^2}{\norm{\uht}^2}
+        d(\mu, \nu, t) = \norm{v}_{L^2_\omega}^2 + \norm{w}_{L^2_\omega}^2,
+    \end{align*}
+    and the absolut homogeneity from simple qualities of the integral. Finally let
+    $\norm{v}_{L^2_\omega} = 0$ for some $v \in L^2(\Theta \times \Theta' \times [0, T])$, then assuming $v \neq 0$ 
+    yields with Assumption (\ref{assumption parameter-to-solution map})
+    \begin{equation*}
+        \norm{v}_{L^2_\omega}^2 \geq  m^{-1} \int_{\Theta \times \Theta' \times [0, T]} \norm{v(\mu, \nu, t)} d(\mu, \nu, t) 
+        > 0,
+    \end{equation*}
+    hence reaching a contradiction.
+    With the knowledge of $\norm{ \cdot }_{L^2_\omega}$ being a norm, we know it must be subject to the 
+    triangle inequality, thus
+    \begin{align}
+        \mathcal{E}_\text{R} &= \left( \int_{\Theta \times \Theta' \times \mathcal{T}} 
+        \frac{\norm{\uht - \A \hat{q}_\text{P}(\mu, \nu, t)}}{\norm{\uht}} d(\mu, \nu, t) \right)^{1/2} \\ 
+        \label{eq: decomposed errors poddnn}
+        &\leq \norm{\uht - \A \A^T \G \uht}_{L_\omega^2} + \norm{\A \A^T \G \uht - 
+        \A \hat{q}_\text{P}(\mu, \nu, t)}_{L^2_\omega}.
+    \end{align}
+    Let $q_A(\mu, \nu, t) := \A^T \G \uht$ be a reduced solution according to the POD basis. 
+    Then the natural definition of the neural network approximation error is
+    \begin{equation}
+        \mathcal{E}_{\text{NN}} = \left( \int_{\Theta \times \Theta' \times \mathcal{T}} \frac{\norm{\A q_A(\mu, \nu, t) - 
+        \A \hat{q}(\mu, \nu, t)}^2}{\norm{\uht}^2} d(\mu, \nu, t) \right)^{1/2}.
+    \end{equation}
+    This marks the second part in (\ref{eq: decomposed errors poddnn}). This is only dependent on the ability of 
+    the neural network to identifying the best choice on a given linear sub-manifold of the solution manifold. 
+    The first part is concerned with the error generated from the best \emph{possible} approximation of such a 
+    linear sub-manifold.
     
-    By the strong law of large numbers, we can thus conclude, that $\mathcal{E}_S \to 0$ almost surely, as $N_t, N_s \to \infty$, and further by (\ref{prop: existence and convergence to sigma infty}), we have that $\mathcal{E}_{POD} \to \mathcal{E}_{POD, \infty}$ as $N_t, N_s \to \infty$, where
+    For this, we can bound the norm $\norm{ \cdot }_{L^2_\omega} \leq m^{-1} \norm{ \cdot }$, 
+    where $m > 0$ is the constant stemming from Assumption (\ref{assumption parameter-to-solution map}). 
+    Further we remind ourselves of the definition of the discrete correlation matrix 
+    $K = \vert \Theta \times \Theta \times \mathcal{T} \vert N_{data}^{-1} U \G U^T$ and its eigenvalues 
+    $\sigma_k^2$ in (\ref{def: POD}). Using $\sqrt{a + b} \leq \sqrt{a} + \sqrt{b}$ for all $a,b \geq 0$, we get
+    \begin{align*}
+        &\norm{\uht - \A \A^T \G \uht}_{L^2_\omega} \\
+        &\leq m^{-1} \left( \int_{\Theta \times \Theta' \times \mathcal{T}} \norm{\uht - \A \A^T \G \uht}^2 
+        d(\mu, \nu, t) \right)^{1/2} \\
+        &\leq m^{-1} \left( \int_{\Theta \times \Theta' \times \mathcal{T}} \norm{\uht - \A \A^T \G \uht}^2 
+        d(\mu, \nu, t) - \sum_{k > N} \sigma_k^2  + \sum_{k > N} \sigma_k^2 \right)^{1/2} \\
+        &\leq m^{-1} \left( \, \bigg\vert \, \int_{\Theta \times \Theta' \times \mathcal{T}} \norm{\uht - 
+        \A \A^T \G \uht}^2 d(\mu, \nu, t) - \sum_{k > N} \sigma_k^2 \, \bigg\vert + \sum_{k > N} \sigma_k^2 \right)^{1/2} \\
+        &\leq \underbrace{m^{-1} \, \bigg\vert \, \int_{\Theta \times \Theta' \times \mathcal{T}} \norm{\uht - 
+        \A \A^T \G \uht}^2 d(\mu, \nu, t) - \sum_{k > N} \sigma_k^2 \, \bigg\vert^{1/2}}_{
+            =: \mathcal{E}_\text{S}} + \underbrace{m^{-1} \sqrt{\sum_{k > N} \sigma_k^2}}_{=: \mathcal{E}_{\text{POD}}}. \\
+    \end{align*}
+    This concludes the estimate up to the facts about the convergence of the errors. Recalling
+    Proposition (\ref{prop: eigenvalues and optimal projection under sampling}), 
+    we can rewrite the sampling error as follows
+    \begin{equation*}
+        \mathcal{E}_\text{S} = m^{-1} 
+        \bigg| \int_{\Theta \times \Theta' \times \mathcal{T}} 
+        \norm{\uht - \A \A^T \G \uht}^2 \, d(\mu, \nu, t) \\
+        - \frac{|\Theta \times \Theta' \times \mathcal{T}|}{N_{data}} 
+        \sum_{j=1}^{N_{data}} \norm{u_j - \A \A^T \G u_j}^2 \bigg|^{1/2}
+    \end{equation*}
+    Furthermore, we define, using the compactness postulated in Assumption (\ref{assumption sample}) and 
+    the boundedness in Assumption (\ref{assumption parameter-to-solution map}), the $L^2$-error map via
+    \begin{equation*}
+        f(\mu, \nu, t) := \norm{\uht - \A \A^T \G \uht}^2 \leq M^2 \opnorm{I_{N_h} - \A \A^T \G}^2 = 
+        M^2 \opnorm{I_{N_A} - \A} < \infty.
+    \end{equation*}
+    Thus with $f \in L^2(\Theta \times \Theta' \times \mathcal{T})$, we know that by Proposition 
+    (\ref{prop: order of convergence for sample}), $\E[\mathcal{E}_\text{S}] \leq \mathcal{O}(N_s^{-1/4} + N_t^{-1/2})$.
+    
+    By the strong law of large numbers, we can thus conclude, that $\mathcal{E}_\text{S} \to 0$ almost surely, 
+    as $N_t, N_s \to \infty$, and further by Proposition (\ref{prop: existence and convergence to sigma infty}), 
+    we have that $\mathcal{E}_{POD} \to \mathcal{E}_{POD, \infty}$ as $N_t, N_s \to \infty$, where
     \begin{equation} \label{eq: pod eigenvalues cts case}
         \mathcal{E}_{POD, \infty} = m^{-1} \sqrt{\sum_{k > N} \sigma_{k, \infty}^2}.
     \end{equation}
 \end{proof}
 
+Even optimistically, the upper error bound decomposition of Theorem (\ref{theo: relative error POD+DNN}) suggest
+for an ever-increasing number of data points $N_s, N_t \to \infty$, and an ever-increasing complexity
+for the Deep Neural Network underlying the realization of $\hat{q}_\text{P}$, an error of order of the 
+Kolmogorov $N$-width of the solution manifold, since the DNN cannot overcome the unavoidable loss to
+even the perfect POD choice. Intuitively, the specific proportionality constant will be larger if the 
+quotient between "small" regions of the solution space to the "large" regions of the solution space is big.
+
+This observation can be reformulated into the following theorem.
+
 \begin{theorem} \label{theo: lower bound on relative error}
     Under the assumptions of Theorem (\ref{theo: relative error POD+DNN}), we have that 
     \begin{equation*}
-        \Ecal_R \geq \frac{m}{M} \Ecal_{\text{DOD}, \infty},
+        \Ecal_\text{R}^\text{POD+DNN} \geq \frac{m}{M} \Ecal_{\text{POD}, \infty},
     \end{equation*}
-    where $\Ecal_{\text{DOD}, \infty} := m^{-1} \sqrt{\sum_{k > N} \sigma_{k, \infty}^2}$.
+    where $\Ecal_{\text{POD}, \infty} := m^{-1} \sqrt{\sum_{k > N} \sigma_{k, \infty}^2}$.
 \end{theorem}
 \begin{proof}
     \notdone{Proof this}
 \end{proof}
 
-\section{Relative Error of DOD+DNNs}
 
-\almostdone{Extrapolate to DOD+DNN}
+We have now discussed some preliminary relative error results for the POD+DNN neural networks for given near-optimal
+neural network weights. As a next step, one can do the same for the DOD+DNN neural networks. First, we need
+an auxilary statement, that precidents the similarity of definition of the DOD projection error to the POD projection
+error, since the former depends on architecture. 
 
-\begin{lemma}[Existence of the DOD-Module] \label{lemma: DOD Existence}
+The key idea here being, that one can employ Horniks Theorem (or equivalently Yarotsky for a more sophisticated
+analysis including complexity) to ensure existence of a neural network architecture and corresponding neural 
+network of such architecture, such that the objective functional 
+\begin{equation*}
+    (\mu, t, \V) \mapsto \int_{\Theta'} \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht} d (\nu),
+\end{equation*}
+is close to the "perfect one". Under triangle equality for the distance to the "perfect one", this can be seperated
+into the mistake, which is arbitrarily small, and the total size of the perfect objective functional, that is nothing
+but the Kolmogorov $N$-width under fixed $(\mu, t)$. And that KnW decays exponentially fast by Assumption 
+(\ref{assumption KnW decay}), in contrast to the general one. 
 
-    \notdone{Rework the proof and statement according to the setting
-    }
-    
-    Let $\Theta \subset \R^p$ and $\Theta' \subset \R^{q}$ be two compact sets. Let
+The source for the following lemma is generally \cite{franco2024}.
+
+
+
+\begin{lemma}[Optimal Deep Orthogonal Decomposition] \label{lemma: DOD Existence}
+    For each geometric parameter $\mu \in \Theta$, let $\Scal_{\mu, t} :=
+    \{ \uht \}_{\nu \in \Theta'} \subset \mathcal{G}(\Theta \times \Theta' \times [0, T])$ be the 
+    $(\mu, t)$-invariant solution submanifold. 
+    Then, under the Assumptions (\ref{assumption sample}) and (\ref{assumption parameter-to-solution map}), 
+    for every $\varepsilon > 0$ there are weights $\theta_\text{DOD}^* \in \Theta(\Phi_{\tilde{\V}})$ 
+    for a DOD of output dimension $N_h \times N$ accoring to Definition (\ref{def: DOD}) such that
     \begin{equation*}
-        \mathcal{F}: \Theta \times \Theta' \to \R^{N_h}; \,  (\bs{\mu, \nu}) \mapsto \bs{u_{\mu, \nu}}
+        \int_{\Theta \times \Theta' \times [0, T]} 
+        \norm{\uht - \V_{\mu, t}(\theta_\text{DOD}^*) \V_{\mu, t}(\theta_\text{DOD}^*) \G \uht} d(\mu, \nu, t)
+        < \varepsilon + \int_{\Theta \times [0, T]} d_N(\mathcal{S}_{\mu, t}) d(\mu, t).
     \end{equation*}
-    be continuous. For each $\bs{\mu} \in \Theta$, let $\mathcal{S}_{\bs{\mu}} := \{ \bs{u_{\mu, \nu}} \}_{\bs{\nu} \in \Theta'} \subset \mathcal{F}(\Theta \times \Theta')$ be the $\bs{\mu}$-submanifold in the image of $\mathcal{F}$. Let $\G$ be the Gram matrix associated with an inner product in $\R^{N_h}$, and let $\norm{\cdot}$ be its corresponding norm. Then, for every $\varepsilon > 0$ there is a ReLU matrix-valued deep neural network $\bs{V}: \R^p \to \R^{N_h \times n}$ such that
-    \begin{equation*}
-        \E_{\bs{\mu, \nu}} \norm{\bs{u_{\mu, \nu}} - \bs{V_{\mu} V_{\mu}}^T \G \bs{u_{\mu, \nu}}} < \varepsilon + \E_{\bs{\mu}}[d_n(\mathcal{S}_{\bs{\mu}})]
-    \end{equation*}
-    where $\bs{V_{\mu}} := \bs{V}(\bs{\mu})$.
 \end{lemma}
 \begin{proof}
-    Let $n \in \N$ be fixed. Assuming we have proven, that $\vert \V_{ij} \vert \leq 1$ w.l.o.g., we define $J: \Theta \times [-1, 1]^{N_h \times n} \to \R$ as 
-    \begin{equation}
-        J(\bs{\mu}, \V) := \E_{\bs{\nu}}\norm{\bs{u_{\mu, \nu}} - \V \V^T \G \bs{u_{\mu, \nu}}},
-    \end{equation}
-    and let some $\varepsilon > 0$. Then the continuity of $J$ implies uniform continuity by the compactness of its pre-image, i.e. there is $\delta > 0$ such that
+    \notdone{fix proof}
+    Let $N, N_A, N_h \in \N$ be fixed by Assumption (\ref{assumption: dimension hierarchy}). 
+    Assuming we have $\mu \in \Theta, t \in [0, T]$ and $\V = \A \tilde{\V} \in [0, 1]^{N_h \times N}$, with
+    $\A \in [0, 1]^{N_h \times N_A}$ being $\G$ orthonormal, and $\tilde{\V} \in [0, 1]^{N_A \times N}$, then 
+    we define $J: \Theta \times [0, T] \times [0, 1]^{N_h \times N} \to \R$ via
     \begin{equation*}
-        \vert \bs{\mu} - \bs{\mu'} \vert + \norm{\V - \V'}_{\infty} < \delta \implies \vert J(\bs{\mu}, \V) - J(\bs{\mu'}, \V') \vert < \varepsilon.
+        J(\mu, t, \V) := \int_{\Theta'} \norm{\uht - \V \V^T \G \uht} d(\nu),
+    \end{equation*}
+    and let some $\varepsilon > 0$ be fixed. 
+    Under Assumption (\ref{assumption parameter-to-solution map}), one can infer the Lipschitz continuity of $J$
+    by the Lipschitz continuity of $\Gcal$, i.e. let $\mu, \mu' \in \Theta$, $t, t' \in [0, T]$ 
+    and $\V = \A \tilde{\V}, \V' = \A \tilde{\V}' \in \R^{N_h \times N}$ such that for some $\delta > 0$
+    \begin{equation*}
+        \euknorm{\mu - \mu'} + \euknorm{t - t'} + \opnorm{\V - \V'} < \delta,
+    \end{equation*}
+    then we can calculate with $u_\text{pre-red}^{\mu, \nu, t} := \A^T \G \uht$ for each $\mu \in \Theta, \nu \in \Theta'$
+    and $t \in [0, T]$, and the reverse triangle inequality
+    \begin{align*}
+        \euknorm{J(\mu, t, \V) - J(\mu', t', \V')} &= \int_{\Theta'} \euknorm{\norm{\uht - \V \V^T \G \uht} - 
+        \norm{u_h^{\mu', \nu, t} - \V' (\V')^T \G u_h^{\mu', \nu, t}}} d(\nu) \\
+        &= \int_{\Theta'} \left\vert \, \euknorm{u_\text{pre-red}^{\mu, \nu, t} - \tilde{\V} 
+        \tilde{\V}^T u_\text{pre-red}^{\mu, \nu, t}} - 
+        \euknorm{u_\text{pre-red}^{\mu', \nu, t'} - \tilde{\V}' (\tilde{\V}')^T 
+        u_\text{pre-red}^{\mu', \nu, t'}} \, \right\vert d(\nu) \\
+        &\leq \int_{\Theta'} \left\vert \, u_\text{pre-red}^{\mu, \nu, t} - u_\text{pre-red}^{\mu', \nu, t'} \, \right\vert
+        + \left\vert \, \tilde{\V} \tilde{\V}^T u_\text{pre-red}^{\mu, \nu, t} - 
+        \tilde{\V}' (\tilde{\V}')^T 
+        u_\text{pre-red}^{\mu', \nu, t'} \, \right\vert d(\nu) \\
+        &< 2L \delta \vert \Theta' \vert + \int_{\Theta'} \left\vert \,
+        \tilde{\V}\tilde{\V}^T u_\text{pre-red}^{\mu, \nu, t} - \tilde{\V}' (\tilde{\V}')^T \left( u_\text{pre-red}^{\mu, \nu, t} + 
+        L \delta \right) \, \right\vert d(\nu) \\
+        &\leq L \delta \vert \Theta' \vert +  \vert \Theta' \vert  \cdot \opnorm{\tilde{\V}' (\tilde{\V}')^T}  
+        + L \delta \vert \Theta' \vert  \cdot \opnorm{\tilde{\V}' (\tilde{\V}')^T} \\
+        &< \delta \vert \Theta' \vert \left(1 + L + \delta L \right)
+    \end{align*}
+    Then the continuity of $J$ implies uniform continuity by the compactness 
+    of its pre-image, i.e. there is $\delta > 0$ such that
+    \begin{equation*}
+        \vert \bs{\mu} - \bs{\mu'} \vert + \norm{\V - \V'}_{\infty} < \delta \implies \vert J(\bs{\mu}, \V) - 
+        J(\bs{\mu'}, \V') \vert < \varepsilon.
     \end{equation*}
     Then there is a Borel measurable map $s: \Theta \to [-1, 1]^{N_h \times n}$ given by
     \begin{equation*}
         s: \bs{\mu} \mapsto \underset{{\V \in [-1, 1]^{N_h \times n}}}{\text{argmin}} J(\bs{\mu}, \V).
     \end{equation*}
-    This map is bounded (given by continuity of J and compactness of its image) and hence $s \in L^1(\Theta; \R^{N_h \times n})$, i.e. $\norm{s}_{L^1(\Theta; \R^{N_h \times n})} := \int_{\Theta} \norm{s(\bs{\mu})}_{\infty} d \mu{(\bs{\mu})} < \infty$. 
-    This means that by Hornik's Theorem \cite{hornik1991nn} there is a deep ReLU neural network $\bs{V}_0: \Theta \to \R^{N_h \times n}$ such that $\E_{\bs{\mu}} \vert \bs{V}_0(\bs{\mu}) - s(\bs{\mu}) \vert < \delta$ for all $\delta > 0$. Now let $\rho$ be a entry-wise ReLU activation function and we consider a three-layered network $L: \R^{N_h \times n} \to \R^{N_h \times n}$ given by
+    This map is bounded (given by continuity of J and compactness of its image) and hence 
+    $s \in L^1(\Theta; \R^{N_h \times n})$, i.e. $\norm{s}_{L^1(\Theta; \R^{N_h \times n})} := 
+    \int_{\Theta} \norm{s(\bs{\mu})}_{\infty} d \mu{(\bs{\mu})} < \infty$. 
+    This means that by Hornik's Theorem \cite{hornik1991nn} there is a deep ReLU neural network 
+    $\bs{V}_0: \Theta \to \R^{N_h \times n}$ such that 
+    $\E_{\bs{\mu}} \vert \bs{V}_0(\bs{\mu}) - s(\bs{\mu}) \vert < \delta$ for all $\delta > 0$. 
+    Now let $\rho$ be a entry-wise ReLU activation function and we consider a three-layered network 
+    $L: \R^{N_h \times n} \to \R^{N_h \times n}$ given by
     \begin{equation*}
-        L(\bs{x}) := \bs{e} - \mathbb{I}_{N_h \times n} \rho(- \mathbb{I}_{N_h \times n} \rho(\mathbb{I}_{N_h \times n} \bs{x} + \bs{e}) + 2 \bs{e}),
+        L(\bs{x}) := \bs{e} - \mathbb{I}_{N_h \times n} 
+        \rho(- \mathbb{I}_{N_h \times n} \rho(\mathbb{I}_{N_h \times n} \bs{x} + \bs{e}) + 2 \bs{e}),
     \end{equation*}
-    where $\mathbb{I}_{N_h \times n}$ is the identity tensor on $\R^{N_h \times n}$, and $\bs{e}$ is a $N_h \times n$ matrix with ones as entries. Thus for each entry $x_{i,j}$ of $\bs{x}$, we have $L(x_{i, j}) = 1 - \rho(2 - \rho(x_{i,j} + 1)) \in [-1, 1]$. Thus, since $L$ is 1-Lipschitz and $L$ only effects values outside $[-1, 1]$, and hence $L \circ s = s$, we have for $\bs{V(\mu)} := L \circ \bs{V}_0 (\bs{\mu})$
+    where $\mathbb{I}_{N_h \times n}$ is the identity tensor on $\R^{N_h \times n}$, and 
+    $\bs{e}$ is a $N_h \times n$ matrix with ones as entries. Thus for each entry $x_{i,j}$ of $\bs{x}$, 
+    we have $L(x_{i, j}) = 1 - \rho(2 - \rho(x_{i,j} + 1)) \in [-1, 1]$. 
+    Thus, since $L$ is 1-Lipschitz and $L$ only effects values outside $[-1, 1]$, 
+    and hence $L \circ s = s$, we have for $\bs{V(\mu)} := L \circ \bs{V}_0 (\bs{\mu})$
     \begin{equation*}
-        \E \vert \bs{V(\mu)} - s(\bs{\mu}) \vert = \E \vert L \circ \bs{V}_0(\bs{\mu}) - L \circ s(\bs{\mu}) \vert \leq \E \vert \bs{V}_0(\bs{\mu}) - s(\bs{\mu}) \vert < \delta.
+        \E \vert \bs{V(\mu)} - s(\bs{\mu}) \vert = \E \vert L \circ \bs{V}_0(\bs{\mu}) - 
+        L \circ s(\bs{\mu}) \vert \leq \E \vert \bs{V}_0(\bs{\mu}) - s(\bs{\mu}) \vert < \delta.
     \end{equation*}
-    With this we can take $\bs{V(\mu)}$ to be in the pre-image of $J$ and therefore conforming to its uniform continuity, i.e. take $\varepsilon > 0$, s.t.
+    With this we can take $\bs{V(\mu)}$ to be in the pre-image of $J$ and therefore conforming to its 
+    uniform continuity, i.e. take $\varepsilon > 0$, s.t.
     \begin{equation*}
         \vert J(\bs{\mu}, s(\bs{\mu})) - J(\bs{\mu}, \bs{V}(\bs{\mu})) \vert < \varepsilon.
     \end{equation*}
-    In total we calculate with $\E_{\bs{\mu, \nu}} \norm{\bs{u_{\mu, \nu}} - \bs{V_{\mu} V_{\mu}}^T \G \bs{u_{\mu, \nu}}} = \E_{\bs{\mu}}[J(\bs{\mu}, \bs{V}(\bs{\mu})]$,
+    In total we calculate with $\E_{\bs{\mu, \nu}} \norm{\bs{u_{\mu, \nu}} - 
+    \bs{V_{\mu} V_{\mu}}^T \G \bs{u_{\mu, \nu}}} = \E_{\bs{\mu}}[J(\bs{\mu}, \bs{V}(\bs{\mu})]$,
     \begin{align*}
-        \E_{\bs{\mu, \nu}} \norm{\bs{u_{\mu, \nu}} - \bs{V_{\mu} V_{\mu}}^T \G \bs{u_{\mu, \nu}}} &\leq \E_{\bs{\mu}}[J(\bs{\mu}, \bs{V}(\bs{\mu}))- J(\bs{\mu}, s(\bs{\mu}))] + \E_{\bs{\mu}}[J(\bs{\mu}, s(\bs{\mu}))] \\
+        \E_{\bs{\mu, \nu}} \norm{\bs{u_{\mu, \nu}} - \bs{V_{\mu} V_{\mu}}^T \G \bs{u_{\mu, \nu}}} &\leq 
+        \E_{\bs{\mu}}[J(\bs{\mu}, \bs{V}(\bs{\mu}))- J(\bs{\mu}, s(\bs{\mu}))] + 
+        \E_{\bs{\mu}}[J(\bs{\mu}, s(\bs{\mu}))] \\
         &< \varepsilon + \E_{\bs{\mu}} \left[ \min\limits_{\V} J(\bs{\mu}, \V) \right] \\
-        &\leq \varepsilon + \E_{\bs{\mu}} \left[ \min\limits_{\V} \sup\limits_{\bs{\nu}} \norm{\bs{u_{\mu, \nu}} - \V \V^T \G \bs{u_{\mu, \nu}}} \right]
+        &\leq \varepsilon + \E_{\bs{\mu}} 
+        \left[ \min\limits_{\V} \sup\limits_{\bs{\nu}} \norm{\bs{u_{\mu, \nu}} - \V \V^T \G \bs{u_{\mu, \nu}}} \right]
     \end{align*}
 \end{proof}
 
 \begin{theorem} \label{theo: relative error DOD+DNN}
-    Let $\mathcal{G}:(\mu, \nu, t) \mapsto u_h(\mu, \nu, t)$ for all $\mu \in \Theta, \nu \in \Theta'$ and $t \in \mathcal{T}$ be the parameter-to-solution map. Here we consider a general DOD+DNN structure, i.e. $\mathcal{G}(\mu, \nu, t) \approx V(\mu, t) \hat{q}(\mu, \nu, t)$, where $\hat{q}: \R^{p+q+1} \to \R^N$ is a neural network trained using data $(\mu_i, \nu_i, t_i)_{i=1}^{N_{data}}$ and $V: \R^{p+1} \to \R^{N_h \times N}$ is the DOD neural network, as described in (\ref{subsec: DOD+DNN}). Then under the Assumptions (\ref{assumption sample}) and (\ref{assumption parameter-to-solution map}), we have
+    Define the preliminaries such as in the introduction to this Section (\ref{section: error decomposition}). 
+    Further set $\V_{\mu, t} := \V_{\mu, t}(\theta^*_\text{DOD})$ for the choice of weights $\theta_\text{DOD}^* \in
+    \Theta(\Phi_{\tilde{\V}})$ as in Lemma (\ref{lemma: DOD Existence}).
+    Then, under the Assumptions (\ref{assumption sample}) and 
+    (\ref{assumption parameter-to-solution map}), we have for the relative error of the DOD+DNN
     
     \begin{equation}
-        \mathcal{E}_R \leq \mathcal{E}_S + \mathcal{E}_{DOD} + \mathcal{E}_{NN},
+        \mathcal{E}^\text{DOD+DNN}_R \leq \mathcal{E}_\text{S} + \mathcal{E}_\text{DOD} + \mathcal{E}_\text{NN},
     \end{equation}
     where 
     
     \begin{enumerate}
         \item The sampling error 
         \[
-            \mathcal{E}_S = \mathcal{E}_S\left(\mathcal{G}, (\mu_i, \nu_i, \tau_i)_{i = 1}^{N_{\text{data}}}, N\right)
+            \mathcal{E}_\text{S} = \mathcal{E}_\text{S}\left(\mathcal{G}, (\mu_i, \nu_i, \tau_i)_{i = 1}^{N_{\text{data}}}, N\right)
         \]
-        satisfies $\mathcal{E}_S \to 0$ as $N_s, N_t \to \infty$, with expectation 
+        satisfies $\mathcal{E}_\text{S} \to 0$ as $N_s, N_t \to \infty$, with expectation 
         \[
-            \E[\mathcal{E}_S] = \mathcal{O}(N_s^{-1/4} + N_t^{-1}).
+            \E[\mathcal{E}_\text{S}] = \mathcal{O}(N_s^{-1/4} + N_t^{-1}).
         \]
     
         \item The DOD projection error 
         \[
-            \mathcal{E}_{\text{DOD}} = \mathcal{E}_{\text{DOD}}\left(\mathcal{G}, (\mu_i, \nu_i, \tau_i)_{i = 1}^{N_{\text{data}}}, N\right)
+            \mathcal{E}_{\text{DOD}} = \mathcal{E}_{\text{DOD}}\left(\mathcal{G}, 
+            (\mu_i, \nu_i, \tau_i)_{i = 1}^{N_{\text{data}}}, N\right)
         \]
-        satisfies $\mathcal{E}_{\text{DOD}} \to \mathcal{E}_{\text{DOD}, \infty}$ almost surely as $N_s, N_t \to \infty$, where
+        satisfies $\mathcal{E}_{\text{DOD}} \to \mathcal{E}_{\text{DOD}, \infty}$ 
+        almost surely as $N_s, N_t \to \infty$, where
         \[
             \mathcal{E}_{\text{DOD}, \infty} = \mathcal{E}_{\text{DOD}, \infty}(\mathcal{G}, N)
         \]
-        is independent of the data snapshots and arbitrarily close, with regards to the capabilities of the DOD neural network, 
-        to the expected linear KnW of the submanifold $\mathcal{S}_{\mu, t} = \{ u(\mu, \nu, t) \, \vert \, \nu \in \Theta' \}$ up to a constant, 
-        i.e. $\E_{\mu, t}[d_N(\mathcal{S}_{\mu, t})]$.
+        is independent of the data snapshots and arbitrarily close, with regards to the size 
+        of the DOD neural network, 
+        to the order of the averaged linear KnW of the solution submanifold 
+        $\mathcal{S}_{\mu, t} = \{ \uht \, \vert \, \nu \in \Theta' \}$.
     
         \item The neural network approximation error
         \[
             \mathcal{E}_{\text{NN}} = \mathcal{E}_{\text{NN}}\left(\mathcal{G}, N, \hat{q}\right)
         \]
-        satisfies $\Ecal_{\text{NN}} \to d_N(\mathcal{S}_{\mu})$ in expectation, as $N_s, N_t \to \infty$.
+        is arbitrarily small depending on the size and choice of weights of the neural network $\Phi_A$.
     \end{enumerate}
 
 \end{theorem}
 \begin{proof}
     
-    In the core this proof is the same as the one of Theorem (\ref{theo: relative error POD+DNN}), we will therefore only consider the parts in which they are not interchangeable; the use of the triangle inequality gives us the neural network error in the same way, with only the additional factor being dependent on the choice and sophistication of the DOD map, 
+    In its core, this proof inherits its structure and arguments from the one of Theorem 
+    (\ref{theo: relative error POD+DNN}), 
+    we will therefore only shorten the parts in which they are interchangeable. Let 
+    $\norm{\cdot}_{L^2_\omega}: L^2(\Theta \times \Theta' \times [0, T]; \R^{N_h}) \to \R^+$ be the norm as given before,
+    and define
+    \begin{equation*}
+        q_N(\mu, \nu, t) := \V_{\mu, t}^T \G \uht \in \R^N, 
+    \end{equation*}
+    as the reduced solution regarding the DOD projection.
+    Then we can apply the triangle inequality like before, to achieve 
+    \begin{equation*}
+        \Ecal_\text{R}^\text{DOD+DNN} \leq \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}_{L^2_\omega} + 
+        \norm{\V_{\mu, t} q_N(\mu, \nu, t) - \V_{\mu, t} \hat{q}_\text{D}(\mu, \nu, t)}_{L^2_\omega}.
+    \end{equation*}
+    In turn, from here we can already infer the error stemming from the latent dynamics identification under the 
+    neural network realization $\hat{q}_\text{D}$, i.e.
     \begin{equation}
-        \mathcal{E}_{NN} = \left( \int_{\Theta \times \Theta' \times \mathcal{T}} \frac{\norm{V(\mu, t) q (\mu, \nu, t) - V(\mu, t) \hat{q}(\mu, \nu, t)}^2}{\norm{u(\mu, \nu, t)}^2} d(\mu, \nu, t) \right)^{1/2}.
+        \mathcal{E}_{NN} = \left( \int_{\Theta \times \Theta' \times \mathcal{T}} 
+        \frac{\norm{\V_{\mu, t} q_N(\mu, \nu, t) - \V_{\mu, t} \hat{q}_\text{D}(\mu, \nu, t)}^2}{\norm{\uht}^2} 
+        d(\mu, \nu, t) \right)^{1/2}.
     \end{equation}
     
-    Moreover, we can extrapolate the same procedure of splitting the remaining term into the respective errors
+    Moreover, we can extrapolate the same procedure of splitting the remaining term into the respective errors, 
+    where we already assume for the fixed $N \in \N$, the "optimal" choice of weights $\theta_\text{DOD}^* \in
+    \Theta(\Phi_{\tilde{\V}})$ for the underlying DOD neural network in accordance to Lemma (\ref{lemma: DOD Existence})
     \begin{equation}
-        \norm{u(\mu, \nu, t) - V(\mu, t) V(\mu, t)^T u(\mu, \nu, t)}_{L^2_\omega} \leq \Ecal_S + \Ecal_{\text{DOD}},
+        \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}_{L^2_\omega} \leq \Ecal_\text{S} + \Ecal_{\text{DOD}},
     \end{equation}
     where
     \begin{multline*}
-        \Ecal_S = m^{-1} \, \bigg\vert \, \int_{\Theta \times \Theta' \times \mathcal{T}} \norm{u(\mu, \nu, t) - V(\mu, t) V(\mu, t)^T u(\mu, \nu, t)}^2 d(\mu, \nu, t) \\
-        - \frac{\vert \Theta \times \Theta' \times \Tcal \vert}{N_{data}} \sum_{i = 1}^{N_{s_1}} \sum_{j = 1}^{N_{s_2}} \sum_{k = 1}^{N_t} \norm{u(\mu_i, \nu_j, t_k) - V(\mu_i, t_k) V(\mu_i, t_k)^T u(\mu_i, \nu_j, t_k)}^2 \, \bigg\vert^{1/2}
+        \Ecal_S = m^{-1} \, \bigg\vert \, \int_{\Theta \times \Theta' \times \mathcal{T}} \norm{\uht - 
+        \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2 d(\mu, \nu, t) \\
+        - \frac{\vert \Theta \times \Theta' \times \Tcal \vert}{N_{data}} \sum_{i = 1}^{N_{s_1}} 
+        \sum_{j = 1}^{N_{s_2}} \sum_{k = 1}^{N_t} \norm{u_h^{\mu_i, \nu_j, k \Delta t} - 
+        \V_{\mu_i, k \Delta t} \V_{\mu_i, k \Delta t}^T \G u_h^{\mu_i, \nu_j, k \Delta t}}^2 \, \bigg\vert^{1/2}
     \end{multline*}
     and
     \begin{equation*}
         \Ecal_{\text{DOD}} = \frac{m^{-1} \vert \Theta \times \Theta' \times \Tcal \vert}{N_{data}} \, \bigg\vert \,  
         \sum_{i = 1}^{N_{s_1}} \sum_{j = 1}^{N_{s_2}} \sum_{k = 1}^{N_t} 
-        \norm{u(\mu_i, \nu_j, t_k) - V(\mu_i, t_k) V(\mu_i, t_k)^T u(\mu_i, \nu_j, t_k)}^2 \, \bigg\vert^{1/2}.
+        \norm{u_h^{\mu_i, \nu_j, k \Delta t} - \V_{\mu_i, k \Delta t} \V_{\mu_i, k \Delta t}^T \G u_h^{\mu_i, \nu_j, k \Delta t}}^2 \, \bigg\vert^{1/2}.
     \end{equation*}
-    This leaves us with the proof for the convergence statements. While $\Ecal_S \to 0$ as $N_s, N_t \to \infty$ can be shown in the same manner as it has been in aforementioned proof above, the DOD error is more tricky. 
+    This leaves us with the proof for the convergence statements. 
+    While $\Ecal_S \to 0$ as $N_s, N_t \to \infty$ can be shown in the same manner as it has been in the 
+    aforementioned proof above, the DOD error is more tricky. 
     
-    Using the triangle inequality again and combining it with the findings of Lemma (\ref{lemma: DOD Existence}) we get for any $\varepsilon > 0$ and a suitable amount of complexity of the ReLU neural network $V: \R^{p+1} \to \R^{N_h \times N}$
+    Using the triangle inequality again and combining it with the findings of Lemma 
+    (\ref{lemma: DOD Existence}) for the lemma-specific $\varepsilon > 0$ 
     \begin{align*}
-        \Ecal_{\text{DOD}} &\leq m^{-1} \bigg\vert \, \int_{\Theta \times \Theta' \times \Tcal} \norm{u(\mu, \nu, t) - V(\mu, t) V(\mu, t)^T u(\mu, \nu, t)}^2 d(\mu, \nu, t) \, \bigg\vert^{1/2} \\
-        &+ \Ecal_{\text{DOD}} -  m^{-1} \bigg\vert \,  \int_{\Theta \times \Theta' \times \Tcal} \norm{u(\mu, \nu, t) - V(\mu, t) V(\mu, t)^T u(\mu, \nu, t)}^2 d(\mu, \nu, t) \, \bigg\vert^{1/2} \\
-        \underset{N_s,\, N_t \to \infty}{\longrightarrow} &m^{-1} \bigg\vert \, \int_{\Theta \times \Theta' \times \Tcal} \norm{u(\mu, \nu, t) - V(\mu, t) V(\mu, t)^T u(\mu, \nu, t)}^2 d(\mu, \nu, t) \, \bigg\vert^{1/2} \\
-        &< m^{-1}\varepsilon + m^{-1}\int_{\Theta \times \Tcal} d_N(\mathcal{S}_{\mu, t}) d(\mu, t)
+        \Ecal_{\text{DOD}} &= m^{-1} \bigg\vert \, \int_{\Theta \times \Theta' \times \Tcal} 
+        \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2 d(\mu, \nu, t) \, \bigg\vert^{1/2} \\
+        &+ \Ecal_{\text{DOD}} -  m^{-1} \bigg\vert \,  \int_{\Theta \times \Theta' \times \Tcal} 
+        \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2 d(\mu, \nu, t) \, \bigg\vert^{1/2} \\
+        \underset{N_s,\, N_t \to \infty}{\longrightarrow} &\underbrace{m^{-1} \bigg\vert \, 
+        \int_{\Theta \times \Theta' \times \Tcal} \norm{\uht - 
+        \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2 d(\mu, \nu, t) \, \bigg\vert^{1/2}}_{=: \Ecal_{\text{DOD}, \infty}} \\
+        &< m^{-1}\varepsilon + m^{-1}\int_{\Theta \times \Tcal} d_N(\mathcal{S}_{\mu, t}) d(\mu, t),
     \end{align*}
-
-    
-\end{proof}
-
-\begin{lemma}[Projection Error] \label{lemma: optimal projection error}
-    Let $N_{s_2}$ be given under Assumption (\ref{assumption sample}), then for all $\varepsilon > 0$ there is a ReLU neural network
-    $V: \R^{p+1} \to \R^{N_h \times N}$, such that for $u_j := u(\mu, \nu_j, t)$ with given $\mu \in \Theta$ and $t \in \Tcal$
-    \begin{equation*}
-        \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \bigg\vert \, \frac{1}{N_{s_2}} \sum_{j=1}^{N_{s_2}} \norm{u_j - V(\mu, t) V(\mu, t)^T u_j}^2 \\
-        - \min\limits_{W \in \R^{N_h \times N}} \frac{1}{N_{s_2}} \sum_{j = 1}^{N_{s_2}} \norm{u_j - W W^T u_j}^2 \, \bigg\vert^{1/2} < \varepsilon.
-    \end{equation*}
-\end{lemma}
-\begin{proof}
-    The existence and identity of $V^*$ s.t. 
-    \begin{equation*}
-        V^* = \underset{W \in \R^{N_h \times N}}{\operatorname{argmin}} \sum_{j=1}^{N_{s_2}}
-        \norm{u_j - V^* (V^*)^T u_j}^2    
-    \end{equation*}
-    is given via the statement in Proposition (\ref{prop: eigenvalues and optimal projection under sampling}) with the POD basis.
-    Hence defining a norm via 
-    \begin{equation*}
-        \norm{(u_j)_{j=1}^{N_{s_2}}}_{train} := \bigg\vert \, \sum_{j=1}^{N_{s_2}} \norm{u_j}^2 \, \bigg\vert^{1/2}
-    \end{equation*}
-    gives us the following inequality firstly using the monotonicity of the square root and then using the triangle inequalities multiple times
-    \begin{align*}
-        & \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \bigg\vert \, \sum_{j=1}^{N_{s_2}} \norm{u_j - V(\mu, t) V(\mu, t)^T u_j}^2 
-        - \sum_{j = 1}^{N_{s_2}} \norm{u_j - V^* (V^*)^T u_j}^2 \, \bigg\vert^{1/2} \\
-        \leq& \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \bigg\vert \, \sum_{j = 1}^{N_{s_2}} \norm{V(\mu, t) V(\mu, t)^T u_j - V^* (V^*)^T u_j}^2 \, \bigg\vert^{1/2}, 
-    \end{align*}
-    then define $q_j := (V^*)^T u_j$ and $\hat{q}_j := V(\mu, t)^T u_j$ and their training vectors accordingly, i.e. $q := (q_j)_{j=1}^{N_{s_2}}, \hat{q} := (\hat{q}_j)_{j=1}^{N_{s_2}}$
-    \begin{align*}
-        \leq& \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{V(\mu, t) \hat{q} - V(\mu, t) q}_{train} + \norm{V(\mu, t) q - V^* q}_{train} \\
-        \leq& \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal}  \norm{V(\mu, t)}_\infty \, \norm{\hat{q} - q}_{train} + \norm{V(\mu, t) - V^*}_\infty \, \norm{q}_{train} \\
-        = & \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{V(\mu, t)}_\infty \, \norm{V(\mu, t)^T u - (V^*)^T u}_{train} + \norm{V(\mu, t) - V^*}_\infty \, \norm{(V^*)^T u}_{train} \\
-        \leq& \, N_{s_2}^{-1/2}  \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{V(\mu, t)}_\infty \, \norm{V(\mu, t) - V^*}_\infty \, \norm{u}_{train} + \norm{V(\mu, t) - V^*}_\infty \, \norm{V^*}_\infty \, \norm{u}_{train} \\
-        \leq& \, N_{s_2}^{-1/2}  \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{u}_{train} \left( \norm{V(\mu, t) - V^*}_\infty \, \left( \norm{V(\mu, t)}_\infty + 1 \right) \right) \\
-        \leq& \, 2 M \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{V(\mu, t) - V^*}_\infty,
-    \end{align*}
-    where we used $\norm{u}_{train} \leq \vert \, \sum_{j=1}^{N_{s_2}} M^2 \, \vert^{1/2} = N_{s_2}^{1/2} M$ and additionally $\norm{V(\mu, t)}_\infty = \norm{V^*}_\infty = 1$
-    by orthonormality in the last arguments.
-
-    \notdone{Do the Yarotski argument with the appropriate number of layers and weights.}
-
+    which can be arbitrarily improved for a more complex choice of the inner DOD module architecture. This dependency
+    on the complexity can be infered from Theorem (\ref{theo: yarotsky}), since the $L^\infty$ error correlates with the 
+    $\Hcal_h$ representation error by the compactness of the time-parameter space, that is given
+    by Assumption (\ref{assumption sample}).
 \end{proof}
 
 
-\section{Complexity Bounds for POD-DL-ROMs}
 
-\almostdone{Include discussed results with proof of Brivio et al.}
+
+
+\section{Upper Complexity Bounds}
+
+
+
+
+
 
 \begin{theorem} \label{theo: PAC bound for POD-DL-ROM}
-    Let $\mathcal{G}: (\mu, \nu, t) \mapsto u(\mu, \nu, t)$ for any $(\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal$ be the
+    Let $\mathcal{G}: (\mu, \nu, t) \mapsto \uht$ for any $(\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal$ be the
     parameter-to-solution map and let Assumption (\ref{assumption sample}) and (\ref{assumption parameter-to-solution map}) be true. Let $1  > \delta > 0$ and $\varepsilon > 0$.
     Now assume we can collect freely a sufficient amount of training data $N_{\text{data}} = N_{\text{data}}(\delta, \varepsilon)$ and put it into the
     correlation matrix $K$ as given in Definition (\ref{def: POD}) with $\sigma_k^2$ being its sorted eigenvalues. Now choose
@@ -283,7 +536,7 @@
         N = \operatorname{argmin} \left\{ j \in \N \, \bigg\vert \, \sum_{k > j} \sigma^2_k \leq \frac{m^2}{9} \varepsilon^2 \right\}.
     \end{equation*}
     Given the POD matrix $V \in \R^{N_h \times N}$ we now define the parameter-to-POD-coefficient map 
-    $\mathcal{Q}: (\mu, \nu, t) \mapsto q(\mu, \nu, t) :=  V^T u(\mu, \nu, t)$ for 
+    $\mathcal{Q}: (\mu, \nu, t) \mapsto q(\mu, \nu, t) :=  V^T \uht$ for 
     any $(\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal$. We assume that there exists $n > 0, \psi_* : \R^n \to \R^N, \psi_*' : \R^N \to \R^n$ that are respectively $s$-times and
     $s'$-times differentiable ( with $s >> s' \geq 2$), such that they enjoy the perfect embedding Assumption (\ref{assumption perfect embedding}), i.e. 
     \begin{equation*}
@@ -324,7 +577,7 @@
     \begin{equation} \label{eq:nn error for pod-dl-rom}
         \begin{aligned}
             \Ecal_{\text{NN}} &= \left( \int_{\Theta \times \Theta' \times \Tcal} 
-            \frac{\norm{V q(\mu, \nu, t) - V \hat{q}(\mu, \nu, t)}^2}{\norm{u(\mu, \nu, t)}^2}
+            \frac{\norm{V q(\mu, \nu, t) - V \hat{q}(\mu, \nu, t)}^2}{\norm{\uht}^2}
             \, d(\mu, \nu, t) \right)^{1/2} \\
             &\leq m^{-1} \left( \int_{\Theta \times \Theta' \times \Tcal} 
             \norm{V q(\mu, \nu, t) - V \hat{q}(\mu, \nu, t)}^2 \, d(\mu, \nu, t) \right)^{1/2} \\
@@ -403,13 +656,57 @@
     with higher probability than $1 - \delta$.
 \end{proof}
 
-\section{Complexity Bounds for DOD-DL-ROMs}
+
+
+
+\begin{lemma}[Projection Error] \label{lemma: optimal projection error}
+    Let $N_{s_2}$ be given under Assumption (\ref{assumption sample}), then for all $\varepsilon > 0$ there is a ReLU neural network
+    $V: \R^{p+1} \to \R^{N_h \times N}$, such that for $u_j := u(\mu, \nu_j, t)$ with given $\mu \in \Theta$ and $t \in \Tcal$
+    \begin{equation*}
+        \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \bigg\vert \, \frac{1}{N_{s_2}} \sum_{j=1}^{N_{s_2}} \norm{u_j - \V_{\mu, t} \V_{\mu, t}^T u_j}^2 \\
+        - \min\limits_{W \in \R^{N_h \times N}} \frac{1}{N_{s_2}} \sum_{j = 1}^{N_{s_2}} \norm{u_j - W W^T u_j}^2 \, \bigg\vert^{1/2} < \varepsilon.
+    \end{equation*}
+\end{lemma}
+\begin{proof}
+    The existence and identity of $V^*$ s.t. 
+    \begin{equation*}
+        V^* = \underset{W \in \R^{N_h \times N}}{\operatorname{argmin}} \sum_{j=1}^{N_{s_2}}
+        \norm{u_j - V^* (V^*)^T u_j}^2    
+    \end{equation*}
+    is given via the statement in Proposition (\ref{prop: eigenvalues and optimal projection under sampling}) with the POD basis.
+    Hence defining a norm via 
+    \begin{equation*}
+        \norm{(u_j)_{j=1}^{N_{s_2}}}_{train} := \bigg\vert \, \sum_{j=1}^{N_{s_2}} \norm{u_j}^2 \, \bigg\vert^{1/2}
+    \end{equation*}
+    gives us the following inequality firstly using the monotonicity of the square root and then using the triangle inequalities multiple times
+    \begin{align*}
+        & \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \bigg\vert \, \sum_{j=1}^{N_{s_2}} \norm{u_j - \V_{\mu, t} \V_{\mu, t}^T u_j}^2 
+        - \sum_{j = 1}^{N_{s_2}} \norm{u_j - V^* (V^*)^T u_j}^2 \, \bigg\vert^{1/2} \\
+        \leq& \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \bigg\vert \, \sum_{j = 1}^{N_{s_2}} \norm{\V_{\mu, t} \V_{\mu, t}^T u_j - V^* (V^*)^T u_j}^2 \, \bigg\vert^{1/2}, 
+    \end{align*}
+    then define $q_j := (V^*)^T u_j$ and $\hat{q}_j := \V_{\mu, t}^T u_j$ and their training vectors accordingly, i.e. $q := (q_j)_{j=1}^{N_{s_2}}, \hat{q} := (\hat{q}_j)_{j=1}^{N_{s_2}}$
+    \begin{align*}
+        \leq& \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{\V_{\mu, t} \hat{q} - \V_{\mu, t} q}_{train} + \norm{\V_{\mu, t} q - V^* q}_{train} \\
+        \leq& \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal}  \norm{\V_{\mu, t}}_\infty \, \norm{\hat{q} - q}_{train} + \norm{\V_{\mu, t} - V^*}_\infty \, \norm{q}_{train} \\
+        = & \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{\V_{\mu, t}}_\infty \, \norm{\V_{\mu, t}^T u - (V^*)^T u}_{train} + \norm{\V_{\mu, t} - V^*}_\infty \, \norm{(V^*)^T u}_{train} \\
+        \leq& \, N_{s_2}^{-1/2}  \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{\V_{\mu, t}}_\infty \, \norm{\V_{\mu, t} - V^*}_\infty \, \norm{u}_{train} + \norm{\V_{\mu, t} - V^*}_\infty \, \norm{V^*}_\infty \, \norm{u}_{train} \\
+        \leq& \, N_{s_2}^{-1/2}  \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{u}_{train} \left( \norm{\V_{\mu, t} - V^*}_\infty \, \left( \norm{\V_{\mu, t}}_\infty + 1 \right) \right) \\
+        \leq& \, 2 M \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{\V_{\mu, t} - V^*}_\infty,
+    \end{align*}
+    where we used $\norm{u}_{train} \leq \vert \, \sum_{j=1}^{N_{s_2}} M^2 \, \vert^{1/2} = N_{s_2}^{1/2} M$ and additionally $\norm{\V_{\mu, t}}_\infty = \norm{V^*}_\infty = 1$
+    by orthonormality in the last arguments.
+
+    \notdone{Do the Yarotski argument with the appropriate number of layers and weights.}
+
+\end{proof}
+
+
 
 \almostdone{Extrapolate to DOD-DL-ROM}
 
 
 \begin{theorem} \label{theo: PAC bound for DOD-DL-ROM}
-    Let $\mathcal{G}: (\mu, \nu, t) \mapsto u(\mu, \nu, t)$ for any $(\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal$ be the
+    Let $\mathcal{G}: (\mu, \nu, t) \mapsto \uht$ for any $(\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal$ be the
     parameter-to-solution map and let Assumption (\ref{assumption sample}) and (\ref{assumption parameter-to-solution map}) be true. 
     Let $1 > \delta > 0$ and $\varepsilon > 0$.
     Now assume we can collect freely a sufficient amount of training data $\Theta_{\text{data}}, \Theta'_{\text{data}}$ and 
@@ -426,7 +723,7 @@
     For each pair $(\mu, t) \in \Theta_{\text{data}} \times \Tcal_{\text{data}}$ given the respective POD matrix, so the 
     best possible projection given the data set (refer to (\ref{prop: eigenvalues and optimal projection under sampling})), 
     $V^*(\mu, t) \in \R^{N_h \times N_{\text{DOD}}}$ we now define the parameter-to-optimal-coefficient map 
-    $\mathcal{Q}: (\mu, \nu, t) \mapsto q(\mu, \nu, t) := V^*(\mu, t)^T u(\mu, \nu, t)$ for 
+    $\mathcal{Q}: (\mu, \nu, t) \mapsto q(\mu, \nu, t) := V^*(\mu, t)^T \uht$ for 
     any $(\mu, \nu, t) \in \Theta_{\text{data}} \times \Theta' \times \Tcal_{\text{data}}$. We assume that there exists 
     $n > 0, \Psi_* : \R^n \to \R^{N_{\text{DOD}}}, \Psi_*' : \R^{N_{\text{DOD}}} \to \R^n$ that are respectively $s$-times and
     $s'$-times differentiable ( with $s >> s' \geq 2$), such that they enjoy the perfect embedding 
@@ -474,10 +771,10 @@
     \begin{align*}
         \Ecal_{\text{DOD}} &= \frac{m^{-1} \vert \Theta \times \Theta' \times \Tcal \vert}{N_{data}^{1/2}} 
         \, \bigg\vert \, \sum_{i = 1}^{N_{s_1}} \sum_{j = 1}^{N_{s_2}} \sum_{k = 1}^{N_t} 
-        \norm{u(\mu_i, \nu_j, t_k) - V(\mu_i, t_k) V(\mu_i, t_k)^T u(\mu_i, \nu_j, t_k)}^2 \, \bigg\vert^{1/2} \\
+        \norm{u_h^{\mu_i, \nu_j, k \Delta t} - \V_{\mu_i, k \Delta t} \V_{\mu_i, k \Delta t}^T u_h^{\mu_i, \nu_j, k \Delta t}}^2 \, \bigg\vert^{1/2} \\
         &\leq m^{-1} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \, \bigg\vert \, 
         \frac{\vert \Theta \times \Theta' \times \Tcal \vert}{N_{s_2}}  \sum_{j = 1}^{N_{s_2}} 
-        \norm{u(\mu, \nu_j, t) - V(\mu, t) V(\mu, t)^T u(\mu, \nu_j, t)}^2 \, \bigg\vert^{1/2}, 
+        \norm{u(\mu, \nu_j, t) - \V_{\mu, t} \V_{\mu, t}^T u(\mu, \nu_j, t)}^2 \, \bigg\vert^{1/2}, 
     \end{align*}
     enabling us to use Proposition (\ref{prop: eigenvalues and optimal projection under sampling}) in order 
     to switch to the eigenvalues $\sigma(\mu, t)_k$ for $(\mu, t) \in \Theta_{\text{data}} \times \Tcal_{\text{data}}$
@@ -510,6 +807,10 @@
     \end{equation*}
     with probability greater than $1 - \delta$ concluding our proof.
 \end{proof}
+
+
+
+
 
 
 \section{Comparison between existing Techniques}

@@ -1210,7 +1210,7 @@ The general goal of all machine learning problems is to closely approximate that
     be some arbitrary function. 
     Define the \emph{masks of $\Acal_\Phi$} via
     \begin{equation*}
-        I_l := \{ (i, j) \, : \, [A_l]_{ij} = 1 \}, \quad J_l := \{i \, : \, [b_l]_i = 1\},
+        I_l := \{ (i, j) \, : \, [A_l]_{ij} \neq 0 \}, \quad J_l := \{i \, : \, [b_l]_i \neq 0 \},
     \end{equation*}
     for each layer $1 \leq l \leq L$. We further set the \emph{admissible weight space} as
     \begin{equation*}
@@ -1220,7 +1220,8 @@ The general goal of all machine learning problems is to closely approximate that
     \begin{equation*}
         \theta = \left( (\theta_{l, ij}^A)_{(i, j) \in I_l}, (\theta_{l, i}^b)_{i \in J_l} \right)_{l=1}^L.
     \end{equation*}
-    Then in each layer of $\Phi(\theta) = ((\hat A_1(\theta), \hat b_1(\theta)), \dots, (\hat A_L(\theta), \hat b_L(\theta)))$
+    Then in each layer of $\Phi(\theta) = 
+    ((\hat A_1(\theta), \hat b_1(\theta)), \dots, (\hat A_L(\theta), \hat b_L(\theta)))$
     the affine transformation can be uniquely retrieved via the lifting
     \begin{equation*}
         \hat A_l(\theta)_{ij} = 
