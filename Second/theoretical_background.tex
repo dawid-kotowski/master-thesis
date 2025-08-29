@@ -126,20 +126,19 @@ This of course only makes sense in light of the next definition.
     for any $f \in W^{s, p}(\Omega)$.
 \end{definition}
 
+Furthermore, a very important auxilary result will be the following theorem, translating Lipschitz continuity into
+Sobolev-regularity. This will allow us to employ the later introduced approximation theory for neural networks
+from the sole position of Lipschitz continuity.
 
-\begin{theorem}[Sobolev Embedding Theorem]
-    Let $m_1, m_2 \in \N_0$, $1 \leq p < \infty$ and $\alpha \in (0, 1)$. If we choose 
+\begin{theorem} \label{theo: lipschitz implies sobolev}
+    Let $f: \Omega \to \R$ be a bounded and $L$-Lipschitz map, then $f \in W^{1, \infty}(\Omega)$, the 
+    weak gradient of $f$ agrees almost everywhere with the classical gradient, and
     \begin{equation*}
-        m_1 - \frac{d}{p} = m_2 + \alpha,
+        \norm{D f(x)}_{L^{\infty}(\Omega)} \leq L.
     \end{equation*}
-    then the identity defines a continuous embedding
-    \begin{equation*}
-        W^{m_1, p}(\Omega) \hookrightarrow C^{m_2, \alpha}(\bar{\Omega}).
-    \end{equation*}
-    If even $m_1 - \frac{d}{p} > m_2 + \alpha$, then the embedding is compact.
 \end{theorem}
 \begin{proof}
-    See \cite[p. 10-13]{alt2016}.
+    See \cite[Theorem 4.1]{heinonen2005} and \cite[Remark 4.2]{heinonen2005}.
 \end{proof}
 
 

@@ -452,7 +452,7 @@ training data $\Pcal$, which is a huge advantage when compared to the direct POD
 
 
 
-\section{Data-driven Reduced Order Models}
+\section{Data-driven Reduced Order Models} \label{section: data-driven ROMs}
 
 
 
@@ -504,7 +504,7 @@ the general setting appears to be unclear.
 \begin{assumption}[Dimension Hierarchy] \label{assumption: dimension hierarchy}
     Let for all following data-driven Reduced Order Models, the following natural number hierarchy be fixed
     \begin{equation*}
-        n < N < N_A \ll N_h.
+        n < N' < N \ll N_A \ll N_h.
     \end{equation*}
     Note, that "$\ll$" is an unspecified relation, meaning to symbolize a "large" difference.
 \end{assumption}
@@ -546,7 +546,7 @@ Definition (\ref{def: neural network weights}) with the loss function
 
 
 
-\subsection{Proper Orthogonal Decomposition Deep Learning ROM}
+\subsection{Proper Orthogonal Decomposition Deep Learning ROM} \label{subsec: pod-dl-rom}
 
 
 
@@ -615,11 +615,14 @@ $\norm{\cdot}$, we may reduce the high dimensional loss function in its essence 
 However, this so far ignored the particular problem in sight; it ignores Assumption (\ref{assumption KnW decay}),
 which guarantees a significant reduction cost, when employing a $(\mu, t)$-independent projector.
 To circumvent this Kolmogorov $N$-width barrier for $N \ll N_h$, one can instead of using a POD for the choice of reduced basis,
-invoke a Neural Network based linear projector, that fits a basis superposition dependend on $\mu$ and $t$.
+invoke a Neural Network based linear projector, that fits a basis superposition dependend on $\mu$ and $t$,
+and can thus exhibit a further reduction to $N' < N$ under a similar value for the worst-case projection,
+i.e. the Kolmogorov $N'$-width.
 
 The following technically depicts a RB method. 
 \begin{definition}[Deep Orthogonal Decomposition] \label{def: DOD}
-    Collect a POD (according to Algorithm (\ref{algo: pod})) with $\G$
+    Recollect the dimensional hierarchy of Assumption (\ref{assumption: dimension hierarchy}).
+    Employ a POD (according to Algorithm (\ref{algo: pod})) with $\G$
     given as above using
     the stacked solution trajectories
     \begin{equation*}
@@ -627,9 +630,10 @@ The following technically depicts a RB method.
         u_h^{\mu_{N_{s_1}}, \nu_{N_{s_2}}}\right]^T \in \R^{N_h \times N_\text{data}},
     \end{equation*}
     with the solution trajectories of Definition (\ref{def: solution data}), resulting in the POD matrix 
-    $\A \in \R^{N_h \times N_A}$ for some $N_A \leq N_h$.
+    $\A \in \R^{N_h \times N_A}$.
     Now set up for the inner module of the Deep Orthogonal Decomposition a Neural Network architecture 
-    $\Phi_{\tilde{\V}}$ with input dimension $p + 1$ and output dimension $N_A \times N$ for some $N < N_A$ such that
+    $\Phi_{\tilde{\V}}$ with input dimension $p + 1$ and output dimension $N_A \times N'$
+    such that
     \begin{equation*}
         \Phi_{\tilde{\V}} = \text{ORTH} \circ \text{STACK} \circ (P((R_1 \odot s), \dots, (R_N \odot s)))(\mu, t),
     \end{equation*}
@@ -638,9 +642,9 @@ The following technically depicts a RB method.
         \item $s$ is a Deep Feed Forward Neural Network architecture with input dimension $p + 1$ and output dimension $l$,
         \item $R_1, \dots, R_N$ are a collection of Deep Feed Forward Neural Network architectures
         with input dimensions $l$ and output dimensions $N_A$,
-        \item $\text{STACK}: \R^{N_A \cdot N} \to \R^{N_A \times N}$ is a canonical stacking operator, 
-        \item $\text{ORTH}: \R^{N_A \times N} \to \R^{N_A \times N}$ is an orthonormalization unit, that orthonormalizes
-        any given matrix $W \in \R^{N_A \times N}$ into $\tilde{W} \in \R^{N_A \times N}$ such that 
+        \item $\text{STACK}: \R^{N_A \cdot N'} \to \R^{N_A \times N'}$ is a canonical stacking operator, 
+        \item $\text{ORTH}: \R^{N_A \times N'} \to \R^{N_A \times N'}$ is an orthonormalization unit, that orthonormalizes
+        any given matrix $W \in \R^{N_A \times N'}$ into $\tilde{W} \in \R^{N_A \times N'}$ such that 
         $\text{span}(W) = \text{span}(\tilde W)$. This is most often done using a QR decomposition \cite{golubvanloan2013}. 
     \end{enumerate}
     The realization of the network $\Phi_{\tilde{\V}}$ for some $\mu \in \Theta$, $t \in [0, T]$ and
@@ -657,14 +661,14 @@ The following technically depicts a RB method.
     $\theta_\text{DOD} \in \Theta(\Phi_{\tilde{\V}})$ is attained for some
     $\mu \in \Theta$ and $t \in [0, T]$ by
     \begin{equation} \label{eq: DOD}
-        \V_{\mu, t}(\theta_\text{DOD}) := \A \cdot \tilde{\V}_{\mu, t}(\theta_\text{DOD}) \in \R^{N_h \times N}.
+        \V_{\mu, t}(\theta_\text{DOD}) := \A \cdot \tilde{\V}_{\mu, t}(\theta_\text{DOD}) \in \R^{N_h \times N'}.
     \end{equation}
 \end{definition}
 
 
 Nonetheless this does not warrant a "good" DOD, just a defined one. 
-For this one needs to assert a qualitative loss function and some data, which we will get by pre-reduction
-in the same manner as before, even though in contrast $N_A > N$ in general, i.e.
+For this one needs to assert a qualitative loss function and some data, which we will collect by pre-reduction
+in the same manner as before, i.e.
 \begin{equation*}
     u_\text{pre-red}^{\mu, \nu, t} := \A^T \G \uht \in \R^{N_A} \qquad \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal.
 \end{equation*}
@@ -687,42 +691,38 @@ solution map in the underlying high fidelity Hilber space approximating the FOM 
 Equation (\ref{eq: fom solution identity}).
 
 In this paper, we propose two novel data-driven ROMs, based on the DOD, to find an approximate solution-to-parameter 
-map. These are the \emph{Deep Orthogonal Decomposition with Deep Neural Network} (DOD+DNN) and the
+map. These are the \emph{Deep Orthogonal Decomposition with Deep Feed-Forward Neural Network} (DOD+DFNN) and the
 \emph{Deep Orthogonal Decomposition based Deep Learning ROM} (DOD-DL-ROM). The former indeed symbolizes a general 
-approach hence including the latter, but, with some abuse of notation, we admit the DOD+DNN a naive direct
+approach hence including the latter, but, with some abuse of notation, we admit the DOD+DFNN a naive direct
 Deep Feed Forward architecture for the determination of the coefficient, while the DOD-DL-ROM is an adaptation
 of the DL-ROM architecture introduced in the header of the section.
 
-Let in general for the following $n < N \ll N_A \leq N_h$ be natural numbers.
+\subsubsection{DOD+DFNN} \label{subsec: DOD+DFNN}
 
-
-
-\subsubsection{DOD+DNN} \label{subsec: DOD+DNN}
-
-Let $\Phi_N := \Phi_N^\text{DF}$ 
+Let $\Phi_{N'} := \Phi_{N'}^\text{DF}$ 
 be some Deep Feed-Forward Neural Network architecture
-with input dimension $p+q+1$ and output dimension $N$, then the approximate parameter-to-solution map for
+with input dimension $p+q+1$ and output dimension $N'$, then the approximate parameter-to-solution map for
 a fixed weight $\theta = (\theta_\text{DOD}, \theta_\text{DF}) \in 
 \Theta(\Phi_{\tilde{\V}}) \times \Theta(\Phi_n^\text{DF})  $ according to 
 Definition (\ref{def: neural network weights}) can be given for each $(\mu, \nu, t) \in \Theta \times \Theta'
 \times [0, T]$ via
 \begin{equation} \label{eq: dod+dnn solution}
-    \uhthat = \V_{\mu, t}(\theta_\text{DOD}) \cdot R_\rho(\Phi_N(\theta_\text{DF}))(\mu, \nu, t) \in \R^{N_h}.
+    \uhthat = \V_{\mu, t}(\theta_\text{DOD}) \cdot R_\rho(\Phi_{N'}(\theta_\text{DF}))(\mu, \nu, t) \in \R^{N_h}.
 \end{equation}
 
 Subsequently the training is done in series and not in parallel, as the optimal DOD parameter $\theta^*_\text{DOD}$
 needs to be found first. Secondly, the $\G$-orthonormality of the DOD can be leveraged with
 \begin{equation*}
-    u_{\text{red}^2}^{\mu, \nu, t} := \V_{\mu, t}(\theta^*_\text{DOD})^T \G \uht \in \R^{N} 
+    u_{\text{red}^2}^{\mu, \nu, t} := \V_{\mu, t}(\theta^*_\text{DOD})^T \G \uht \in \R^{N'} 
     \qquad \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal,
 \end{equation*}
-to further reduce the training data and finally define the loss function for the DOD+DNN architecture
+to further reduce the training data and finally define the loss function for the DOD+DFNN architecture
 \begin{multline} \label{eq: loss dod+dnn}
-    \Lcal_\text{DOD+DNN}\left(R_\rho(\Phi_N(\theta_\text{DF})) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,k}, 
+    \Lcal_\text{DOD+DNN}\left(R_\rho(\Phi_{N'}(\theta_\text{DF})) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,k}, 
     \{u_{\text{red}^2}^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) \\
     = \frac{1}{N_\text{data}}\sum_{i=1}^{N_{s_1}} \sum_{j=1}^{N_{s_2}} 
     \sum_{k = 1}^{N_t} \, \euknorm{u_{\text{red}^2}^{\mu_i, \nu_j, k \Delta t} - 
-    R_\rho(\Phi_N(\theta_\text{DF}))(\mu_i, \nu_j, k \Delta t)}^2.
+    R_\rho(\Phi_{N'}(\theta_\text{DF}))(\mu_i, \nu_j, k \Delta t)}^2.
 \end{multline}
 
 This is a rather obvious extension of \cite{franco2024}, but works surprisingly well. 
@@ -732,22 +732,23 @@ It will be the basic benchmark to overcome for the following algorithms.
 
 
 
-\subsubsection{DOD-DL-ROM}
+\subsubsection{DOD-DL-ROM} \label{subsec: dod-dl-rom}
 
 
 
 
 
-Let $\Psi_N := f_N^\text{D}$ be a decoder architecture with input dimension $n$ and output dimension $N$ 
+Let $\Psi_{N'} := f_{N'}^\text{D}$ be a decoder architecture with input dimension $n$ and output dimension $N'$ 
 (and $\Psi'_n := f_n^\text{E}$ the corresponding encoder architecture), and $\Phi_n := \Phi_n^\text{DF}$
-be some Deep Feed-Forward Neural Network architecture with input dimension $p+q+1$ and output dimension $n$then the approximate parameter-to-solution map for
+be some Deep Feed-Forward Neural Network architecture with input dimension $p+q+1$ and output dimension $n$
+then the approximate parameter-to-solution map for
 a fixed weight $\theta = (\theta_\text{DOD}, \theta_\text{D}, \theta_\text{DF}) \in 
 \Theta(\Phi_{\tilde{\V}}) \times \Theta(f_N^\text{D}) \times \Theta(\Phi_n^\text{DF})$ according to 
 Definition (\ref{def: neural network weights}) can be given for each $(\mu, \nu, t) \in \Theta \times \Theta'
 \times [0, T]$ via
 \begin{equation} \label{eq: dod-dl-rom solution}
     \uhthat = \V_{\mu, t}(\theta_\text{DOD}) \cdot 
-    \left(R_\rho(\Psi_N(\theta_\text{D})) \circ R_\rho(\Phi_n(\theta_\text{DF}))\right) (t; \mu, \nu) \in \R^{N_h}
+    \left(R_\rho(\Psi_{N'}(\theta_\text{D})) \circ R_\rho(\Phi_n(\theta_\text{DF}))\right) (t; \mu, \nu) \in \R^{N_h}
 \end{equation}
 
 Same, as for the DOD+DNN, the training is done in series. One observes, that the training data can be again
@@ -758,16 +759,16 @@ reduced with
 \end{equation*}
 and then used to define the DOD-DL-ROM loss function utilizing the $\G$-orthonormality of the DOD, hence
 \begin{multline} \label{eq: loss function dod dl rom}
-    \Lcal_\text{DOD-DL-ROM}\left(R_\rho(P(\Psi_N \odot \Phi_n, \Psi'_n)(\theta)) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
+    \Lcal_\text{DOD-DL-ROM}\left(R_\rho(P(\Psi_{N'} \odot \Phi_n, \Psi'_n)(\theta)) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
     \{u_{\text{red}^2}^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) =  \\
         \frac{1}{N_\text{data}} \sum_{i=1}^{N_{s_1}} \sum_{j=1}^{N_{s_2}} 
         \sum_{k = 1}^{N_t} \, \bigg( \frac{\omega_h}{2} \, 
         \euknorm{u_{\text{red}^2}^{\mu_i, \nu_j, k \Delta t} - 
-        \left(R_\rho(\Psi_N(\theta_\text{D})) \circ R_\rho(\Phi_n(\theta_\text{DF}))\right) (\mu_i, \nu_j, k \Delta t)}^2 \\
+        \left(R_\rho(\Psi_{N'}(\theta_\text{D})) \circ R_\rho(\Phi_n(\theta_\text{DF}))\right) (\mu_i, \nu_j, k \Delta t)}^2 \\
         + \, \frac{1 - \omega_h}{2} \, \euknorm{R_\rho(\Psi'_n(\theta_\text{E}))(u_{\text{red}^2}^{\mu_i, \nu_j, k \Delta t}) 
         - R_\rho(\Phi_n^\text{DF}(\theta_\text{DF}))(\mu_i, \nu_j, k \Delta t)}^2 \bigg).
 \end{multline}
-Notice, that this reduction allows us to elect an algorithm, which uses only the $n$- and $N$-dimensional euklidian norm,
+Notice, that this reduction allows us to elect an algorithm, which uses only the $n$- and $N'$-dimensional euklidian norm,
 therefore enabling even less computational complexity for each training epoch, under the assumption of an already 
 optimized DOD.
 

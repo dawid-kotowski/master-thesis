@@ -125,3 +125,70 @@ Remark, that we will still employ a pre-reduction using the rPOD matrix $\A$ ste
 
 
 
+
+
+% Requires Hölder definition...
+
+Another interesting result is the famous Embedding Theorem, that may give the reader an intuition for
+the relation between Sobolev and Hölder spaces. We will not employ it in this thesis, however it 
+
+\begin{theorem}[Sobolev Embedding Theorem]
+    Let $m_1, m_2 \in \N_0$, $1 \leq p < \infty$ and $\alpha \in (0, 1)$. If we choose 
+    \begin{equation*}
+        m_1 - \frac{d}{p} = m_2 + \alpha,
+    \end{equation*}
+    then the identity defines a continuous embedding
+    \begin{equation*}
+        W^{m_1, p}(\Omega) \hookrightarrow C^{m_2, \alpha}(\bar{\Omega}).
+    \end{equation*}
+    If even $m_1 - \frac{d}{p} > m_2 + \alpha$, then the embedding is compact.
+\end{theorem}
+\begin{proof}
+    See \cite[p. 10-13]{alt2016}.
+\end{proof}
+
+
+
+% Unnecessary
+
+
+\begin{lemma}[Projection Error] \label{lemma: optimal projection error}
+    Let $N_{s_2}$ be given under Assumption (\ref{assumption sample}), then for all $\varepsilon > 0$ there is a ReLU neural network
+    $V: \R^{p+1} \to \R^{N_h \times N}$, such that for $u_j := u(\mu, \nu_j, t)$ with given $\mu \in \Theta$ and $t \in \Tcal$
+    \begin{equation*}
+        \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \bigg\vert \, \frac{1}{N_{s_2}} \sum_{j=1}^{N_{s_2}} \norm{u_j - \V_{\mu, t} \V_{\mu, t}^T u_j}^2 \\
+        - \min\limits_{W \in \R^{N_h \times N}} \frac{1}{N_{s_2}} \sum_{j = 1}^{N_{s_2}} \norm{u_j - W W^T u_j}^2 \, \bigg\vert^{1/2} < \varepsilon.
+    \end{equation*}
+\end{lemma}
+\begin{proof}
+    The existence and identity of $V^*$ s.t. 
+    \begin{equation*}
+        V^* = \underset{W \in \R^{N_h \times N}}{\operatorname{argmin}} \sum_{j=1}^{N_{s_2}}
+        \norm{u_j - V^* (V^*)^T u_j}^2    
+    \end{equation*}
+    is given via the statement in Proposition (\ref{prop: eigenvalues and optimal projection under sampling}) with the POD basis.
+    Hence defining a norm via 
+    \begin{equation*}
+        \norm{(u_j)_{j=1}^{N_{s_2}}}_{train} := \bigg\vert \, \sum_{j=1}^{N_{s_2}} \norm{u_j}^2 \, \bigg\vert^{1/2}
+    \end{equation*}
+    gives us the following inequality firstly using the monotonicity of the square root and then using the triangle inequalities multiple times
+    \begin{align*}
+        & \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \bigg\vert \, \sum_{j=1}^{N_{s_2}} \norm{u_j - \V_{\mu, t} \V_{\mu, t}^T u_j}^2 
+        - \sum_{j = 1}^{N_{s_2}} \norm{u_j - V^* (V^*)^T u_j}^2 \, \bigg\vert^{1/2} \\
+        \leq& \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \bigg\vert \, \sum_{j = 1}^{N_{s_2}} \norm{\V_{\mu, t} \V_{\mu, t}^T u_j - V^* (V^*)^T u_j}^2 \, \bigg\vert^{1/2}, 
+    \end{align*}
+    then define $q_j := (V^*)^T u_j$ and $\hat{q}_j := \V_{\mu, t}^T u_j$ and their training vectors accordingly, i.e. $q := (q_j)_{j=1}^{N_{s_2}}, \hat{q} := (\hat{q}_j)_{j=1}^{N_{s_2}}$
+    \begin{align*}
+        \leq& \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{\V_{\mu, t} \hat{q} - \V_{\mu, t} q}_{train} + \norm{\V_{\mu, t} q - V^* q}_{train} \\
+        \leq& \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal}  \norm{\V_{\mu, t}}_\infty \, \norm{\hat{q} - q}_{train} + \norm{\V_{\mu, t} - V^*}_\infty \, \norm{q}_{train} \\
+        = & \, N_{s_2}^{-1/2} \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{\V_{\mu, t}}_\infty \, \norm{\V_{\mu, t}^T u - (V^*)^T u}_{train} + \norm{\V_{\mu, t} - V^*}_\infty \, \norm{(V^*)^T u}_{train} \\
+        \leq& \, N_{s_2}^{-1/2}  \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{\V_{\mu, t}}_\infty \, \norm{\V_{\mu, t} - V^*}_\infty \, \norm{u}_{train} + \norm{\V_{\mu, t} - V^*}_\infty \, \norm{V^*}_\infty \, \norm{u}_{train} \\
+        \leq& \, N_{s_2}^{-1/2}  \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{u}_{train} \left( \norm{\V_{\mu, t} - V^*}_\infty \, \left( \norm{\V_{\mu, t}}_\infty + 1 \right) \right) \\
+        \leq& \, 2 M \sup\limits_{(\mu, t) \in \Theta \times \Tcal} \norm{\V_{\mu, t} - V^*}_\infty,
+    \end{align*}
+    where we used $\norm{u}_{train} \leq \vert \, \sum_{j=1}^{N_{s_2}} M^2 \, \vert^{1/2} = N_{s_2}^{1/2} M$ and additionally $\norm{\V_{\mu, t}}_\infty = \norm{V^*}_\infty = 1$
+    by orthonormality in the last arguments.
+
+    \notdone{Do the Yarotski argument with the appropriate number of layers and weights.}
+
+\end{proof}
