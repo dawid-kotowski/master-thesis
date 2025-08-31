@@ -192,3 +192,41 @@ the relation between Sobolev and Hölder spaces. We will not employ it in this t
     \notdone{Do the Yarotski argument with the appropriate number of layers and weights.}
 
 \end{proof}
+
+
+% copy for safety
+
+
+\begin{theorem} \label{theo: PAC bound for POD-DL-ROM}
+    Let $\mathcal{G}: (\mu, \nu, t) \mapsto \uht$ for any $(\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal$ be the
+    parameter-to-solution map and let Assumption (\ref{assumption sample}) and (\ref{assumption parameter-to-solution map}) be true. Let $1  > \delta > 0$ and $\varepsilon > 0$.
+    Now assume we can collect freely a sufficient amount of training data $N_{\text{data}} = N_{\text{data}}(\delta, \varepsilon)$ and put it into the
+    correlation matrix $K$ as given in Definition (\ref{def: POD}) with $\sigma_k^2$ being its sorted eigenvalues. Now choose
+    \begin{equation*}
+        N = \operatorname{argmin} \left\{ j \in \N \, \bigg\vert \, \sum_{k > j} \sigma^2_k \leq \frac{m^2}{9} \varepsilon^2 \right\}.
+    \end{equation*}
+    Given the POD matrix $V \in \R^{N_h \times N}$ we now define the parameter-to-POD-coefficient map 
+    $\mathcal{Q}: (\mu, \nu, t) \mapsto q(\mu, \nu, t) :=  V^T \uht$ for 
+    any $(\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal$. We assume that there exists $n > 0, \psi_* : \R^n \to \R^N, \psi_*' : \R^N \to \R^n$ that are respectively $s$-times and
+    $s'$-times differentiable ( with $s >> s' \geq 2$), such that they enjoy the perfect embedding Assumption (\ref{assumption perfect embedding}), i.e. 
+    \begin{equation*}
+        \psi_*(\psi_*'(q(\mu, \nu, t))) = q(\mu, \nu, t), \quad \forall (\mu, \nu, t) \in \Theta \times \Theta' \times \Tcal.
+    \end{equation*}
+    We further let 
+    \begin{equation*}
+        C_1 := \sup\limits_{\vert \alpha \vert \leq s'} \sup\limits_{v \in \R^N} \vert \, D^\alpha \psi_*'(v) \, \vert, \quad 
+        C_2 := \sup\limits_{\vert \alpha \vert \leq s} \sup\limits_{w \in \R^n} \vert \, D^\alpha \psi_*'(w) \, \vert.
+    \end{equation*}
+    Then there is a constant $c = c(\Theta, \Theta', \Tcal, L, C_1, C_2, p, q, n, s, s')$ and a POD-DL-ROM architecture $V \hat{q} =
+    V \psi \circ \phi: \R^{p+q+1} \to \R^{N_h}$ composed of a decoder $\psi: \R^n \to \R^N$ having at most:
+    \begin{enumerate}
+        \item[-] $L_{n \to N} = c \log(\varepsilon^{-1})$ layers,
+        \item[-] $\omega_{n \to N} = cN \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1})$ active weights,
+    \end{enumerate}
+    and a reduced feed forward neural network $\phi: \R^{p+q+1} \to \R^n$ having at most:
+    \begin{enumerate}
+        \item[-] $L_{(p+q+1) \to n} = c \log(\varepsilon^{-1})$ layers,
+        \item[-] $\omega_{(p+q+1) \to n} = cn \varepsilon^{-(p+q+1)} \log(\varepsilon^{-1})$ active weights,
+    \end{enumerate}
+    such that $\prob[\Ecal_R < \varepsilon] > 1 - \delta$.
+\end{theorem}
