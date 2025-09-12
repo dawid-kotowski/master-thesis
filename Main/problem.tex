@@ -566,15 +566,15 @@ on the stacked solution trajectories
     u_h^{\mu_{N_{s_1}}, \nu_{N_{s_2}}}\right]^T \in \R^{N_h \times N_\text{data}},
 \end{equation*}
 with the solution trajectories of Definition (\ref{def: solution data}), resulting in the POD matrix 
-$\A \in \R^{N_h \times N}$ for the $N < N_h$ from Assumption (\ref{assumption: dimension hierarchy}). Then we can
+$\A_\text{P}  \in \R^{N_h \times N}$ for the $N < N_h$ from Assumption (\ref{assumption: dimension hierarchy}). Then we can
 define the pre-reduced solution snapshots by computing
 \begin{equation*}
-    u_\text{red}^{\mu, \nu, t} := \A^T \G \uht \in \R^{N} \qquad \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal.
+    u_\text{red}^{\mu, \nu, t} := \A_\text{P} ^T \G \uht \in \R^{N} \qquad \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal.
 \end{equation*}
-By $\G$-orthonormality of $\A$, we can thus define the FOM approximate coefficient solution $\uhthat \in \R^{N_h}$ for each 
+By $\G$-orthonormality of $\A_\text{P} $, we can thus define the FOM approximate coefficient solution $\uhthat \in \R^{N_h}$ for each 
 $\mu \in \Theta$, $\nu \in \Theta'$ and $t \in \Tcal$
 \begin{equation} \label{eq: pod-dl-rom solution}
-    \uhthat = \A \cdot \left(R_\rho(\Psi_A(\theta^*_\text{D})) \circ R_\rho(\Phi_n(\theta^*_\text{DF}))\right) (t; \mu, \nu) \in \R^{N_h},
+    \uhthat = \A_\text{P}  \cdot \left(R_\rho(\Psi_N(\theta^*_\text{D})) \circ R_\rho(\Phi_n(\theta^*_\text{DF}))\right) (t; \mu, \nu) \in \R^{N_h},
 \end{equation}
 where we set $\Psi_N = f^\text{D}_{N}$ for the decoder architecture with input dimension $n$ and output dimension $N$
 (and $\Psi'_n = f^\text{E}_n$ the corresponding encoder architecture) of a convolutional AE. 
