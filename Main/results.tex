@@ -373,10 +373,7 @@ Under the already given assumptions, we can pose its first existence result.
 \end{lemma}
 \begin{proof}
     Let $\mu, \mu' \in \Theta$, $t, t' \in [0, T]$ 
-    and $\V = \A \tilde{\V}, \V' = \A \tilde{\V}' \in \R^{N_h \times N'}$ such that for some $\delta > 0$
-    \begin{equation*}
-        \euknorm{\mu - \mu'} + \euknorm{t - t'} + \opnorm{\V - \V'} < \delta.
-    \end{equation*}
+    and $\V = \A \tilde{\V}, \V' = \A \tilde{\V}' \in \R^{N_h \times N'}$ arbitrary.
     For the following calculation, we compose the preliminary identity for 
     $u := \uhtprered$ and $u' := u_\text{pre-red}^{\mu', \nu, t'}$,
     with $u_\text{pre-red}^{\mu, \nu, t} := \A^T \G \uht \in \R^{N_A}$ for each $\mu \in \Theta, \nu \in \Theta'$
@@ -406,7 +403,7 @@ Under the already given assumptions, we can pose its first existence result.
         &\leq \int_{\Theta'} \left\vert (\I_{N_A} - \tilde{\V} \tilde{\V}^T)(\uhtprered - 
         u_\text{pre-red}^{\mu', \nu, t'} )  \right\vert d(\nu) + M \vert \Theta' \vert \opnorm{\tilde{\V} \tilde{\V}^T - 
         \tilde{\V}' (\tilde{\V}')^T}   \\
-        &< \delta \vert \Theta' \vert (L  + 2  M ),
+        &\leq \vert \Theta' \vert (L  + 2  M ) \left( \euknorm{\mu - \mu'} + \euknorm{t - t'} + \euknorm{\V - \V'}\right),
     \end{align*}
     and $J$ is thus Lipschitz continous.
     \notdone{include existence of s}
@@ -568,7 +565,7 @@ out of sheer luck, independent of the amount of training data provided.
         \item The sampling error 
         \[
             \mathcal{E}_\text{S} = \mathcal{E}_\text{S}\left(\mathcal{G}, 
-            (\mu_i, \nu_i, \tau_i)_{i = 1}^{N_{\text{data}}}, N'\right)
+            (\mu_i, \nu_i, t_i)_{i = 1}^{N_{\text{data}}}, N'\right)
         \]
         satisfies $\mathcal{E}_\text{S} \to 0$ as $N_{s_2} \to \infty$, with expectation 
         \[
@@ -578,23 +575,24 @@ out of sheer luck, independent of the amount of training data provided.
         \item The DOD projection error 
         \[
             \mathcal{E}_{\text{DOD}} = \mathcal{E}_{\text{DOD}}\left(\mathcal{G}, 
-            (\mu_i, \nu_i, \tau_i)_{i = 1}^{N_{\text{data}}}, N\right)
+            (\mu_i, \nu_i, t_i)_{i = 1}^{N_{\text{data}}}, N\right)
         \]
-        satisfies $\mathcal{E}_{\text{DOD}} \to \mathcal{E}_{\text{DOD}, \infty}$ 
-        almost surely as $N_s, N_t \to \infty$, where
+        satisfies $\mathcal{E}_{\text{DOD}} \to \mathcal{E}_{\text{DOD}, \infty} + \varepsilon$
+        almost surely as $N_{s_2} \to \infty$
+        for any $\varepsilon = \varepsilon(\Phi_{\tilde{\V}})> 0$ arbitrarily small depending on
+        the size and choice of weights of the inner DOD module, where
         \[
-            \mathcal{E}_{\text{DOD}, \infty} = \mathcal{E}_{\text{DOD}, \infty}(\mathcal{G}, N)
+            \mathcal{E}_{\text{DOD}, \infty} = \mathcal{E}_{\text{DOD}, \infty}(\mathcal{G}, N')
         \]
-        is independent of the data snapshots and arbitrarily close, with regards to the size 
-        of the DOD neural network, 
-        to the order of the maximal linear KnW of the solution submanifold 
-        $\mathcal{S}_{\mu, t} = \{ \uht \, \vert \, \nu \in \Theta' \}$.
+        is independent of the data snapshots and of 
+        order of the maximal linear KnW of the solution submanifold 
+        $\mathcal{S}_{\mu, t} = \{ \uht \, \vert \, \nu \in \Theta' \}$ for any $(\mu, t) \Theta \times [0,T]$.
     
         \item The neural network approximation error
         \[
-            \mathcal{E}_{\text{NN}} = \mathcal{E}_{\text{NN}}\left(\mathcal{G}, N, \hat{q}\right)
+            \mathcal{E}_{\text{NN}} = \mathcal{E}_{\text{NN}}\left(\mathcal{G}, N, \Phi^\text{D}_{N'}\right)
         \]
-        is arbitrarily small depending on the size and choice of weights of the neural network $\Phi_A$.
+        is arbitrarily small depending on the size and choice of weights of the neural network $\Phi^\text{D}_{N'}$.
     \end{enumerate}
 
 \end{theorem}
@@ -626,7 +624,7 @@ out of sheer luck, independent of the amount of training data provided.
     as in the proof of Theorem (\ref{theo: relative error POD+DNN}), 
     where we already assume for the fixed $N \in \N$, the "optimal" choice of weights $\theta_\text{DOD}^* \in
     \Theta(\Phi_{\tilde{\V}})$ for the underlying DOD neural network in accordance to Remark
-    (\ref{remark: discrete optimal DOD}) and its subsequently defined virtual discrete 
+    (\ref{remark: discrete optimal DOD}) for some fixed $\delta > 0$ and its subsequently defined virtual discrete 
     corrolation eigenvalues $\sigma(\mu, t)_k$
     in Equation (\ref{eq: definition virtual eigenvalues})
     \begin{align*}
@@ -641,7 +639,7 @@ out of sheer luck, independent of the amount of training data provided.
         \G \uht}^2 d(\nu) -  \frac{\euknorm{\Theta'}}{N_{s_2}} \sum_{\nu \in \Pcal_2} \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2 
         d(\mu, t) \, \right\vert^{1/2}}_{=: \Ecal_\text{S}} \\
         &+ 
-        \underbrace{m^{-1} \euknorm{\Theta \times [0, T]}^{1/2}\varepsilon + m^{-1} \euknorm{\Theta \times [0, T]}^{1/2}
+        \underbrace{m^{-1} \euknorm{\Theta \times [0, T]}^{1/2}\delta + m^{-1} \euknorm{\Theta \times [0, T]}^{1/2}
         \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_k^2}}_{=: \Ecal_\text{DOD}}.
     \end{align*}
 
@@ -652,12 +650,14 @@ out of sheer luck, independent of the amount of training data provided.
 
     Moreover, we have that 
     \begin{multline*}
-        \Ecal_\text{DOD} = \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m} \left( \varepsilon + 
+        \Ecal_\text{DOD} = \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m} \left( \delta + 
         \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_k^2}
         \right) \\
-        \underset{\N_{s_2} \to \infty}{\longrightarrow} \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m} \left( \varepsilon + 
+        \underset{\N_{s_2} \to \infty}{\longrightarrow} 
+        \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m}
         \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_{k, \infty}^2}
-        \right) =: \Ecal_{\text{DOD}, \infty},
+        + \frac{\delta \euknorm{\Theta \times [0, T]}^{1/2}}{m}
+        =: \Ecal_{\text{DOD}, \infty} + \varepsilon,
     \end{multline*}
     which can be arbitrarily improved for a more complex choice of the inner DOD module architecture. This dependency
     on the complexity is suggested by Yarotsky Theorem (\ref{theo: yarotsky}), since the $L^\infty$ error 
@@ -668,14 +668,73 @@ out of sheer luck, independent of the amount of training data provided.
 \end{proof}
 
 
-To connect this line of thought to the prior discussion for the POD+DNN, we remind the reader of the definition 
-of the virtual eigenvalues $\sigma(\mu, t)_k$ given in Equation (\ref{eq: definition virtual eigenvalues}).
-Under Remark (\ref{remark: discrete optimal DOD}) we can infer the existence of an arbitrary
-precise neural network realizing such a quasi-POD map, thus we can provide a similar result to Theorem 
-(\ref{theo: lower bound pod+dnn}) for the DOD+DNN.
+To connect this line of thought to the prior discussion for the POD+DNN, we can now pose a similar lower bound on
+the error for the DOD+DNN ROM technique. For practical reasoning, the reader should keep in mind, that the result
+is closely connected to the complexity of the neural network of the inner DOD module, even if the following
+theorem omits such an appreciation, since the connection given through Yarotsky Theorem (\ref{theo: yarotsky})
+is not immediate under the preliminaries alone.
 
+\begin{theorem} \label{theo: lower bound dod+dnn}
+    Under the assumptions of Theorem (\ref{theo: relative error DOD+DNN}), we have that 
+    \begin{equation*}
+        \Ecal_\text{R}^\text{DOD+DNN} \geq \frac{m}{M} \Ecal'_{\text{DOD}, \infty},
+    \end{equation*}
+    where we set
+    \begin{equation*}
+        \Ecal'_{\text{DOD}, \infty} := m^{-1}
+    \int_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_{k, \infty}^2} d(\mu, t).
+    \end{equation*}
+\end{theorem}
+\begin{proof}  
+    The proof will again follow a similar structure as the one of Theorem (\ref{theo: lower bound pod+dnn}).
+    In fact, we can again infer the sub-optimal choice of the projection coefficients under any neural network
+    realization
+    \begin{equation*}
+        \Ecal_\text{R} = \int\limits_{\Theta \times \Theta' \times [0, T]} 
+        \frac{\norm{\uht - \V_{\mu, t} \hat{q}_{N'}(\mu, \nu, t)}}{\norm{\uht}} d(\mu, \nu, t)
+        \geq
+        \int\limits_{\Theta \times \Theta' \times [0, T]} 
+        \frac{\norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}}{\norm{\uht}} d(\mu, \nu, t),
+    \end{equation*}
+    where $\V_{\mu, t} \in \R^{N_h \times N'}$ is the DOD matrix realization 
+    for any $(\mu, t) \in \Theta \times [0, T]$ as given by Definition (\ref{def: DOD}). Then again
+    starting from the other direction for a virtual POD matrix $\A^\infty_{\mu, t} \in \R^{N_h \times N'}$ for each
+    $(\mu, t) \in \Theta \times [0, T]$
+    under the continuous correlation matrix, obtained for $N_{s_2} \to \infty$, 
+    which exists and is well defined via the Proposition 
+    (\ref{prop: eigenvalues and optimal projection under sampling}) and has eigenvalues
+    $\sigma(\mu, t)^2_{1, \infty} \geq \cdots \geq \sigma(\mu, t)^2_{N', \infty}$, we
+    get using the definition of the proof of Theorem (\ref{theo: relative error DOD+DNN})
+    \begin{align}
+        (\Ecal'_{\text{DOD}, \infty})^2 &= m^{-2} 
+        \int_{(\mu, t) \in \Theta \times [0, T]} \sum_{k > N'} \sigma(\mu, t)_{k,\infty}^2 \, d(\mu, t) \\
+        &= m^{-2}
+        \int_{(\mu, t) \in \Theta \times [0, T]} 
+        \int_{\Theta'} \norm{\uht - \A^\infty_{\mu, t} (\A^\infty_{\mu, t})^T \G \uht} d(\nu) d(\mu, t)
+        \label{align: lower bound dod 1} \\
+        &\leq m^{-2}
+        \int_{(\mu, t) \in \Theta \times [0, T]}
+        \int_{\Theta'} \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht} d(\nu) d(\mu, t)
+        \label{align: lower bound dod 2} \\
+        &= m^{-2} \int_{\Theta \times \Theta' \times [0, T]} \frac{\norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}}{\norm{\uht}}
+        \norm{\uht} d(\mu, \nu, t) \\
+        &\leq \frac{M^2}{m^2} (\Ecal_\text{R})^2, \label{align: lower bound dod 3}
+    \end{align}
+    where we use the Proposition (\ref{prop: eigenvalues and optimal projection under sampling}) for the
+    continuous POD matrix in Step (\ref{align: lower bound dod 1}), the optimality of the same proposition 
+    for Step (\ref{align: lower bound dod 2}) and the first equation of this proof in 
+    Step (\ref{align: lower bound dod 3}) with the rather obvious use of the bound on $\norm{\uht}$ from Assumption
+    (\ref{assumption parameter-to-solution map}).
+\end{proof}
 
+Note, that this result barely differs from Theorem (\ref{theo: lower bound pod+dnn}) for the POD+DNN
+ROM lower bound, and that we use a different version for the DOD error, than we have for the proof of Theorem
+(\ref{theo: relative error DOD+DNN}), because the average over the Kolmogorov $N'$-widths in $\Theta \times [0, T]$ 
+has more comparability to the Kolmogorov $N$-width decay of the whole solution manifold as a lower bound.
 
+Of course, the optimality step in the proof suggests the use of a "good" DOD matrix and is hence closely
+related to the complexity of the inner DOD module, but this explains the lack of any mention of a choice
+for the neural network weights; this simply works for any matrix.
 
 
 
@@ -695,11 +754,7 @@ However, to achieve actual complexity
 bounds for the latter two ROMs, we will necessarily need to impose one further assumption for the regularity of the 
 optimal objective
 functional as discussed in Remark (\ref{remark: regularity for s}). 
-
-
-
-
-\notdone{make discussion for regularity of parameter-to-solution map}
+This will be inserted in an upcoming part, before the discussion of the DOD-DL-ROM upper complexity bound.
 
 
 
@@ -1002,45 +1057,42 @@ inherits it, and subsequently provides the possibility of the use of Yarotsky Th
     which is independent of the data, to which the approximation of the neural net of the DOD is sufficiently "close". 
     
     The sampling error can be bounded in the same way as before, i.e. we can directly bound 
-    $\Ecal_S = \Ecal_S(N_{s_1}, N_{s_2}, N_t)$ independently of $N'$, under the Assumption (\ref{assumption sample})
-    by the Weak Law of Large Numbers, i.e. for all $1 > \delta > 0$ and $\varepsilon > 0$ there are $N_{s_1}, N_{s_2}, N_t$, such that
+    $\Ecal_S = \Ecal_S(N_{s_2})$ independently of $N'$, under the Assumption (\ref{assumption sample})
+    by the Weak Law of Large Numbers, i.e. for all $1 > \delta > 0$ and $\varepsilon > 0$ there is $N_{s_2}$, such that
     \begin{equation} \label{eq: S error dod-dl-rom}
-        \prob[\Ecal_S((N_{s_1}, N_{s_2}, N_t)) < \varepsilon / 4] > 1 - \delta.
+        \prob[\Ecal_S < \varepsilon / 4] > 1 - \delta.
     \end{equation}
     Now recall the definition of $\Ecal_{\text{DOD}}$ in the proof of Theorem (\ref{theo: relative error DOD+DNN}) and 
-    further establish
-    \begin{align*}
-        \Ecal_{\text{DOD}} &= \frac{m^{-1} \vert \Theta \times \Theta' \times [0, T] \vert}{N_{data}^{1/2}} 
-        \, \bigg\vert \, \sum_{i = 1}^{N_{s_1}} \sum_{j = 1}^{N_{s_2}} \sum_{k = 1}^{N_t} 
-        \norm{u_h^{\mu_i, \nu_j, k \Delta t} - \V_{\mu_i, k \Delta t} \V_{\mu_i, k \Delta t}^T u_h^{\mu_i, \nu_j, k \Delta t}}^2 \, \bigg\vert^{1/2} \\
-        &\leq m^{-1} \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \, \bigg\vert \, 
-        \frac{\vert \Theta \times \Theta' \times [0, T] \vert}{N_{s_2}}  \sum_{j = 1}^{N_{s_2}} 
-        \norm{u_h^{\mu, \nu_j, t} - \V_{\mu, t} \V_{\mu, t}^T u_h^{\mu, \nu_j, t}}^2 \, \bigg\vert^{1/2}, 
-    \end{align*}
-    enabling us to use Proposition (\ref{prop: eigenvalues and optimal projection under sampling}) in order 
-    to switch to the eigenvalues $\sigma(\mu, t)_k$ for $(\mu, t) \in \Theta \times [0, T]$ given by
-    Equation (\ref{eq: definition virtual eigenvalues}) 
-    and employing the Remark (\ref{remark: discrete optimal DOD}) with 
-    the bound
+    further setting the $\delta > 0$ from the upstream Remark (\ref{remark: discrete optimal DOD}) realizing
+    an "optimal" discrete approximation for a fixed data size $N_{s_2}$ as
     \begin{equation*}
-        \frac{\varepsilon \, m^2}{4 \vert \Theta \times \Theta' \times [0, T] \vert^{1/2}},
+        \delta = \frac{\varepsilon m}{4 \euknorm{\Theta \times [0, T]}^{1/2}}
     \end{equation*}
-    which directly gives us the approximation result via the defition of $N'$ in the prelminaries of this section
+    concluding, under the additional use of definition of $N'$ in Equation
+    (\ref{eq: definition of N, N'}), in the following approximation for the DOD error:
     \begin{equation} \label{eq: dod error dod-dl-rom}
-        \Ecal_{\text{DOD}} < \frac{\varepsilon}{4} + 
-        m^{-1} \sup\limits_{(\mu, t) \in (\Theta \times [0, T])} 
-        \sqrt{\sum_{k > N'} \sigma(\mu, t)_k^2} 
-        \leq \frac{\varepsilon}{2}.
+        \begin{aligned}
+            \Ecal_{\text{DOD}} &= \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m} \left( \delta + 
+            \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_k^2} \right) \\
+            &< \frac{\varepsilon}{4} + \left( \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m}
+            \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_k^2}
+            \right) \\
+            &\leq \frac{\varepsilon}{4} + \left( \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m} \cdot 
+            \frac{\varepsilon m}{4 \euknorm{\Theta \times [0, T]}^{1/2}} \right)
+            = \frac{\varepsilon}{2}
+        \end{aligned}
     \end{equation}
 
-    \notdone{Include the cost via Yarotski}
-    \notdone{Argue the actual part for the NN error}
+    \notdone{include complexity}
 
     Moreover we can use the exact same arguments as in the bound for $\Ecal_{\text{NN}}$ for the POD-DL-ROM as in the
     proof of Theorem (\ref{theo: PAC bound for POD-DL-ROM}), which yields
     \begin{equation} \label{eq: nn error dod-dl-rom}
         \Ecal_{\text{NN}} < \frac{\varepsilon}{4}.
     \end{equation}
+    Note, that here we imply, that the reduction is achieved with the replacement of $N$ with $N'$ in each of the 
+    arguments (and also the use of potentially
+    different weights and architectures), hence also getting slightly different values for the number of layers and weights.
     Finally putting each Equation, i.e. (\ref{eq: S error dod-dl-rom}), (\ref{eq: dod error dod-dl-rom}) and (\ref{eq: nn error dod-dl-rom}),
     together, we get 
     \begin{equation*}
