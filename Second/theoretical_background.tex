@@ -414,10 +414,10 @@ We base this subsection on \cite{quarteroni2015rb}, but import the generalizatio
     (\ref{def: POD}), then
     \begin{multline*}
         \frac{\vert \, \Theta \times [0, T] \, \vert}{N_{data}} 
-        \sum\limits_{i \in I, k = 1, \dots, N_t} \norm{u(\mu_j, t_k) - \A \A^T \G u(\mu_j, t_k)}_2^2 \\
+        \sum\limits_{i \in I, k = 1, \dots, N_t} \norm{u(\mu_j, t_k) - \A \A^T \G u(\mu_j, t_k)}^2 \\
         = \min\limits_{W \in \mathcal{V}_N} \frac{\vert \, \Theta \times [0, T] \, \vert}{N_{data}} 
         \sum\limits_{i \in I, k = 1, \dots, N_t} 
-        \norm{u(\mu_j, t_k) - W W^T \G u(\mu_j, t_k)}_2^2 
+        \norm{u(\mu_j, t_k) - W W^T \G u(\mu_j, t_k)}^2 
         = \sum_{j=N+1}^r \sigma_k^2.
     \end{multline*}
 \end{proposition}
