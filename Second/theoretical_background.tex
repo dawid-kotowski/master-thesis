@@ -6,22 +6,22 @@
 \section{Linear Algebra}
 
 
-As preparation for the comming Bauer Fike Theorem, we want to define a matrix norm for the space $\R^{N \times N}$,
-where $N \in \N$, as follows
+As preparation for the comming Bauer Fike Theorem, we want to define a matrix norm for the space $\R^{N_h \times N_h}$,
+where $N_h \in \N$, as follows
 \begin{equation*}
-    \opnorm{A} := N \cdot \max\limits_{1 \leq i,j \leq N} \left\vert \, [A]_{ij} \,  \right\vert.
+    \opnorm{A} := N_h \cdot \max\limits_{1 \leq i,j \leq N_h} \left\vert \, [A]_{ij} \,  \right\vert.
 \end{equation*}
-This satifies the wanted property mentioned in the origional paper \cite[p. 137-141]{bauer1960la}; any operator norm
+This satifies the wanted property mentioned in the original paper \cite[p. 137-141]{bauer1960la}; any operator norm
 such that
 \begin{equation*}
-    \norm{Ax} \leq \opnorm{A} \norm{x}, \quad \text{for all } x \in \R^N
+    \norm{Ax} \leq \opnorm{A} \norm{x}, \quad \text{for all } x \in \R^N_h
 \end{equation*}
-for some norm $\norm{\cdot}$ on $\R^N$ can be used for the statement of the following theorem:
+for some norm $\norm{\cdot}$ on $\R^{N_h}$ can be used for the statement of the following theorem:
 
 \begin{theorem}[Bauer-Fike Theorem] \label{theo: bauer fike}
-    Let $K \in \R^{N \times N}$ be some diagonalizable matrices with $\sigma_k$ eigenvalues and 
-    $V = (\xi_1, \dots, \xi_N) \in \R^{N \times N}$ be the stacked eigenvectors matrix of $K$ 
-    and $\delta K \in \R^{N \times N}$ some symmetric matrix. Then if $\lambda_{k}$ are the eigenvalues of 
+    Let $K \in \R^{N_h \times N_h}$ be some diagonalizable matrices with $\sigma_k$ eigenvalues and 
+    $V = (\xi_1, \dots, \xi_N) \in \R^{N_h \times N_h}$ be the stacked eigenvectors matrix of $K$ 
+    and $\delta K \in \R^{N_h \times N_h}$ some symmetric matrix. Then if $\lambda_{k}$ are the eigenvalues of 
     $K + \delta K$, we have 
     \begin{equation*}
         \min\limits_{k} \vert \lambda_k - \sigma_k \vert \leq \kappa(V) \opnorm{(K + \delta K) - K},
@@ -29,6 +29,82 @@ for some norm $\norm{\cdot}$ on $\R^N$ can be used for the statement of the foll
     where $\kappa(V) = \opnorm{V} \opnorm{V^{-1}}$.
 \end{theorem}
 \notdone{add prove}
+
+Furthermore, we will often discuss the notion of orthonormality with regard to a a matrix. This
+can be understood with the following definition:
+
+\begin{definition}[Matrix Orthonormality] \label{def: matrix orthonormality}
+    Let $\G \in \R^{N_h \times N_h}$ be a symmetric positive definit matrix for some $N_h \in \N$. We then say that
+    any matrix $\A \in \R^{N_h \times N}$ is $\G$-orthonormal for some $N \leq N_h$, if
+    \begin{equation*}
+        \I = \A^T \G \A.
+    \end{equation*}
+\end{definition}
+
+\begin{remark}
+    If some matrix $\V \in \R^{N_h \times N}$ can be written as $\V = \A \tilde{\V}$, where
+    $\tilde{\V} \in \R^{N_A \times N}$ and $\A \in \R^{N_h \times N_A}$ being a $\G$-orthonormal matrix, 
+    then $\V$ is $\G$-orthonormal if and only if $\tilde{\V}$ is orthonormal in the euklidian sense. 
+    In fact,
+    \begin{equation*}
+        \V^T \G \V = \tilde{\V}^T \A^T \G \A \tilde{\V} = \tilde{\V}^T \tilde{\V}.
+    \end{equation*}
+\end{remark}
+
+\begin{definition}[Orthogonal Projector] \label{def: orthogonal projector}
+    A operator $P: V \to V$, where $V$ is a Hilbert space with inner product $\langle \cdot, \cdot \rangle_V$,
+    is called an \emph{orthogonal projector} onto $W \subset V$, if
+    \begin{enumerate}
+        \item $P^2 = P$,
+        \item $\text{Im}(P) = W$ and
+        \item $\langle Px, y \rangle_V = \langle x, Py \rangle_V$ for all $x, y \in V$.
+    \end{enumerate}
+\end{definition}
+
+\begin{lemma} \label{lemma: orthogonal projector on span of A}
+    Let $\R^{N_h}$ be a Hilbert space with the inner product 
+    \begin{equation*}
+        \langle u, v \rangle_\G := u^T \G v,
+    \end{equation*}
+    with $\G \in \R^{N_h \times N_h}$ being a symmetric positive definite matrix. If now
+    $\A \in \R^{N_h \times N_A}$ is a $\G$-orthonormal matrix, then
+    \begin{equation*}
+        P := \A \A^T \G
+    \end{equation*}
+    is a orthogonal projector on $\text{span}(\A)$ with regard to the $\G$ induced inner product.
+    We refer to this as $P$ being the \emph{$\G$-orthonormal projector} on $\text{span}(\A)$.
+\end{lemma}
+\begin{proof}
+    It suffices to simply check the items of Definition (\ref{def: orthogonal projector}); the image
+    statement is instantaneously clear, since $\A \A^T \G = \A (\A^T \G)$. The idempotency can be
+    checked via
+    \begin{equation*}
+        P^2 = (\A \A^T \G)(\A \A^T \G) = \A (\A^T \G \A) \A^T \G = \A \A^T \G = P.
+    \end{equation*}
+    Finally set $u, v \in \R^{N_h}$ arbitrarily, then 
+    \begin{align*}
+        \langle P u, v \rangle_\G &= (P u)^T \G v \\
+        &= u^T P^T \G v \\
+        &= u^T (\A \A^T \G)^T v \\
+        &= u^T \G \A \A^T \G v \\
+        &= u^T \G P v = \langle u, Pv \rangle_\G.
+    \end{align*}
+\end{proof}
+
+
+These preliminaries will play an important role, since we will use such a 
+gramian $\G$ of an a priori chosen basis under a discretization of a PDE to set up a (linear) projector
+attaining any projection onto the solution manifold under the span of a $\G$-orthonormal matrix.
+In fact, any projector 
+\begin{equation*}
+    \V \V^T \G : \R^{N_h} \to \R^N
+\end{equation*}
+for a $\G$-orthonormal matrix $\V \in \R^{N_h \times N}$ and some $N \leq N_h$ can be seen as a special
+case for the differential geometric framework 
+of (nonlinear) projectors on manifolds concerning Reduced Order Modelling introduced
+and discussed in \textcite{buchfink2023}.
+
+
 
 
 
@@ -126,7 +202,7 @@ This of course only makes sense in light of the next definition.
     for any $f \in W^{s, p}(\Omega)$.
 \end{definition}
 
-Furthermore, a very important auxilary result will be the following theorem, translating Lipschitz continuity into
+Furthermore, a very important theorem result will be the following theorem, translating Lipschitz continuity into
 Sobolev-regularity. This will allow us to employ the later introduced approximation theory for neural networks
 from the sole position of Lipschitz continuity.
 
@@ -142,115 +218,91 @@ from the sole position of Lipschitz continuity.
 \end{proof}
 
 
-\subsection{Existence and Uniqueness}
-
-This subsection provides a brief introduction to one specific statement of existence and uniqueness, which we coincidentally
-can apply well to the projected version of our finite dimensional problem. Note, that of course, this does not justify any existence
-result for highly non-linear equations on a lot of upstream classical or even weak problems, like the famous 
-incompressible Navier-Stokes Equation.
-
-We start by defining the differential operator class, to which we can then apply the Hille-Yosida Theorem. Most notable, 
-we know with that subclass, that any monotone operator, which acts on a finite dimensional space, is in that class, as
-will be shown afterwards. 
-
-\begin{definition}[Maximal Monotone Operator] \label{def: maximal monotone operator}
-    Let $A: D(A) \subset H \to H$ be an unbounded linear operator. It is \emph{monotone}, if
-    \begin{equation*}
-        \langle Av, v \rangle_H \geq 0, \quad \text{for all } v \in D(A),
-    \end{equation*}
-    and \emph{maximal monotone}, if additionally for all $f \in H$ there is $u \in D(A)$ such that
-    \begin{equation*}
-        u + Au = f.
-    \end{equation*}
-\end{definition}
-
-
-\begin{lemma} \label{lemma: finite dimensional monotone operator}
-    Let $H$ be a finite dimensional real Hilbert space, and $A: H \to H$ a monotone operator according to Definition
-    (\ref{def: maximal monotone operator}). Then $A$ is maximal monotone.
-\end{lemma}
-\begin{proof}
-    By obvious identification with a basis, we know, that $H \cong \R^N$ for some $N \in \N$. Thus any element 
-    $u \in H$ can be expressed as 
-    \begin{equation*}
-        u = \sum_{j=1}^N u_j \varphi_j,
-    \end{equation*}
-    where $u_j \in \R$ and $\varphi_j \in H$ for all $j=1, \dots, N$, and
-    similarily for $i,j, k = 1, \dots, N$ there are $a_{ik} \in \R$ such that
-    \begin{equation*}
-        Au = \sum_{i=1}^N \sum_{j=1}^N \sum_{k=1}^N a_{ik} u_j \langle \varphi_j, \varphi_i \rangle \varphi_k.
-    \end{equation*}
-    Thus the condition for $A$ being maximal monotone
-    simplyfies to finding $[u_j]_{j=1}^N \in R^N$ for an arbitrary $[f_j]_{j=1}^N \in \R^N$ where
-    \notdone{doesnt work}
-    \begin{equation*}
-        u_j + \sum_{i=1}^N a_{ij} u_j = f_j
-    \end{equation*} 
-    for all $j=1, \dots, N$, which can obviously be done in general.
-\end{proof}
-
-
-\begin{theorem}[Hille-Yosida Theorem] \label{theo: hille-yosida}
-    Let $A$ be a maximal monotone operator, $H$ some Hilbert space and $D(A) \subset H$. 
-    Then, given any $u_0 \in D(A)$ there is a unique function
-    \begin{equation*}
-        u \in C^1([0, \infty); H) \cap C([0, \infty); D(A))
-    \end{equation*}
-    satisfying
-    \begin{equation*}
-        \begin{cases}
-            \displaystyle
-            \frac{\partial u}{\partial t} + Au = 0 \quad &\text{on }[0, \infty), \\
-            \displaystyle
-            u(0) = u_0 \quad &\text{on }\{0\}.
-        \end{cases}
-    \end{equation*}
-    Moreover,
-    \begin{equation*}
-        \norm{u(t)}_H \leq \norm{u_0}_H,
-    \end{equation*}
-    for all $t \geq 0$.
-\end{theorem}
-\begin{proof}
-    See \cite[p. 185-191]{brezis2011}.
-\end{proof}
 
 
 \subsection{Reduced Basis Framework}  \label{subsec: reduced basis framework}
 
 
 
-\notdone{Give a reasonable weak formulation framework to appreciate gram matrix}
-\almostdone{Introduce the general notion of the POD}
+
+
 \almostdone{Introduce KnW and its relation to the continous case}
 
 For this subsection we define $u(\mu_j, t_k) \in \R^{N_h}$ for $(\mu_j)_{j = 1}^{N_s} =: \Pcal \subset \Theta$ and 
-$(t_k)_{k = 1}^{N_t} =: \Tcal \subset \mathbb{T}$ to be some vectors, later representing the solutions to a parametric PDE for a 
-given parameter and time point in a given discrete subspace of the coefficient solution manifold. Here $\Theta$ represents and arbitrary parameter space, 
-$\mathbb{T}$ some arbitrary time space, and $N_s, N_t \in \N$ be the parameter and time sample size respectively. 
-Let the norm on $\R^{N_h}$ be defined here, using a symmetric positive definite matrix $\G \in \R^{N_h \times N_h}$, as
-follows 
+$(t_k)_{k = 1}^{N_t} =: \Tcal \subset [0, T]$ to be some vectors, later representing the solutions to a 
+parametric PDE for a 
+given parameter and time point in a given discrete subspace of the coefficient solution manifold. 
+Here $\Theta$ represents and arbitrary parameter space, 
+$T > 0$ some arbitrary time point, and $N_s, N_t \in \N$ be the parameter and time sample size respectively. 
+Let the inner product on $\R^{N_h}$ be defined here, 
+using a symmetric positive definite matrix $\G \in \R^{N_h \times N_h}$ via 
 \begin{equation*}
-    \norm{u(\mu, t)} := \sqrt{u(\mu, t)^T \, \G \, u(\mu, t)}.
+    \langle u, v \rangle_\G := u^T \G v, \qquad \text{for all } u, v \in \R^{N_h},
 \end{equation*}
+and the corresponding norm $\norm{\cdot} := \langle \cdot, \cdot \rangle_\G$.
 This is meant to result from a choice of an inner product stemming from the coefficient vectors $u(\mu, t)$ 
 representing that space, in other words, given by the choice of a basis
-on the corresponding Hilbert space, when viewing $u(\mu, t) \in \R^{N_h}$ as the coefficients identifying an element in
+on the corresponding Hilbert space, when viewing $u(\mu, t) \in \R^{N_h}$ as the coefficients 
+identifying an element in
 that space. 
 It is assumed,
 that we sample the parameters and time points uniformly and iid from their respective spaces and that 
-$\norm{u(\mu, t)} < \infty$ for all $\mu \in \Theta$ and $t \in \mathbb{T}$. Let also 
+$\norm{u(\mu, t)} < \infty$ for all $\mu \in \Theta$ and $t \in [0, T]$ in an essential
+sense. Let also 
 \begin{equation*}
     N_\text{data} := N_s \cdot N_t,
 \end{equation*}
 be the total sample size.
 
-Here we will discuss prerequisites to the Proper Orthogonal Decomposition and related concepts, such as the 
+Note, that, with the discussion surrounding the Definition (\ref{def: matrix orthonormality}) of the
+$\G$-orthonormality, taking the error of any such gram-sensitive projector will result in the 
+possibility of switching to a low dimensional euklidian norm, if the matrix $\V \in \R^{N_h \times N}$ 
+for some $N \leq N_h$ is
+$\G$-orthonormal and can be expressed as $\V = \A \tilde{\V}$, where $\A \in \R^{N_A \times N}$
+for $N \leq N_A \leq N_h$ is also $\G$-orthonormal. This is quantified by the following result:
+
+\begin{proposition} \label{prop: switch to euklidian norm}
+    Let $\V \in \R^{N_h \times N}$ 
+    for some $N \leq N_h$ be
+    $\G$-orthonormal and be written as 
+    \begin{equation*}
+        \V = \A \tilde{\V},
+    \end{equation*}
+    where $\A \in \R^{N_A \times N}$
+    for $N \leq N_A \leq N_h$ is also $\G$-orthonormal. Then we have, for any 
+    $u \in \R^{N_h}$, that
+    \begin{equation*}
+        \norm{u - \V \V^T \G u}^2 = c_\A + \euknorm{u_\text{pre-red} - \tilde{\V} \tilde{\V}^T u_\text{pre-red}}^2,
+    \end{equation*}
+    with $c_\A > 0$ being a constant only depending on $\A$ and $u_\text{pre-red} = \A^T \G u$.
+\end{proposition}
+\begin{proof}
+    By Lemma (\ref{lemma: orthogonal projector on span of A}), we know that $\A \A^T \G$ is a $\G$-orthonormal 
+    projector into the span of $\A$, and thus its residual $u - \A \A^T \G u$ must be 
+    $\G$-orthogonal to all columns of $\A$, since we can decompose 
+    $u = u_\perp + u_\parallel$, where $u_\parallel \in \text{span}(\A)$ and 
+    $u_\perp \in \R^{N_h} - \text{span}(\A)$. This gives us the possibility to use the Pythagoras decomposition:
+    \begin{align*}
+        \norm{u - \V \V^T \G u}^2 &= \norm{u - \A \tilde{\V} \tilde{\V}^T \A^T \G u}^2 \\
+        &= \norm{u - \A \A^T \G u}^2 + \norm{\A \A^T \G u - \A \tilde{\V} \tilde{\V}^T \A^T \G u}^2 \\
+        &= \norm{u - \A \A^T \G u}^2 + \euknorm{\A^T \G u - \tilde{\V} \tilde{\V}^T \A^T \G u}^2,
+    \end{align*}
+    where the last step is justified by showing that for any $u \in \R^{N_h}$
+    \begin{equation*}
+        \norm{\A u} = \langle \A u, \A u \rangle_\G = (\A u)^T \G \A u = u^T \A^T \G \A u = u^T u = \euknorm{u}.
+    \end{equation*}
+    Now setting $u_\text{pre-red} := \A^T \G u$ gives us the wanted statement.
+\end{proof}
+
+This proposition might seem quite unimportant, but this will be the core idea giving us a possibility to
+assert closeness with regard to the representations of the solution rather than the, potentially uninformative,
+solution coefficient vectors in $\R^{N_h}$ under a computationally feasible norm (the euklidian $N_A$-dimensional
+norm).
+
+Next, we will discuss prerequisites to the Proper Orthogonal Decomposition and related concepts, such as the 
 Kolmogorov $n$-width, which lets us derive many key concepts and is an important quantity in the field of ROM methods. 
 We base this subsection on \cite{quarteroni2015rb}, but import the generalizations to arbitrary inner products from
-\cite{franco2024}. Note, that in practice, the performing of a POD for each $\mu$ seperately would be unfeasible,
-but we want to keep the choice of basis parameter sensitive, as it will open the door for some interesting facts down the road.
-
+\cite{franco2024}. 
 \begin{definition}[Generalized Proper Orthogonal Decomposition] \label{def: POD}
     Assuming $N_\text{data} < \infty$ and let $\G \in \R^{N_h \times N_h}$ be a mass matrix, 
     we define by $U_j = [u(\mu_j, t_k)]_{k = 1}^{N_t} \in \R^{N_h \times N_t}$ 
@@ -258,7 +310,7 @@ but we want to keep the choice of basis parameter sensitive, as it will open the
     \in \R^{N_h \times N_\text{data}}$ 
     the collective snapshot matrix. Then the \emph{(discrete) correlation matrix} is given by
     \begin{equation} \label{eq: discrete correlation matrix}
-        K = \frac{\vert \Pcal \times \mathcal{T} \vert}{N_{data}} U \G U^T \in \R^{N_h \times N_h}.
+        K = \frac{\vert \Theta \times [0, T] \vert}{N_{data}} U \G U^T \in \R^{N_h \times N_h}.
     \end{equation}
     $K$ is symmetric and semi-positive definite and thus has real and 
     positive eigenvalues $\sigma^2 \geq \dots \geq \sigma_r^2$. 
@@ -275,7 +327,7 @@ but we want to keep the choice of basis parameter sensitive, as it will open the
     This matrix is $\G$-orthonormal by construction.
     Further, if $N_s, N_t = \infty$, we define the \emph{continuous correlation matrix} via
     \begin{equation} \label{eq: continuous correlation matrix}
-        K_\infty = \int_{\Pcal \times \mathcal{T}} u(\mu, t) \G u^T(\mu, t) d(\mu, t) \in \R^{N_h \times N_h},
+        K_\infty = \int_{\Theta \times [0, T]} u(\mu, t) \G u^T(\mu, t) d(\mu, t) \in \R^{N_h \times N_h},
     \end{equation}
     and its real eigenvalues by $\sigma_{k, \infty}^2$.
 \end{definition}
@@ -288,12 +340,12 @@ but we want to keep the choice of basis parameter sensitive, as it will open the
         reduction $N < N_h$
         \State \textbf{Output: } POD basis matrix $\A^\mu = [\xi^\mu_1, \dots, \xi^\mu_N] \in \R^{N_h \times N}$
         \If{$N_\text{data} \leq N_h$}
-            \State Form the correlation matrix $C = \frac{\vert \Pcal \times \mathcal{T} \vert}{N_{data}} U^T \G U
+            \State Form the correlation matrix $C = \frac{\vert \Theta \times [0, T] \vert}{N_{data}} U^T \G U
             \in \R^{N_\text{data} \times N_\text{data}}$
             \State Solve the eigenvalue problem $C \psi_i = \sigma_i^2 \psi_i$, \quad $i=1,\dots,r$
             \State Set $\xi_i = \tfrac{1}{\sigma_i} U \psi_i$, \quad $i=1,\dots,r$
         \Else
-            \State Form the correlation matrix $K = \frac{\vert \Pcal \times \mathcal{T} \vert}{N_{data}} 
+            \State Form the correlation matrix $K = \frac{\vert \Theta \times [0, T] \vert}{N_{data}} 
             U \G U^T \in \R^{N_h \times N_h}$
             \State Solve the eigenvalue problem $K \xi_i = \sigma_i^2 \xi_i$, \quad $i=1,\dots,r$
         \EndIf
@@ -323,20 +375,20 @@ but we want to keep the choice of basis parameter sensitive, as it will open the
     Taking a variational approach on this finite dimensional space, we know, that 
     there exists a $\G$-orthognormal matrix $V_\infty \in \R^{N_h \times N}$ such that 
     \begin{align*}
-        \sum_{k > N} \sigma^2_{k, \infty} &= \int_{\Pcal \times \mathcal{T}} \norm{u(\mu, t) - V_\infty V^T_\infty \G u(\mu, t)}^2 d(\mu, t) \\
+        \sum_{k > N} \sigma^2_{k, \infty} &= \int_{\Theta \times [0, T]} \norm{u(\mu, t) - V_\infty V^T_\infty \G u(\mu, t)}^2 d(\mu, t) \\
         &= \underset{W \in \R^{N_h \times N}: W^T \G W = I}{\min} \, \int_{\mu \times \mathcal{T}} \norm{u(\mu, t) - W W^T \G u(\mu, t) }^2 d(\mu, t).
     \end{align*}
     Thus, since this is the optimal choice of an approximation matrix for the continuous case and 
     $\A \in \R^{N_h \times N}$ given by Definition (\ref{def: POD}) is only optimal in the discrete setting and 
     not necessarily the continuous case, we have
     \begin{equation*}
-        \sum_{k > N} \sigma^2_{k, \infty} \leq \int_{\Pcal \times \mathcal{T}} 
+        \sum_{k > N} \sigma^2_{k, \infty} \leq \int_{\Theta \times [0, T]} 
         \norm{u(\mu, t) - \A \A^T \G u(\mu, t)}^2 d(\mu, t) = \sum_{k > N} \sigma^2_k.
     \end{equation*} 
     We then write entry-wise for $m, l = 1, \dots N_h$
     \begin{align*}
-        [K_\infty - K]_{ml} :=& \int_{\Pcal \times \Tcal} [\G^{1/2}u(\mu, t)]_m [\G^{1/2}u(\mu, t)]_l d(\mu, t) \\
-        &- \frac{\vert \Pcal \times \Tcal \vert}{N_{data}} \sum_{j=1}^{N_s} 
+        [K_\infty - K]_{ml} :=& \int_{\Theta \times [0, T]} [\G^{1/2}u(\mu, t)]_m [\G^{1/2}u(\mu, t)]_l d(\mu, t) \\
+        &- \frac{\vert \Theta \times [0, T] \vert}{N_{data}} \sum_{j=1}^{N_s} 
         \sum_{k=1}^{N_t} [\G^{1/2}u(\mu_j, t_k)]_m [\G^{1/2}u(\mu_j, t_k)]_l.
     \end{align*}
     By the uniform iid sampling assumed and the general bound on $\norm{u(\mu, t)} \leq M$ before, 
@@ -357,13 +409,13 @@ but we want to keep the choice of basis parameter sensitive, as it will open the
 
 \begin{proposition} \label{prop: eigenvalues and optimal projection under sampling}
     Let $\mathcal{V}_N = \{ W \in \R^{N_h \times N} \, \vert \, W^T \G W = I_N \}$ be the set of all 
-    $N$-dimensional $\G$-orthonormal bases, 
+    $N$-dimensional $\G$-orthonormal matrices, 
     $N_{data} := N_t N_s$ and $\A = [\xi]_{i=1}^N$ be the POD matrix according to Definition
     (\ref{def: POD}), then
     \begin{multline*}
-        \frac{\vert \, \Pcal \times \Tcal \, \vert}{N_{data}} 
+        \frac{\vert \, \Theta \times [0, T] \, \vert}{N_{data}} 
         \sum\limits_{i \in I, k = 1, \dots, N_t} \norm{u(\mu_j, t_k) - \A \A^T \G u(\mu_j, t_k)}_2^2 \\
-        = \min\limits_{W \in \mathcal{V}_N} \frac{\vert \, \Pcal \times \Tcal \, \vert}{N_{data}} 
+        = \min\limits_{W \in \mathcal{V}_N} \frac{\vert \, \Theta \times [0, T] \, \vert}{N_{data}} 
         \sum\limits_{i \in I, k = 1, \dots, N_t} 
         \norm{u(\mu_j, t_k) - W W^T \G u(\mu_j, t_k)}_2^2 
         = \sum_{j=N+1}^r \sigma_k^2.
@@ -372,17 +424,17 @@ but we want to keep the choice of basis parameter sensitive, as it will open the
 
 \begin{definition}[Linear Kolmogorov $N$-width] \label{def: linear kolmogorov}
     Let $N \in \N$, $N \leq N_h$ and $\mathcal{S}_{N_h} = \{ u(\mu, t) \in \R^{N_h} \, 
-    \vert \, (\mu, t) \in \Pcal \times \Tcal \}$ 
+    \vert \, (\mu, t) \in \Theta \times [0, T] \}$ 
     be some parametric manifold. The linear Kolmogorov $N$-width of $\mathcal{S}_{N_h}$ is defined as
     \begin{equation*}
-        d_N(S_{N_h}) = \inf\limits_{V \in \R^{N_h \times N}} \sup\limits_{u(\mu, t) \in S_{N_h}} 
-        \norm{u(\mu, t) - V V^T \G u(\mu, t)}.
+        d_N(S_{N_h}) = \inf\limits_{V \in \R^{N_h \times N}} \sup\limits_{u \in S_{N_h}} 
+        \norm{u - V V^T \G u}.
     \end{equation*}
 \end{definition}
 
 \begin{definition}[Nonlinear Kolmogorov $N$-width] \label{def: nonlinear kolmogorov}
     Let $N \in \N$, $N \leq N_h$ and $\mathcal{S}_{N_h}= \{ u(\mu, t) \in \R^{N_h} \, 
-    \vert \, (\mu, t) \in \Pcal \times \Tcal \}$ 
+    \vert \, (\mu, t) \in \Theta \times [0, T] \}$ 
     be some parametric manifold. The nonlinear Kolmogorov $N$-width of $\mathcal{S}_{N_h}$ is defined as 
     \begin{equation*}
         \delta_N(\mathcal{S}_{N_h}) = \inf\limits_{\psi \in C(\R^{N_h}, \R^N), 

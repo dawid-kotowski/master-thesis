@@ -315,20 +315,22 @@ This observation can be reformulated into the following theorem.
 \end{proof}
 
 
-We have now discussed some preliminary relative error results for the POD+DNN neural networks for given near-optimal
-neural network weights. As a next step, one can do the same for the DOD+DNN neural networks. First, we need
-an auxilary statement, that precidents the similarity of definition of the DOD projection error to the POD projection
-error, since the former depends on architecture. 
+We have now discussed some general relative error results for any POD+DNN ROM for some given
+neural network weights. As a next step, one can do the same for the DOD+DNN ROM. First, we need
+an auxilary statement, that precidents the similarity of the definition of the DOD projection error to the POD projection
+error, since the former depends on the architecture of the inner DOD module and thus must be at least sub-optimal 
+to some degree. 
 
 The key idea here being, that one can employ Horniks Theorem to ensure existence of a neural network architecture and corresponding neural 
-network of such architecture, such that the objective functional 
+network of such architecture, such that it finds $\V*$ minimizing the objective functional 
 \begin{equation*}
     (\mu, t, \V) \mapsto \int_{\Theta'} \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht} d (\nu),
 \end{equation*}
-is close to the "perfect one". Under triangle equality for the distance to the "perfect one", this can be seperated
-into the mistake, which is arbitrarily small, and the total size of the perfect objective functional, that is nothing
-but the Kolmogorov $N'$-width under fixed $(\mu, t)$. And that KnW decays exponentially fast by Assumption 
-(\ref{assumption KnW decay}), in contrast to the general one. 
+for any $(\mu, t) \in \Theta \times [0, T]$. 
+Under triangle equality for the distance to the optimal minimizer of the objective functional, this can be seperated
+into the mistake of fitting the network to 
+the minimizer, which is arbitrarily small, and the mistake of the minimizer, that is nothing
+but the Kolmogorov $N'$-width under fixed $(\mu, t)$.
 
 \begin{remark} \label{remark: regularity for s}
     Generally we can \emph{not} employ Yarotsky Theorem (\ref{theo: yarotsky}) here, since even though 
@@ -336,74 +338,76 @@ but the Kolmogorov $N'$-width under fixed $(\mu, t)$. And that KnW decays expone
     functional, as described above, can be shown to be Lipschitz continous under our current 
     assumptions, as given above, its minimizer with regard to the matrix entry does not 
     necessarily inherit any regularity and Yarotsky
-    does require Sobolev-smoothness. However, we will set up the proof for the following lemma in such a way,
+    does require Sobolev-type smoothness. However, we will set up the proof for the following lemma in such a way,
     that Yarotsky can be directly interchanged, if a higher regularity for the optimal objective functional is
     imposed.
 \end{remark}
 
-Before we start, we would like to define the aforementioned optimal objective functional, since further assumptions
+Before we start, we would like to define the aforementioned objective functional and its minimizer, 
+since further assumptions
 on the PDE can expose the needed further regularity.
 
 The source for the following proposition and its framework is generally \cite{franco2024}.
 
-\begin{definition}[Optimal DOD Functional] \label{def: DOD functional}
+\begin{definition}[Optimal DOD] \label{def: DOD functional}
     Let $N', N_A, N_h \in \N$ be fixed by Assumption (\ref{assumption: dimension hierarchy}). 
-    Assuming we have $\mu \in \Theta, t \in [0, T]$ and $\V = \A \tilde{\V} \in [0, 1]^{N_h \times N'}$, with
-    $\A \in [0, 1]^{N_h \times N_A}$ being $\G$ orthonormal, and $\tilde{\V} \in [0, 1]^{N_A \times N'}$, then 
-    we define $J: \Theta \times [0, T] \times [0, 1]^{N_h \times N'} \to \R$ via
+    Assuming we have $\mu \in \Theta, t \in [0, T]$ and $\V = \A \tilde{\V} \in [-1, 1]^{N_h \times N'}$, with
+    $\A \in \R^{N_h \times N_A}$ fixed being $\G$ orthonormal, and $\tilde{\V} \in [-1, 1]^{N_A \times N'}$, then 
+    we define $J: \Theta \times [0, T] \times [0, 1]^{N_h \times N'} \to \R$ the \emph{objective DOD functional} via
     \begin{equation*}
-        J(\mu, t, \V) := \int_{\Theta'} \norm{\uht - \V \V^T \G \uht} d(\nu).
+        J(\mu, t, \V) := \int_{\Xcal} \norm{\uht - \V \V^T \G \uht} d(\nu),
     \end{equation*}
-    Then we call a Borel measurable map $s: \Theta \times [0, T] \to [0, 1]^{N_A \times N'}$ 
+    for any compact set $\Xcal \subset \Theta'$ with $\text{dim}(\Xcal) = q$.
+    Then we call a Borel measurable map $s: \Theta \times [0, T] \to [-1, 1]^{N_A \times N'}$ 
     producing w.l.o.g. orthonormal
     matrices given by
     \begin{equation*}
-        s: (\mu, t) \mapsto \underset{{\tilde{\V} \in [0, 1]^{N_A \times N'}}}{\text{argmin}}  
-        J(\mu, t, \A \tilde{\V}),
+        s: (\mu, t) \mapsto \underset{{\V \in [-1, 1]^{N_A \times N'}}}{\text{argmin}}  
+        J(\mu, t, \A \V),
     \end{equation*}
-    the \emph{optimal DOD functional}, if it is uniquely defined.
+    the \emph{optimal DOD} for $\Xcal$, if it is uniquely defined.
 \end{definition}
 
 Under the already given assumptions, we can pose its first existence result.
 \begin{lemma} \label{lemma: DOD functional is lipschitz}
-    Let $J: \Theta \times [0, T] \times [0, 1]^{N_h \times N'} \to \R$ be given as in 
+    Let $J: \Theta \times [0, T] \times [-1, 1]^{N_h \times N'} \to \R$ be an objective DOD functional
+    for some $\Xcal \subset \Theta'$ with $\text{dim}(\Xcal) = q$ as in 
     Definition (\ref{def: DOD functional}),
     then under Assumption (\ref{assumption parameter-to-solution map}), we have that $J$ is Lipschitz,
-    and the optimal DOD functional $s$ exists.
+    and the optimal DOD $s$ exists.
 \end{lemma}
 \begin{proof}
     Let $\mu, \mu' \in \Theta$, $t, t' \in [0, T]$ 
-    and $\V = \A \tilde{\V}, \V' = \A \tilde{\V}' \in \R^{N_h \times N'}$ arbitrary.
+    and $\V, \V' \in \R^{N_h \times N'}$ arbitrary.
     For the following calculation, we compose the preliminary identity for 
-    $u := \uhtprered$ and $u' := u_\text{pre-red}^{\mu', \nu, t'}$,
-    with $u_\text{pre-red}^{\mu, \nu, t} := \A^T \G \uht \in \R^{N_A}$ for each $\mu \in \Theta, \nu \in \Theta'$
+    $u := \uht$ and $u' := u_h^{\mu', \nu, t'}$ for each $\mu \in \Theta, \nu \in \Xcal$
     and $t \in [0, T]$, 
-    and the projectors $P := \tilde{\V} \tilde{\V}^T$, $P' := \tilde{\V}' (\tilde{\V}')^T$,
+    and the projectors $P := \V \V^T \G$, $P' := \V' (\V')^T \G$,
     \begin{equation} \label{eq: optimal dod help equation}
         \begin{aligned}
-            (\I_{N_A} - P)u - (\I_{N_A} - P')u' &= u - Pu - u' + P'u' \\
+            (\I - P)u - (\I - P')u' &= u - Pu - u' + P'u' \\
             &= u - Pu - u' + P'u' + Pu' - Pu' \\
             &= u - u' - Pu + Pu' + P'u' - Pu' \\
-            &= (\I_{N_A} - P)(u - u') + (P' - P)u'.
+            &= (\I - P)(u - u') + (P' - P)u'.
         \end{aligned}
     \end{equation}
     Then we can calculate with, the reverse triangle inequality, and our auxiliary 
     Equation (\ref{eq: optimal dod help equation}),
     \begin{align*}
-        \euknorm{J(\mu, t, \V) - J(\mu', t', \V')} &= \int_{\Theta'} \euknorm{\norm{\uht - \V \V^T \G \uht} - 
+        \euknorm{J(\mu, t, \V) - J(\mu', t', \V')} &= \int_{\Xcal} \euknorm{\norm{\uht - \V \V^T \G \uht} - 
         \norm{u_h^{\mu', \nu, t} - \V' (\V')^T \G u_h^{\mu', \nu, t}}} d(\nu) \\
-        &= \int_{\Theta'} \left\vert \, \euknorm{u_\text{pre-red}^{\mu, \nu, t} - \tilde{\V} 
-        \tilde{\V}^T u_\text{pre-red}^{\mu, \nu, t}} - 
-        \euknorm{u_\text{pre-red}^{\mu', \nu, t'} - \tilde{\V}' (\tilde{\V}')^T 
-        u_\text{pre-red}^{\mu', \nu, t'}} \, \right\vert d(\nu) \\
-        &= \int_{\Theta'} \left\vert \, \left(u_\text{pre-red}^{\mu, \nu, t} - \tilde{\V} 
-        \tilde{\V}^T u_\text{pre-red}^{\mu, \nu, t}\right) - 
-        \left(u_\text{pre-red}^{\mu', \nu, t'} - \tilde{\V}' (\tilde{\V}')^T 
-        u_\text{pre-red}^{\mu', \nu, t'}\right) \, \right\vert d(\nu) \\
-        &\leq \int_{\Theta'} \left\vert (\I_{N_A} - \tilde{\V} \tilde{\V}^T)(\uhtprered - 
-        u_\text{pre-red}^{\mu', \nu, t'} )  \right\vert d(\nu) + M \vert \Theta' \vert \opnorm{\tilde{\V} \tilde{\V}^T - 
-        \tilde{\V}' (\tilde{\V}')^T}   \\
-        &\leq \vert \Theta' \vert (L  + 2  M ) \left( \euknorm{\mu - \mu'} + \euknorm{t - t'} + \euknorm{\V - \V'}\right),
+        &= \int_{\Xcal} \left\vert \, \norm{\uht - \V 
+        \V^T \G \uht} - 
+        \norm{u_h^{\mu', \nu, t'} - \V' (\V')^T \G 
+        u_h^{\mu', \nu, t'}} \, \right\vert d(\nu) \\
+        &= \int_{\Xcal} \left\vert \, \left(u_h^{\mu, \nu, t} - \V 
+        \V^T \G u_h^{\mu, \nu, t}\right) - 
+        \left(u_h^{\mu', \nu, t'} - \V' (\V')^T \G
+        u_h^{\mu', \nu, t'}\right) \, \right\vert d(\nu) \\
+        &\leq \int_{\Xcal} \left\vert (\I- \V \V^T \G)(\uht - 
+        u_h^{\mu', \nu, t'} )  \right\vert d(\nu) + M \vert \Xcal \vert \opnorm{\V \V^T \G - 
+        \V' (\V')^T \G}   \\
+        &\leq \vert \Xcal \vert (L  + 2  M ) \left( \euknorm{\mu - \mu'} + \euknorm{t - t'} + \euknorm{\V - \V'}\right),
     \end{align*}
     and $J$ is thus Lipschitz continous.
     \notdone{include existence of s}
@@ -414,29 +418,33 @@ Under the already given assumptions, we can pose its first existence result.
  
 
 \begin{proposition}[Optimal Deep Orthogonal Decomposition] \label{prop: DOD Existence}
-    For each geometric parameter $\mu \in \Theta$, let $\Scal_{\mu, t} :=
-    \{ \uht \}_{\nu \in \Theta'} \subset \mathcal{G}(\Theta \times \Theta' \times [0, T])$ be the 
-    $(\mu, t)$-invariant solution submanifold. 
+    For each geometric parameter $\mu \in \Theta$, let $\Scal^\text{pre-red}_{\mu, t} :=
+    \{ \A^T \G \uht \}_{\nu \in \Theta'}$ be the 
+    $(\mu, t)$-invariant pre-reduced solution submanifold, where $\A \in \R^{N_h \times N_A}$ is a 
+    $\G$-orthonormal matrix. 
     Then, under the Assumptions (\ref{assumption sample}) and (\ref{assumption parameter-to-solution map}), 
     for every $\varepsilon > 0$ there are weights $\theta_\text{DOD}^* \in \Theta(\Phi_{\tilde{\V}})$ 
-    for a DOD of output dimension $N_h \times N'$ accoring to Definition (\ref{def: DOD}) such that
+    for a DOD of output dimension $N_h \times N'$ accoring to Definition (\ref{def: DOD}), denoting
+    $\V_{\mu, t} := \V_{\mu, t}(\theta_\text{DOD}^*)$ for each $(\mu, t) \in \Theta \times [0, T]$ and
+    a constant $c_\A' > 0$ only depending on $\A$ and the parameter space, such that
     \begin{equation*}
         \int_{\Theta \times \Theta' \times [0, T]} 
-        \norm{\uht - \V_{\mu, t}(\theta_\text{DOD}^*) \V_{\mu, t}(\theta_\text{DOD}^*)^T \G \uht} d(\mu, \nu, t)
-        < \varepsilon + \int_{\Theta \times [0, T]} d_{N'}(\mathcal{S}_{\mu, t}) d(\mu, t).
+        \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht} d(\mu, \nu, t)
+        \leq \varepsilon  + c_\A' + \int_{\Theta \times [0, T]} d_{N'}(\mathcal{S}^\text{pre-red}_{\mu, t}) d(\mu, t).
     \end{equation*}
 \end{proposition}
 \begin{proof}
     Let $N', N_A, N_h \in \N$ be fixed by Assumption (\ref{assumption: dimension hierarchy}). 
-    We set $J$ and $s$ accoring to Definiton (\ref{def: DOD functional}), whereas the map
+    We set $J$, the objective DOD functional for $\Theta'$, and $s$, the
+    optimal DOD for $\Theta'$, according to Definiton (\ref{def: DOD functional}), whereas the map
     \begin{equation*}
-        s: (\mu, t) \mapsto \underset{{\tilde{\V} \in [0, 1]^{N_A \times N'}}}{\text{argmin}}  J(\mu, t, \A \tilde{\V}).
+        s: (\mu, t) \mapsto \underset{{\tilde{\V} \in [-1, 1]^{N_A \times N'}}}{\text{argmin}}  J(\mu, t, \A \tilde{\V}).
     \end{equation*}
     is bounded (given by continuity of J and compactness of its image) and therefore 
     $s \in L^1(\Theta \times [0, T]; \R^{N_A \times N'})$, i.e.
     \begin{equation*}
         \norm{s}_{L^1(\Theta \times [0, T]; \R^{N_A \times N'})} := 
-        \int_{\Theta \times [0, T]} \opnorm{s(\mu, t)} \, d(\mu, t)  < \infty.
+        \int_{\Theta \times [0, T]} \euknorm{s(\mu, t)} \, d(\mu, t)  < \infty.
     \end{equation*}
     Define $[s]_{ij}$ as the canoncially lifted
     entry in position $(i, j) \in \{1, \dots, N_A\} \times \{1, \dots, N'\}$.
@@ -456,76 +464,101 @@ Under the already given assumptions, we can pose its first existence result.
     \end{equation*}
     since it attains the wanted accuracy
     \begin{equation*}
-        \norm{s - R_\rho(\tilde{\V}_0)}_{L^1(\Theta \times [0, T]; \R^{N_A \times N'})} \leq \varepsilon.
+        \norm{s - R_\rho(\tilde{\V}_0)}_{L^1(\Theta \times [0, T]; \R^{N_A \times N'})} \leq
+        \varepsilon.
     \end{equation*}
-    To now ensure, that the provided realization of the DOD neural network are indeed in the pre-image of $J$, 
-    we need to ensure, that there is a network, which indeed attains the accuracy, but is also entrywise $[0,1]$.
-    For this, let $L = ((A_1, b_1), (A_2, b_2))$ be given via
-    \begin{equation*}
+    To now ensure, that the provided realization of the almost DOD neural network are indeed in the pre-image of $J$, 
+    we need to ensure, that there is a network, which indeed attains the accuracy, but is also entrywise $[-1,1]$.
+    For this, let $\zeta = ((A_1, b_1), (A_2, b_2), (A_3, b_3))$ be given via
+    \begin{align*}
         A_1 := \begin{bmatrix}
-            \I_{\R^{N_A \times N'}} \\
-            \I_{\R^{N_A \times N'}}
+            \I_{\R^{N_A \times N'}} 
         \end{bmatrix},
         \quad
         b_1 := \begin{pmatrix}
-            0_{\R^{N_A \times N'}} \\
-            -\I_{\R^{N_A \times N'}}
-        \end{pmatrix},
+            \I_{\R^{N_A \times N'}}
+        \end{pmatrix},&
         \quad
-        A_2 := \begin{bmatrix}[c|c]
-            \I_{\R^{N_A \times N'}} & -\I_{\R^{N_A \times N'}} 
+        A_2 := \begin{bmatrix}
+            -\I_{\R^{N_A \times N'}}
         \end{bmatrix},
         \quad
-        b_2 := 0.
-    \end{equation*}
-    The realization of this network is equivalent to the entry-wise operator of $x \mapsto \rho(x)-\rho(x-1) \in [0, 1]$
-    for $x \in \R$. Since this realization as a map is bounded by $1$, we can infer with the definition
-    $\V_{\mu, t} := R_\rho(L(\theta^*_\text{DOD})) \circ (\A \cdot R_\rho(\tilde{\V}_0(\theta^*_\text{DOD}))) 
-    (\mu, t)$ a new network with a final
+        b_2 := \begin{pmatrix}
+            \I_{\R^{N_A \times N'}}
+        \end{pmatrix}, \\
+        A_3 := \begin{bmatrix}
+            -\I_{\R^{N_A \times N'}}
+        \end{bmatrix},&
+        \quad
+        b_3 := \begin{pmatrix}
+            \I_{\R^{N_A \times N'}}
+        \end{pmatrix}
+    \end{align*}
+    The realization of this network is equivalent to the entry-wise operator of $x \mapsto 1 - \rho(2 - \rho(\rho(x + 1))) 
+    \in [-1, 1]$
+    for $x \in \R$ on all entries of 
+    a $(N_A \times N')$-dimensional matrix. Note, that to make this neural network truly adhere to Definition
+    (\ref{def: neural network}), which needs the
+    dimensions to be natural numbers, we would have to reinterpret any matrix as a canoncially stacked vector, but 
+    we omit this for the sake of readability, and since it does not affect the number of layers or weights.
+
+
+    Further because the Lipschitz constant of this map is $1$, we can infer with the definition
+    $\V_{\mu, t} := \A \cdot \left(R_\rho(\zeta(\theta^*_\text{DOD})) \circ R_\rho(\tilde{\V}_0(\theta^*_\text{DOD})) \right)
+    (\mu, t)$ a new network, called the inner DOD module, with a final
     architecture $\Phi_{\tilde{\V}}$ and
     complexity only differing by constants, and a choice of neural network weights $\theta^*_\text{DOD} 
     \in \Theta(\Phi_{\tilde{\V}})$, such that
     \begin{equation*}
-        \int_{\Theta \times [0, T]} \opnorm{\V_{\mu, t} - s(\mu, t)} d(\mu, t)
-        = \int_{\Theta \times [0, T]} \underbrace{\opnorm{L}}_{\leq 1} \opnorm{R_\rho(\tilde{\V}_0)(\mu, t) - s(\mu, t)}
+        \int_{\Theta \times [0, T]} \norm{\V_{\mu, t} - \A s(\mu, t)} d(\mu, t)
+        \leq \int_{\Theta \times [0, T]} \euknorm{R_\rho(\tilde{\V}_0)(\mu, t) - s(\mu, t)}
         d(\mu, t)
-        < \varepsilon.
+        \leq \varepsilon,
     \end{equation*}
-    Finally, with the knowledge, that $\V_{\mu, t}$ is $\varepsilon$-close to $s(\mu, t)$ in average, and the fact
-    that this, as a matrix, is indeed in the pre-image of $J$, we can write using the Lipschitz continuity of $J$
+    by the $1$-Lipschitz propert of $R_\rho(\zeta)$ and the same argument as was used in the proof
+    of Proposition (\ref{prop: switch to euklidian norm}).
+    Finally, with this assertion, the fact
+    that this, as a matrix, is indeed in the pre-image of $J$ and
+    the Proposition (\ref{prop: switch to euklidian norm}) for the switch to the euklidian norm
+    with $c_\A' := \euknorm{\Theta \times \Theta' \times [0, T]} c_\A$, 
+    we can write with $\uhtprered := \A^T \G \uht$,
     \begin{multline} \label{eq: last step for optimal DOD}
         \int_{\Theta \times \Theta' \times [0, T]} 
         \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht} d(\mu, \nu, t) \\ 
         \leq \int_{\Theta \times [0, T]}
-        \left\vert J(\mu, t, \V_{\mu, t}) - J(\mu, t, s(\mu, t)) \right\vert d(\mu, t) +
-        \int_{\Theta \times [0, T]} J(\mu, t, s(\mu, t)) d(\mu, t) \\
-        < \varepsilon + \int_{\Theta \times [0, T]} \left( \min\limits_{\V \in \R^{N_h \times N}} J(\mu, t, \V)\right) 
+        \left\vert J(\mu, t, \V_{\mu, t}) - J(\mu, t, \A s(\mu, t)) \right\vert d(\mu, t) +
+        \int_{\Theta \times [0, T]} J(\mu, t, \A s(\mu, t)) d(\mu, t) \\
+        \leq \varepsilon + \int_{\Theta \times [0, T]} \left( \min\limits_{\V \in \R^{N_A \times N'}} J(\mu, t, \A \V)\right) 
         d(\mu, t) \\
-        < \varepsilon + \int_{\Theta \times [0, T]} \left( \min\limits_{\V \in \R^{N_h \times N}} 
-        \sup\limits_{\nu \in \Theta'} \norm{\uht - \V \V^T \G \uht} \right) d(\mu, t).
+        \leq \varepsilon + c_\A' + \int_{\Theta \times [0, T]} \left( \min\limits_{\tilde{\V} \in \R^{N_A \times N'}} 
+        \sup\limits_{\nu \in \Theta'} \euknorm{\uhtprered - \tilde{\V} \tilde{\V}^T \uhtprered} \right) d(\mu, t).
     \end{multline}
 \end{proof}
 
 \begin{remark} \label{remark: discrete optimal DOD}
     We have structured the Proposition (\ref{prop: DOD Existence}) with the $L^1$-integral in mind, but we 
-    may redefine it to $L^\infty$ and use the following definition of $J$ for the statement and proof
+    may redefine it to $L^\infty$ and set the objective DOD functional for $\Pcal_2$ for the statement and proof
+    as
     \begin{equation*}
         J(\mu, t, \V) := \frac{\euknorm{\Theta'}}{N_{s_2}} \sum_{\nu \in \Pcal_2} \norm{\uht - \V \V^T \G \uht}.
     \end{equation*}
     Then the entire proof can be done in the same way, since the Lipschitz property of $J$ in Lemma
     (\ref{lemma: DOD functional is lipschitz}) remains true, 
     and culminates in the following version of Proposition (\ref{prop: DOD Existence}) for $\V_{\mu, t} :=
-    \V_{\mu, t}(\theta^*_\text{DOD})$, when discarding the very last step in 
+    \V_{\mu, t}(\hat \theta^*_\text{DOD})$, when discarding the very last step in 
     Equation (\ref{eq: last step for optimal DOD})
     \begin{multline*}
         \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \frac{\euknorm{\Theta'}}{N_{s_2}} \sum_{\nu \in \Pcal_2}
         \norm{\uht - \V_{\mu, t}
         \V_{\mu, t}^T \G \uht} \\
-        < \varepsilon + \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \frac{\euknorm{\Theta'}}{N_{s_2}} 
+        \leq \varepsilon  + c_\A' + \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \frac{\euknorm{\Theta'}}{N_{s_2}} 
         \min\limits_{\V \in \R^{N_h \times N'}} 
         \sum_{\nu \in \Pcal_2} 
         \norm{\uht - \uht \V \V^T \G \uht}.
     \end{multline*}
+    Notice, that in general $\hat \theta^*_\text{DOD} \neq \theta^*_\text{DOD}$, since the change of the objective
+    DOD functional induces a change to the optimal DOD and hence a potential change to the choice of neural network
+    weights.
 \end{remark}
 
 
@@ -537,15 +570,34 @@ Proposition (\ref{prop: eigenvalues and optimal projection under sampling}) to d
 \begin{equation} \label{eq: definition virtual eigenvalues}
     \sigma(\mu, t)_1^2 \geq \cdots \geq \sigma(\mu, t)_{n}^2 \quad \text{for any } n \leq r,
 \end{equation}
-as the eigenvalues of a hypothetic POD (see Definition (\ref{def: POD})) with the snapshot matrix
+as the eigenvalues of a virtual POD (see Definition (\ref{def: POD})) with the snapshot matrix
 \begin{equation*}
     U := \left[u_h^{\mu, \nu_1, t} \big\vert \cdots \big\vert u_h^{\mu, \nu_{N_{s_2}}, t} \right]^T 
     \in \R^{N_h \times N_{s_{2}}},
 \end{equation*}
-for each $(\mu, t) \in \Theta \times [0, T]$.
-
-Indeed, intuitively this makes sense, since the DOD is a neural network, and can achieve the optimal projector 
-out of sheer luck, independent of the amount of training data provided.
+for each $(\mu, t) \in \Theta \times [0, T]$, and a subsequently defined discrete correlation matrix
+\begin{equation*}
+    K(\mu, t) := \frac{\euknorm{\Theta'}}{N_{s_2}} U \G U^T,
+\end{equation*}
+that fulfill
+\begin{equation*}
+    \frac{\euknorm{\Theta'}}{N_{s_2}} 
+        \min\limits_{\V \in \R^{N_h \times n}} 
+        \sum_{\nu \in \Pcal_2} 
+        \norm{\uht - \uht \V \V^T \G \uht}^2 = \sum_{k > n} \sigma(\mu, t)^2_k,
+\end{equation*}
+for the $n \leq r$ from above.
+In the same manner, we can define a virtual infinite limit POD with the respective infinite correlation
+matrix and their eigenvalues 
+\begin{equation} \label{eq: definition virtual infinity eigenvalues}
+    \sigma(\mu, t)_{1, \infty}^2 \geq \cdots \geq \sigma(\mu, t)_{n, \infty}^2 \quad \text{for any } n \leq r,
+\end{equation}
+that fulfill 
+\begin{equation*} 
+        \min\limits_{\V \in \R^{N_h \times n}} 
+        \int_{\nu \in \Theta'} 
+        \norm{\uht - \uht \V \V^T \G \uht}^2 d(\nu) = \sum_{k > n} \sigma(\mu, t)^2_{k, \infty}.
+\end{equation*}
 
 
 
@@ -557,7 +609,8 @@ out of sheer luck, independent of the amount of training data provided.
     (\ref{assumption parameter-to-solution map}), we have for the relative error of the DOD+DNN
     
     \begin{equation}
-        \mathcal{E}^\text{DOD+DNN}_R \leq \mathcal{E}_\text{S} + \mathcal{E}_\text{DOD} + \mathcal{E}_\text{NN},
+        \mathcal{E}^\text{DOD+DNN}_R \leq \mathcal{E}_\text{S} + \mathcal{E}_\A 
+        + \mathcal{E}_\text{DOD} + \mathcal{E}_\text{NN},
     \end{equation}
     where 
     
@@ -569,13 +622,19 @@ out of sheer luck, independent of the amount of training data provided.
         \]
         satisfies $\mathcal{E}_\text{S} \to 0$ as $N_{s_2} \to \infty$, with expectation 
         \[
-            \E[\mathcal{E}_\text{S}] = \mathcal{O}(N_{s_2}^{-1/4}).
+            \E[\mathcal{E}_\text{S}] \leq \mathcal{O}(N_{s_2}^{-1/4}).
         \]
     
+        \item The ambient error
+        \[
+            \mathcal{E}_\A = \Ecal_\A\left(\mathcal{G}, (\mu_i, \nu_i, t_i)_{i = 1}^{N_{\text{data}}},
+            N_A\right)
+        \]
+        being equal to zero, if $N_A = N_h$.
         \item The DOD projection error 
         \[
             \mathcal{E}_{\text{DOD}} = \mathcal{E}_{\text{DOD}}\left(\mathcal{G}, 
-            (\mu_i, \nu_i, t_i)_{i = 1}^{N_{\text{data}}}, N\right)
+            (\mu_i, \nu_i, t_i)_{i = 1}^{N_{\text{data}}}, N'\right)
         \]
         satisfies $\mathcal{E}_{\text{DOD}} \to \mathcal{E}_{\text{DOD}, \infty} + \varepsilon$
         almost surely as $N_{s_2} \to \infty$
@@ -590,7 +649,7 @@ out of sheer luck, independent of the amount of training data provided.
     
         \item The neural network approximation error
         \[
-            \mathcal{E}_{\text{NN}} = \mathcal{E}_{\text{NN}}\left(\mathcal{G}, N, \Phi^\text{D}_{N'}\right)
+            \mathcal{E}_{\text{NN}} = \mathcal{E}_{\text{NN}}\left(\mathcal{G}, N', \Phi^\text{D}_{N'}\right)
         \]
         is arbitrarily small depending on the size and choice of weights of the neural network $\Phi^\text{D}_{N'}$.
     \end{enumerate}
@@ -604,25 +663,25 @@ out of sheer luck, independent of the amount of training data provided.
     $\norm{\cdot}_{L^2_\omega}: L^2(\Theta \times \Theta' \times [0, T]; \R^{N_h}) \to \R^+$ be the norm as given before,
     and define
     \begin{equation*}
-        q_N(\mu, \nu, t) := \V_{\mu, t}^T \G \uht \in \R^N, 
+        q_{N'}(\mu, \nu, t) := \V_{\mu, t}^T \G \uht \in \R^{N'}, 
     \end{equation*}
     as the reduced solution regarding the DOD projection.
     Then we can apply the triangle inequality like before, to achieve 
     \begin{equation*}
         \Ecal_\text{R}^\text{DOD+DNN} \leq \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}_{L^2_\omega} + 
-        \norm{\V_{\mu, t} q_N(\mu, \nu, t) - \V_{\mu, t} \hat{q}_\text{D}(\mu, \nu, t)}_{L^2_\omega}.
+        \norm{\V_{\mu, t} q_{N'}(\mu, \nu, t) - \V_{\mu, t} \hat{q}_\text{D}(\mu, \nu, t)}_{L^2_\omega}.
     \end{equation*}
     In turn, from here we can already infer the error stemming from the latent dynamics identification under the 
     neural network realization $\hat{q}_\text{D}$, i.e.
     \begin{equation}
         \mathcal{E}_{NN} = \left( \int_{\Theta \times \Theta' \times [0, T]} 
-        \frac{\norm{\V_{\mu, t} q_N(\mu, \nu, t) - \V_{\mu, t} \hat{q}_\text{D}(\mu, \nu, t)}^2}{\norm{\uht}^2} 
+        \frac{\norm{\V_{\mu, t} q_{N'}(\mu, \nu, t) - \V_{\mu, t} \hat{q}_\text{D}(\mu, \nu, t)}^2}{\norm{\uht}^2} 
         d(\mu, \nu, t) \right)^{1/2}.
     \end{equation}
     
     Moreover, we can extrapolate a similar procedure of splitting the remaining term into the respective errors
     as in the proof of Theorem (\ref{theo: relative error POD+DNN}), 
-    where we already assume for the fixed $N \in \N$, the "optimal" choice of weights $\theta_\text{DOD}^* \in
+    where we already assume for the fixed $N' \in \N$, the quasi-optimal choice of weights $\theta_\text{DOD}^* \in
     \Theta(\Phi_{\tilde{\V}})$ for the underlying DOD neural network in accordance to Remark
     (\ref{remark: discrete optimal DOD}) for some fixed $\delta > 0$ and its subsequently defined virtual discrete 
     corrolation eigenvalues $\sigma(\mu, t)_k$
@@ -648,7 +707,8 @@ out of sheer luck, independent of the amount of training data provided.
     that $\E[\Ecal_\text{S}] \leq \Ocal(N_{s_2}^{-1/4})$ by
     Proposition (\ref{prop: order of convergence for sample}) with $N_t = 1, N_{s_1} = 1$.
 
-    Moreover, we have that 
+    Moreover, we have from Proposition (\ref{prop: existence and convergence to sigma infty}),
+    with $N_{s_1}, N_t = 1$, that 
     \begin{multline*}
         \Ecal_\text{DOD} = \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m} \left( \delta + 
         \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_k^2}
@@ -754,7 +814,10 @@ However, to achieve actual complexity
 bounds for the latter two ROMs, we will necessarily need to impose one further assumption for the regularity of the 
 optimal objective
 functional as discussed in Remark (\ref{remark: regularity for s}). 
-This will be inserted in an upcoming part, before the discussion of the DOD-DL-ROM upper complexity bound.
+This will be inserted in an upcoming part, before the discussion of the DOD-DL-ROM upper complexity bound as
+it is optional for the assertion of the complexity bound of the main Theorem (\ref{theo: PAC bound for DOD-DL-ROM}).
+Indeed, if we omit any new assumptions, we may achieve the same Probably-Almost-Correct bound for the 
+relative error of the DOD-DL-ROM, however without any information about the maximal complexity of the inner DOD module.
 
 
 
@@ -813,18 +876,18 @@ the DOD-DL-ROM under weights $\theta_\text{DOD-DL-ROM} = (\theta_\text{DOD}, \th
 \end{gather*}
 from the Subsection (\ref{subsec: dod-dl-rom}) and the DOD Definition (\ref{def: DOD}).
 
-Furthermore, let $\psi_* \in C^s(\R^n; \R^N)$ and $\psi_*' \in C^{s'}(\R^N; \R^n)$ respectively be the maps attaining
-the perfect embedding Assumption (\ref{assumption perfect embedding}), with $s \gg s' \geq 2$. Since $N > N'$ in
-general, the perfect embedding is implied for $N'$ aswell; let $\chi_* \in C^s(\R^n; \R^{N'})$ 
-and $\chi_*' \in C^{s'}(\R^{N'}; \R^n)$ be the maps attaining the equivalent for $N'$.
+Furthermore, let $\chi_* \in C^s(\R^n; \R^{N'})$ and $\chi_*' \in C^{s'}(\R^{N'}; \R^n)$ respectively be the maps attaining
+the perfect embedding Assumption (\ref{assumption perfect embedding}), with $s \gg s' \geq 2$. Since $N' < N$ in
+general, the perfect embedding is implied for $N$ aswell; let $\psi_* \in C^s(\R^n; \R^N)$ 
+and $\psi_*' \in C^{s'}(\R^N; \R^n)$ be the maps attaining the equivalent for $N$.
 
 Finally set constants
 \begin{equation*}
-    C_1 := \sup\limits_{\vert \alpha \vert \leq s'} \sup\limits_{v \in \R^N} \vert \, D^\alpha \psi_*(v) \, 
-    \vert, \quad 
-    C_2 := \sup\limits_{\vert \alpha \vert \leq s} \sup\limits_{w \in \R^n} \vert \, D^\alpha \psi_*'(w) \, \vert,
+    C_1' := \sup\limits_{\vert \alpha \vert \leq s'} \sup\limits_{v \in \R^{N'}} \euknorm{D^\alpha \chi_*(v)}, 
+    \quad 
+    C_2' := \sup\limits_{\vert \alpha \vert \leq s} \sup\limits_{w \in \R^n} \euknorm{D^\alpha \chi_*'(w)},
 \end{equation*} 
-and $C_1', C_2'$ analogously for $\chi_*$ and $\chi_*'$. 
+and $C_1, C_2$ analogously for $\psi_*$ and $\psi_*'$. 
 
 
 
@@ -902,18 +965,27 @@ and $C_1', C_2'$ analogously for $\chi_*$ and $\chi_*'$.
         embedding $\mathcal{V}_n = \psi_*'(\mathcal{S}_N) \in \R^n$ is such that $\text{diam}(\mathcal{V}_n) 
         \leq C_1 L \cdot \text{diam}(\Theta \times \Theta' \times [0, T])$, given 
         the Assumption (\ref{assumption parameter-to-solution map}) and the preliminaries.
-        In fact, using the definition of Sobolev spaces (\ref{def: sobolev space})
-        \begin{align*}
+        In fact,
+        \begin{align}
             \sup\limits_{w, w' \in \mathcal{V}_n} \euknorm{w - w'} &= 
-            \sup\limits_{v, v' \in \Scal_N} \euknorm{\psi_*'(v) - \psi_*'(v')}\\
-            &\leq C_1 \sup\limits_{v, v' \in \Scal_N} \euknorm{v - v'} \\
+            \sup\limits_{v, v' \in \Scal_N} \euknorm{\psi_*'(v) - \psi_*'(v')} \label{align: diam Vn 1} \\
+            &\leq C_1 \sup\limits_{v, v' \in \Scal_N} \euknorm{v - v'} \label{align: diam Vn 2} \\
             &\leq C_1 \sup\limits_{(\mu, \nu, t), (\mu', \nu', t') \in \Theta \times \Theta' \times [0, T]}
-            \euknorm{\A^T \G (\uht - u_h^{\mu', \nu', t'})} \\
+            \euknorm{\A_\text{P}^T \G (\uht - u_h^{\mu', \nu', t'})} \label{align: diam Vn 3} \\
             &\leq C_1 \sup\limits_{(\mu, \nu, t), (\mu', \nu', t') \in \Theta \times \Theta' \times [0, T]}
-            \opnorm{\A^T \G} \, \euknorm{\uht - u_h^{\mu', \nu', t'}} \\
+            \opnorm{\A_\text{P}^T \G} \, \euknorm{\uht - u_h^{\mu', \nu', t'}} \label{align: diam Vn 4} \\
             &\leq C_1 L \cdot \text{diam}(\Theta \times \Theta' \times [0, T]).
-        \end{align*}
-        
+        \end{align}
+        Here, we have used the definition of $\mathcal{V}_n$ as the image of $\psi_*'$ in Step (\ref{align: diam Vn 1}),
+        the fact, that 
+        \begin{equation*}
+            C_1 \geq \sup\limits_{v \in \Scal_N} \euknorm{D^\alpha \psi_*'} 
+        \end{equation*}
+        for $\euknorm{\alpha} = 1$ and its implication under
+        the mean value theorem \cite[p. 107]{rudin1976} in Step (\ref{align: diam Vn 2}) and the fact, that
+        $\opnorm{\A_\text{P}^T \G} = 1$ by $\G$-orthonormality of $\A_\text{P}$, together with the
+        Lipschitz-quality of $\Gcal$ from Assumption (\ref{assumption parameter-to-solution map}) 
+        in Step (\ref{align: diam Vn 4}).
         This argument allows us to find that $\psi_* \in \Fcal_{s, n, \infty, C_1 L \cdot \text{diam}(\Theta \times
         \Theta' \times [0, T])}$, after unilateral prior transformation $x \mapsto x / \euknorm{x} \in (0, 1)^n$ of
         any input, 
@@ -955,11 +1027,12 @@ and $C_1', C_2'$ analogously for $\chi_*$ and $\chi_*'$.
         Lipschitz continuous, with constant $L C_1$. In fact, we have for any pair $(\mu, \nu, t), (\mu', \nu', t')
         \in \Theta \times \Theta' \times [0, T]$,
         \begin{align*}
-            \euknorm{\psi_*(\mu, \nu, t) - \psi_*(\mu', \nu', t')} &= \euknorm{\psi_*'(\A_\text{P}^T \G \uht) - 
+            \euknorm{\phi_*(\mu, \nu, t) - \phi_*(\mu', \nu', t')} &= \euknorm{\psi_*'(\A_\text{P}^T \G \uht) - 
             \psi_*'(\A_\text{P}^T \G u_h^{\mu', \nu', t'})} \\
             &\leq C_1 \euknorm{\A_\text{P}^T \G (\uht - u_h^{\mu', \nu', t'})} \\
-            &\leq C_1 L \cdot \text{diam}(\Theta \times \Theta' \times [0, T]).
+            &\leq C_1 L \cdot \left(\euknorm{\mu - \mu'} + \euknorm{\nu - \nu'} + \euknorm{t - t'} \right),
         \end{align*} 
+        by the very same arguments as in the calculation for the diameter of $\mathcal{V}_n$ above.
         The Lipschitz continuity of this map then allows us to employ Theorem (\ref{theo: lipschitz implies sobolev}),
         which guarantees that $\phi_* \in W^{1, \infty}(\Scal_N)$, since $\text{diam}(\Scal_N) \leq L \cdot 
         \text{diam}(\Theta \times \Theta' \times [0, T])$ by the same arguments as in the $\mathcal{V}_n$-case.
@@ -1012,10 +1085,22 @@ and $C_1', C_2'$ analogously for $\chi_*$ and $\chi_*'$.
 
 
 Building upon the discussion in the beginning of this Section (\ref{section: upper complexity bounds}), we
-may explore the implication of a more regular parameter-to-solution map $\Gcal$. Namely, if that map
-satisfies differentiability, then the optimal objective functional $s$ of Definiton (\ref{def: DOD functional})
-inherits it, and subsequently provides the possibility of the use of Yarotsky Theorem in Proposition 
-(\ref{prop: DOD Existence}) and by inclusion Remark (\ref{remark: discrete optimal DOD}).
+may explore the implication of a more regular optimal DOD for $\Xcal = \Pcal_2$ 
+from Definition (\ref{def: DOD functional}).
+Indeed, if such an assumption is given, then Yarotsky Theorem can be invoked for the implied
+construction of the inner DOD module in Remark (\ref{remark: discrete optimal DOD}). 
+
+\begin{assumption}
+    Let the objective DOD functional $J: \Theta \times [0, T] \times [0, 1]^{N_A \times N'}$ be given
+    for $\Xcal = \Pcal_2$ as in Definition (\ref{def: DOD functional}), and the corresponding
+    optimal DOD
+    \begin{equation*}
+        s: \Theta \times [0, T] \mapsto [0, 1]^{N_h \times N'}; \quad (\mu, t) \mapsto 
+        \underset{{\tilde{\V} \in [0, 1]^{N_A \times N'}}}{\text{argmin}}  
+        J(\mu, t, \A \tilde{\V})
+    \end{equation*}
+    be $\hat{L}$-Lipschitz.
+\end{assumption}
 
 
 \notdone{Include an additional assumption to provide regularity for the optimal dod functional}

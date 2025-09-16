@@ -3,8 +3,10 @@
 
 We set $\N := \{1, 2, \dots \}$, $\N_0 := \{0, 1, \dots\}$ and $\N_{\geq n} := \{n, n+1, \dots \}$ for $n \in \N$. 
 Next the set $\R^+:= \{x \in \R \, \vert \, x \geq 0 \}$ will define all real numbers, which are non-negative.
-Furthermore for any set $A$, we will
-write $\vert A \vert$ to denote its cardinality. If $x \in \R$, the gaussian ceiling function is given via
+Furthermore for any finite set $A$, we will
+write $\vert A \vert$ to denote its cardinality. However, if $A \subset \R^n$ measurable for some $n \in \N$, 
+we will use $\vert A \vert := \lambda(A)$, i.e. as the Lebesgue measure. 
+If $x \in \R$, the gaussian ceiling function is given via
 $\ceil{x} := \min\{k \in \mathbb{Z} \, : \, k \geq x\}$.
 
 Further if $d \in \N$ and $\norm{\cdot}$ is a norm, then for $x \in \R^d$ and $r>0$ we set 
@@ -19,7 +21,8 @@ for any $d \in \N$. Sometimes we abbreviate $\I = \I_d$, when the dimensionality
 Let $(a_n)_{n \in \N} \in \R$ be some sequence, then we say $(a_n)_n$ has \emph{(convergence of) order} $n$,
 if there is $c \in \R$ independent of $n$, s.t. $a_n = c \cdot n$ for all $n \in \N$. We then denote $a_n = \Ocal(n)$.
 
-When writing $a \ll b$ for $a, b \in \R$, the reader can infer, that $a < b$, but also, that the different is "substancial".
+When writing $a \ll b$ for $a, b \in \R$, the reader can infer, that $a < b$, but also, that the difference 
+is "substancial".
 We do not provide a rigorous definition of this, even though some literature does on occasion.
 
 Moreover, we define the \emph{multiindex} notation as follows: For $\alpha = (\alpha_1, \dots, \alpha_d) 
@@ -29,7 +32,7 @@ and $\alpha! := \alpha_1! \cdots \alpha_d!$. If $x \in \R^d$, then we set
     x^\alpha := \prod_{i=1}^d x_i^{\alpha_i}.
 \end{equation*}
 
-\subsection{Partial Differential Equations}
+\paragraph{Partial Differential Equations}
 
 For a function $f: X \to Y$ we denote $\operatorname{supp}(f) := \{ x \in X \, \vert \, f(x) \neq 0 \}$
 as the \emph{support} of $f$. Let $g: Y \to Z$ be another function, then $g \circ f: X \to Z$ is their \emph{composition.}
@@ -49,7 +52,7 @@ For $f \in C^n(\Omega)$ and $\alpha \in \N_0^d$ with $\vert \alpha \vert \leq n$
 A function $f: \Omega \to \R^m$ for $\Omega \subset \R^d$ is called \emph{Lipschitz continuous}, if there is a constant
 $L \geq 0$ such that
 \begin{equation*}
-    \vert \, f(x) - f(y) \, \vert \leq L \vert x - y \vert.
+    \vert f(x) - f(y) \vert \leq L \vert x - y \vert.
 \end{equation*}
 
 We further denote with 
@@ -62,7 +65,7 @@ If not specified otherwise we write $\norm{\cdot}_p :=
 \norm{\cdot}_{L^p(\Omega)}$ for all $1 \leq p \leq \infty$. Note that in critical situations we tend to
 be explicit about the norms.
 
-\subsection{Neural Networks}
+\paragraph{Neural Networks}
 
 Consider $d_1, d_2 \in \N$ and a matrix $A \in \R^{d_1 \times d_2}$, then the number of non-zero entries of $A$
 is given by

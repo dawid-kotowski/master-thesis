@@ -230,3 +230,80 @@ the relation between Sobolev and Hölder spaces. We will not employ it in this t
     \end{enumerate}
     such that $\prob[\Ecal_R < \varepsilon] > 1 - \delta$.
 \end{theorem}
+
+
+% existence and uniqueness subsection for hille yosida
+
+\subsection{Existence and Uniqueness}
+
+This subsection provides a brief introduction to one specific statement of existence and uniqueness, which we coincidentally
+can apply well to the projected version of our finite dimensional problem. Note, that of course, this does not justify any existence
+result for highly non-linear equations on a lot of upstream classical or even weak problems, like the famous 
+incompressible Navier-Stokes Equation.
+
+We start by defining the differential operator class, to which we can then apply the Hille-Yosida Theorem. Most notable, 
+we know with that subclass, that any monotone operator, which acts on a finite dimensional space, is in that class, as
+will be shown afterwards. 
+
+\begin{definition}[Maximal Monotone Operator] \label{def: maximal monotone operator}
+    Let $A: D(A) \subset H \to H$ be an unbounded linear operator. It is \emph{monotone}, if
+    \begin{equation*}
+        \langle Av, v \rangle_H \geq 0, \quad \text{for all } v \in D(A),
+    \end{equation*}
+    and \emph{maximal monotone}, if additionally for all $f \in H$ there is $u \in D(A)$ such that
+    \begin{equation*}
+        u + Au = f.
+    \end{equation*}
+\end{definition}
+
+
+\begin{lemma} \label{lemma: finite dimensional monotone operator}
+    Let $H$ be a finite dimensional real Hilbert space, and $A: H \to H$ a monotone operator according to Definition
+    (\ref{def: maximal monotone operator}). Then $A$ is maximal monotone.
+\end{lemma}
+\begin{proof}
+    By obvious identification with a basis, we know, that $H \cong \R^N$ for some $N \in \N$. Thus any element 
+    $u \in H$ can be expressed as 
+    \begin{equation*}
+        u = \sum_{j=1}^N u_j \varphi_j,
+    \end{equation*}
+    where $u_j \in \R$ and $\varphi_j \in H$ for all $j=1, \dots, N$, and
+    similarily for $i,j, k = 1, \dots, N$ there are $a_{ik} \in \R$ such that
+    \begin{equation*}
+        Au = \sum_{i=1}^N \sum_{j=1}^N \sum_{k=1}^N a_{ik} u_j \langle \varphi_j, \varphi_i \rangle \varphi_k.
+    \end{equation*}
+    Thus the condition for $A$ being maximal monotone
+    simplyfies to finding $[u_j]_{j=1}^N \in R^N$ for an arbitrary $[f_j]_{j=1}^N \in \R^N$ where
+    \notdone{doesnt work}
+    \begin{equation*}
+        u_j + \sum_{i=1}^N a_{ij} u_j = f_j
+    \end{equation*} 
+    for all $j=1, \dots, N$, which can obviously be done in general.
+\end{proof}
+
+
+\begin{theorem}[Hille-Yosida Theorem] \label{theo: hille-yosida}
+    Let $A$ be a maximal monotone operator, $H$ some Hilbert space and $D(A) \subset H$. 
+    Then, given any $u_0 \in D(A)$ there is a unique function
+    \begin{equation*}
+        u \in C^1([0, \infty); H) \cap C([0, \infty); D(A))
+    \end{equation*}
+    satisfying
+    \begin{equation*}
+        \begin{cases}
+            \displaystyle
+            \frac{\partial u}{\partial t} + Au = 0 \quad &\text{on }[0, \infty), \\
+            \displaystyle
+            u(0) = u_0 \quad &\text{on }\{0\}.
+        \end{cases}
+    \end{equation*}
+    Moreover,
+    \begin{equation*}
+        \norm{u(t)}_H \leq \norm{u_0}_H,
+    \end{equation*}
+    for all $t \geq 0$.
+\end{theorem}
+\begin{proof}
+    See \cite[p. 185-191]{brezis2011}.
+\end{proof}
+
