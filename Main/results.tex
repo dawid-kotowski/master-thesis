@@ -354,7 +354,8 @@ The source for the following proposition and its framework is generally \cite{fr
 \begin{definition}[Optimal DOD] \label{def: DOD functional}
     Let $N', N_A, N_h \in \N$ be fixed by Assumption (\ref{assumption: dimension hierarchy}). 
     Assuming we have $\mu \in \Theta, t \in [0, T]$ and $\V = \A \tilde{\V} \in [-1, 1]^{N_h \times N'}$, with
-    $\A \in \R^{N_h \times N_A}$ fixed being $\G$-orthonormal, and $\tilde{\V} \in [-1, 1]^{N_A \times N'}$, then 
+    $\A \in \R^{N_h \times N_A}$ fixed being $\G$-orthonormal and hence
+    $\opnorm{\A} = 1$ by Lemma (\ref{lemma: opnorm A}), and $\tilde{\V} \in [-1, 1]^{N_A \times N'}$, then 
     we define $J: \Theta \times [0, T] \times [-1, 1]^{N_h \times N'} \to \R$ the \emph{objective DOD functional} via
     \begin{equation*}
         J(\mu, t, \V) := \int_{\Xcal} \norm{\uht - \V \V^T \G \uht}^2 d(\nu),
@@ -411,7 +412,9 @@ Under the already given assumptions, we can pose its first existence result.
         \V' (\V')^T \G}   \\
         &\leq \vert \Xcal \vert (L^2  + 2  M^2 ) \left( \euknorm{\mu - \mu'} + \euknorm{t - t'} + \euknorm{\V - \V'}\right),
     \end{align*}
-    and $J$ is thus Lipschitz continous.
+    where our last step is justfied with the projector quality of $\V \V^T \G$ from 
+    Lemma (\ref{lemma: orthogonal projector on span of A}), thus explicitly having eigenvalues $0$ and $1$,
+    and therefore making $J$ Lipschitz continous.
     \notdone{include existence of s}
 \end{proof}
 
@@ -431,7 +434,7 @@ Under the already given assumptions, we can pose its first existence result.
     a constant $c_\A' > 0$ only depending on $\A$ and the parameter space, such that
     \begin{equation*}
         \int_{\Theta \times \Theta' \times [0, T]} 
-        \norm{\uht - \V_{\mu, t}^2 \V_{\mu, t}^T \G \uht} d(\mu, \nu, t)
+        \norm{\uht - \V_{\mu, t}^2 \V_{\mu, t}^T \G \uht}^2 d(\mu, \nu, t)
         \leq \varepsilon  + c_\A' + \int_{\Theta \times [0, T]} d_{N'}(\mathcal{S}^\text{pre-red}_{\mu, t})^2 d(\mu, t).
     \end{equation*}
 \end{proposition}
@@ -580,7 +583,7 @@ Proposition (\ref{prop: eigenvalues and optimal projection under sampling}) to d
 as the eigenvalues of a virtual POD (see Definition (\ref{def: POD})) with the snapshot matrix
 \begin{equation*}
     U := \left[u_\text{pre-red}^{\mu, \nu_1, t} \big\vert \cdots \big\vert u_\text{pre-red}^{\mu, \nu_{N_{s_2}}, t} \right]^T 
-    \in \R^{N_A \times N_t N_{s_{2}}},
+    \in \R^{N_A \times N_{s_{2}}},
 \end{equation*}
 for each $(\mu, t) \in \Theta \times [0, T]$, and a subsequently defined discrete correlation matrix
 \begin{equation*}
@@ -775,7 +778,7 @@ is not immediate under the preliminaries alone.
     under the continuous correlation matrix, obtained as a limit of
     \begin{equation*}
         U := \left[u_h^{\mu, \nu_1, t} \big\vert \cdots \big\vert u_h^{\mu, \nu_{N_{s_2}}, t} \right]^T 
-        \in \R^{N_h \times N_t N_{s_{2}}}
+        \in \R^{N_h \times N_{s_{2}}}
     \end{equation*}
     for $N_{s_2} \to \infty$, which exists and is well defined via the Proposition 
     (\ref{prop: eigenvalues and optimal projection under sampling}) and has eigenvalues
@@ -992,7 +995,7 @@ and $C_1, C_2$ analogously for $\psi_*$ and $\psi_*'$.
             &\leq C_1 \sup\limits_{(\mu, \nu, t), (\mu', \nu', t') \in \Theta \times \Theta' \times [0, T]}
             \euknorm{\A_\text{P}^T \G (\uht - u_h^{\mu', \nu', t'})} \label{align: diam Vn 3} \\
             &\leq C_1 \sup\limits_{(\mu, \nu, t), (\mu', \nu', t') \in \Theta \times \Theta' \times [0, T]}
-            \opnorm{\A_\text{P}^T \G} \, \euknorm{\uht - u_h^{\mu', \nu', t'}} \label{align: diam Vn 4} \\
+            \euknorm{\A_\text{P}^T \G}_\text{op} \, \euknorm{\uht - u_h^{\mu', \nu', t'}} \label{align: diam Vn 4} \\
             &\leq C_1 L \cdot \text{diam}(\Theta \times \Theta' \times [0, T]).
         \end{align}
         Here, we have used the definition of $\mathcal{V}_n$ as the image of $\psi_*'$ in Step (\ref{align: diam Vn 1}),
@@ -1002,7 +1005,7 @@ and $C_1, C_2$ analogously for $\psi_*$ and $\psi_*'$.
         \end{equation*}
         for $\euknorm{\alpha} = 1$ and its implication under
         the mean value theorem \cite[p. 107]{rudin1976} in Step (\ref{align: diam Vn 2}) and the fact, that
-        $\opnorm{\A_\text{P}^T \G} = 1$ by $\G$-orthonormality of $\A_\text{P}$, together with the
+        $\euknorm{\A_\text{P}^T \G}_\text{op} = \opnorm{\A_\text{P}} = 1$ by $\G$-orthonormality of $\A_\text{P}$, together with the
         Lipschitz-quality of $\Gcal$ from Assumption (\ref{assumption parameter-to-solution map}) 
         in Step (\ref{align: diam Vn 4}).
         This argument allows us to find that $\psi_* \in \Fcal_{s, n, \infty, C_1 L \cdot \text{diam}(\Theta \times
@@ -1126,9 +1129,10 @@ in Proposition (\ref{prop: DOD Existence}) to achieve bounds on the complexity f
 inner DOD module. However, 
 the relative error bound, we discussed in Theorem (\ref{theo: relative error DOD+DNN})
 needs an assertion for $N_A$ to be close to $N_h$ to achieve the actual benefit of a 
-$(\mu, t)$-dependent projector. 
+$(\mu, t)$-dependent projector.
 
-As a matter of fact, in the following we set $N_A = N_h$.
+As a matter of fact, in the following we set $N_A = N_h$ to avoid cumbersome notation and make
+use of the Assumption (\ref{assumption KnW decay}) later on.
 This is within the framework of Assumption (\ref{assumption: dimension hierarchy}), but 
 note, that this can be relaxed in a similar way to the POD error $\Ecal_\text{POD}$, as has been
 done in Theorem (\ref{theo: PAC bound for POD-DL-ROM}). In fact, this constitutes that
@@ -1139,7 +1143,7 @@ of scaling with the total POD eigenvalues.
 \begin{theorem} \label{theo: PAC bound for DOD-DL-ROM}
     Let the preliminaries of the DOD-DL-ROM be given as in the introduction of this Section 
     (\ref{section: upper complexity bounds}), $N_A = N_h$ explicitly and the Assumption 
-    (\ref{assumption additional lipschitz}).
+    (\ref{assumption additional lipschitz}) be true.
     Then there is $N_\text{data} = N_\text{data}(\delta, \varepsilon)$, 
     a constant $c = c(\Theta, \Theta', T, L, \hat{L}, C_1, C_2, p, q, n, s, s')$ and 
     a choice of weights for the DOD-DL-ROM approximate parameter-to solution map $(\mu, \nu, t) \mapsto 
@@ -1247,8 +1251,177 @@ of scaling with the total POD eigenvalues.
 \end{proof}
 
 
+In the next step, we can follow up this complexity PAC bound with the same
+statement for the slightly simpler architecture of the DOD+DFNN. It is clear, that the 
+omission of the reduction by an autoencoder simplifies the reduction procedure by one step.
+This does not change basically anything regarding the proof, as the choice of $N'$ ensures a bound here too.
+
+
+\begin{theorem} \label{theo: PAC bound for DOD+DFNN}
+    Let the preliminaries of the DOD+DFNN be given as in the introduction of this Section 
+    (\ref{section: upper complexity bounds}), $N_A = N_h$ explicitly and the Assumption 
+    (\ref{assumption additional lipschitz}) be true.
+    Then there is $N_\text{data} = N_\text{data}(\delta, \varepsilon)$, 
+    a constant $c = c(\Theta, \Theta', T, L, \hat{L}, p, q, N')$ and 
+    a choice of weights for the DOD+DFNN approximate parameter-to solution map $(\mu, \nu, t) \mapsto 
+    \V_{\mu, t} \cdot \hat{q}_{N'} :=
+    \V_{\mu, t} \cdot \phi_{N'}: \R^{p+q+1} \to \R^{N_h}$ 
+    such that 
+    \begin{equation*}
+        \prob\left[\Ecal^{DOD+DFNN}_R < \varepsilon\right] > 1 - \delta,    
+    \end{equation*}
+    and the complexity is given by
+    \begin{enumerate}
+        \item[-] $L_{\Phi_{\tilde{\V}}} = c \log(\varepsilon^{-1})$ layers,
+        \item[-] $\omega_{\Phi_{\tilde{\V}}} = cN_A N' \varepsilon^{-(p+1)} \log(\varepsilon^{-1})$ active weights,
+    \end{enumerate}
+    for the inner DOD module, and
+    \begin{enumerate}
+        \item[-] $L_{\Phi_{N'}} = c \log(\varepsilon^{-1})$ layers,
+        \item[-] $\omega_{\Phi_{N'}} = c N' \varepsilon^{-(p+q+1)} \log(\varepsilon^{-1})$ active weights,
+    \end{enumerate}
+    for the Deep Feed-Forward Neural Network.
+\end{theorem}
+
+\notdone{do something about the delta and varepsilon definitions}
+\notdone{add quick complexity bound for the dod+dfnn architecture}
+
 
 
 
 
 \section{Comparison between existing Techniques}
+
+
+
+
+In this section, we will compare the presented data-driven ROM techniques with each other
+in the context of the Theorems (\ref{theo: PAC bound for POD-DL-ROM}),
+(\ref{theo: PAC bound for DOD-DL-ROM}) and (\ref{theo: PAC bound for DOD+DFNN}), or in other
+words; we will examine the differences of the upper complexity bounds for the POD-based 
+neural network approach and both DOD-based neural network approaches.
+As another step, these complexities will be coarsely compared to other techniques,
+not yet presented in the paper, which have been proposed in the context of data-driven
+Reduced Order Modelling. For this, we will recite some results from relevant literature
+and argue the advantages and disadvantages of the DOD-based ROMs in comparison.
+
+Within this framework, we will play around with potentially sharper assumptions, especially
+hypothetically improving regularity of the parameter-to-solution map $\Gcal$ in Assumption 
+(\ref{assumption parameter-to-solution map}) and the regularity of the optimal DOD $s$ in
+Assumption (\ref{assumption additional lipschitz}). These two regularities namely determine 
+the effectivity of the neural net under Yartosky (and/or Gühring) Theorem (\ref{theo: yarotsky}).
+To have a substancial difference in the use of the DOD, as opposed to the POD, we want to focus
+the readers attention on Assumption (\ref{assumption KnW decay}), which ensures
+\begin{enumerate}
+    \item For $\{\sigma_{k, \infty}^2\}_k$ 
+    the eigenvalues of the POD matrix given
+    under the continuous correlation matrix of the entire solution manifold $\Scal = \{ \uht \, \vert \, 
+    (\mu, \nu, t) \in \Theta \times \Theta' \times [0, T]\}$ a slow decay, i.e.
+    \begin{equation*}
+         \sqrt{\sum_{k > n} \sigma_{k, \infty}^2} \leq C n^{-\alpha},
+    \end{equation*}
+    for $C > 0$ a constant and $0 < \alpha < 1$, and
+    \item For $\{\sigma(\mu, t)_{k, \infty}^2\}_k$
+    the eigenvalues of the $(\mu, t)$-fixed POD matrix given
+    under the continuous non-reduced correlation matrix of the $(\mu, t)$-dependent solution manifold
+    $\Scal_{\mu, t} = \{ \uht \, \vert \, \nu \in \Theta' \}$ a quick decay, i.e.
+    \begin{equation*}
+        \sup_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > n} \sigma(\mu, t)_{k, \infty}^2}
+        \leq C' n^{-\beta},
+    \end{equation*}
+    for $C' > 0$ a constant and $\beta \geq 1$.
+\end{enumerate}
+
+This fact derives as a direct consequence from Proposition 
+(\ref{prop: existence and convergence to sigma infty}) and the definitions of the continous correlation
+matrices in Definition (\ref{def: POD}). With these two bounds, we can presumably take for very large 
+data $N_s, N_t \to \infty$ and $N_A = N_h$
+\begin{equation} \label{eq: order of N, N'}
+    N = \Ocal\left(\varepsilon^{-\frac{1}{\alpha}}\right), \qquad N' = \Ocal\left(\varepsilon^{-\frac{1}{\beta}}\right),
+\end{equation}
+for the guaranteed PAC bounds of the POD-DL-ROM, the DOD+DFNN and the DOD-DL-ROM 
+of fixed precision $\varepsilon > 0$ as is dictated in the beginning of Section
+(\ref{section: upper complexity bounds}). In fact, we know that by
+Proposition (\ref{prop: existence and convergence to sigma infty}) $\sum_{k > n} \sigma_k^2 \to \sum_{k > n}
+\sigma_{k, \infty}^2$ for $N_s, N_t \to \infty$, and therefore
+\begin{equation*}
+    N = \underset{n \in \N}{\operatorname{arg \, min}} \left\{\sum_{k > n} \sigma_k^2 \geq
+    \frac{m^2}{9} \varepsilon^2
+    \right\} \underset{N_s, N_t \to \infty}{\longrightarrow} 
+    \underset{n \in \N}{\operatorname{arg \, min}} \left\{ C n^{-2\alpha} \geq
+        \frac{m^2}{9} \varepsilon^2 
+    \right\} = \Ocal(\varepsilon^{-\frac{1}{\alpha}}),
+\end{equation*}
+and a similar argument for $N'$. These rough estimates for the order of $N$ and $N'$ then let us 
+get an idea for the upcoming comparisons, which mainly will involve the weighing of the higher complexity
+cost of the DOD-based ROMs against the lighter, but potentially less reductive, POD-based methods.
+Note, that the assumption of $N_A = N_h$ could be relaxed, if the pre-reduced $(\mu, t)$-dependent solution
+manifold also has fast KnW decay.
+
+
+
+
+\subsection{Comparison between POD-based and DOD-based ROMs}
+
+
+
+
+Within the subsection, our purpose will be to list the differences between the POD-based techniques for 
+model order reduction and the DOD-based ones depending on the regularity imposed on 
+the optimal DOD $s$ as given by Definition (\ref{def: DOD functional}), 
+for $N_A = N_h$, and the regularity imposed on the parameter-to-solution map $\Gcal$.
+As such, assume additionally to the framework of the Section (\ref{section: upper complexity bounds}),
+\begin{enumerate}
+    \item $\Gcal \in W^{r, \infty}(\Theta \times \Theta' \times [0, T]; \R^{N_h})$ for some $r \geq 1$,
+    \item $s \in W^{m, \infty}(\Theta \times [0, T]; \R^{N_h \times N'})$ for some $m \geq 1$.
+\end{enumerate}
+Let also $0 < \varepsilon < 1$ in general for the sake of monotonicity later on.
+To cluster the total complexity of a ROM, we can just add the respective layers and weights of each
+neural network contained in each method. Such a procedure leaves us with
+\begin{enumerate}
+    \item[-] $\omega_\text{POD-DL-ROM} = \Ocal\left( N \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1}) + 
+    n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right)$,
+    \item[-] $\omega_\text{DOD-DL-ROM} = \Ocal\left( N_h N' \varepsilon^{-(p+1)/m} \log(\varepsilon^{-1})
+    + N' \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1}) + 
+    n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right)$,
+    \item[-] $\omega_\text{DOD+DFNN} = \Ocal\left( N_h N' \varepsilon^{-(p+1)/m} \log(\varepsilon^{-1})
+    + N' \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right)$,
+\end{enumerate}
+and the same layer bound for all of them by insertion of the regularity
+in the respective proofs of the upper complexity bounds, where Yarosky Theorem
+(\ref{theo: yarotsky}) has been used. We remark, that in Assumption (\ref{assumption perfect embedding}),
+we set $n \leq 2(p + q) + 3$ in general, and $s \gg s' \geq 2$ in the preliminaries of 
+Section (\ref{section: upper complexity bounds}). This quantifies all relevant complexity numbers.
+Namely, we want to analyse three distinct cases, starting with a general agnostic one, where
+$r, m$ are close to $1$, in a sense that $n/(s-1) < (p+1)/m$ and $n/(s-1) = (p+q+1)/r$. 
+This directly results in 
+\begin{align*}
+    \omega_\text{POD-DL-ROM} &= \Ocal\left( N \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1}) + 
+    n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
+    &\lesssim \Ocal\left( N \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1})\right) \\
+    &\ll \Ocal\left( N_h N' \varepsilon^{-(p+1)/m} \log(\varepsilon^{-1}) \right) \\
+    &\lesssim \omega_\text{DOD+DFNN},
+\end{align*}
+where we used, that $N \ll N_h$ and the fact that $n \ll N'(\beta, \varepsilon), N(\alpha, \varepsilon)$
+by Assumption (\ref{assumption: dimension hierarchy}). The 
+same heuristic can be done for DOD-DL-ROM active weights bound, since essentially the number of weights are
+dominated by the DOD neural network contribution anyways. The situation changes, however, if we can 
+assert a high regularity for the optimal DOD $s$, i.e. if $m \to \infty$ such that $(p+1)/m \approx 0$, 
+since then the contribution of 
+the DOD to the complexity is minimal and we get
+\begin{align*}
+    \omega_\text{DOD-DL-ROM} &\approx \Ocal\left(N' \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1})
+    + n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
+    &\lesssim \Ocal\left(N \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1}) \right) \\
+    &\approx \omega_\text{POD-DL-ROM}.
+\end{align*}
+This can be easily attributed to the fact, that $N' + n \lesssim N$, because of Equation (\ref{eq: order of N, N'}).
+Here, we have also still prescribed the dominance of the decoder complexity over the forward pass,
+therefore awarding the DOD-DL-ROM with a huge bonus due to the inherently better approximation under the smooth
+optimal decoder map $\zeta_* \in C^s(\R^n; \R^{N'})$. In fact,
+\begin{align*}
+    \omega_\text{DOD-DL-ROM} &\approx \Ocal\left(N' \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1})
+    + n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
+    &\lesssim \Ocal\left(N \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1}) \right) \\
+    &\approx \omega_\text{POD-DL-ROM}.
+\end{align*}

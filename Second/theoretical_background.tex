@@ -6,17 +6,28 @@
 \section{Linear Algebra}
 
 
-As preparation for the comming Bauer Fike Theorem, we want to define a matrix norm for the space $\R^{N_h \times N_h}$,
-where $N_h \in \N$, as follows
+For this section, we will specifically set up the euklidian (Hilbert) space $(\R^{N_h}, \langle \cdot, \cdot \rangle_\G)$,
+with the inner product
 \begin{equation*}
-    \opnorm{A} := N_h \cdot \max\limits_{1 \leq i,j \leq N_h} \left\vert \, [A]_{ij} \,  \right\vert.
+    \langle u, v \rangle_\G := u^T \G v,
 \end{equation*}
-This satifies the wanted property mentioned in the original paper \cite[p. 137-141]{bauer1960la}; any operator norm
+for some symmetric positive definite $\G \in \R^{N_h \times N_h}$ for each $u, v \in \R^{N_h}$ and
+$\norm{\cdot}$ its induced norm. 
+As preparation for the upcoming Bauer Fike Theorem, we further want to define the matrix norm for the 
+matrix space $\R^{N_h \times N}$,
+where $N \leq N_h$, as follows
+\begin{equation*}
+    \opnorm{A} := \sqrt{\lambda_\text{max}(A^T \G A)},
+\end{equation*}
+for $\lambda_\text{max}(A^T \G A)$ being the maximal spectral radius of $A^T \G A$, 
+which exists because $A^T \G A$ is symmetric and positive semi definite
+and hence subject to the spectral theorem.
+This norm satifies the wanted property mentioned in the original paper \cite[p. 137-141]{bauer1960la}; any operator norm
 such that
 \begin{equation*}
-    \norm{Ax} \leq \opnorm{A} \norm{x}, \quad \text{for all } x \in \R^N_h
+    \norm{Ax}^2 = x^T A^T \G A x \leq \lambda_\text{max}(A^T \G A) x^T x \leq \opnorm{A}^2 \euknorm{x}^2
 \end{equation*}
-for some norm $\norm{\cdot}$ on $\R^{N_h}$ can be used for the statement of the following theorem:
+for all $x \in \R^{N}$. 
 
 \begin{theorem}[Bauer-Fike Theorem] \label{theo: bauer fike}
     Let $K \in \R^{N_h \times N_h}$ be some diagonalizable matrices with $\sigma_k$ eigenvalues and 
@@ -28,7 +39,9 @@ for some norm $\norm{\cdot}$ on $\R^{N_h}$ can be used for the statement of the 
     \end{equation*}
     where $\kappa(V) = \opnorm{V} \opnorm{V^{-1}}$.
 \end{theorem}
-\notdone{add prove}
+\begin{proof}
+    See \cite[p. 137-141]{bauer1960la}.
+\end{proof}
 
 Furthermore, we will often discuss the notion of orthonormality with regard to a a matrix. This
 can be understood with the following definition:
@@ -62,11 +75,7 @@ can be understood with the following definition:
 \end{definition}
 
 \begin{lemma} \label{lemma: orthogonal projector on span of A}
-    Let $\R^{N_h}$ be a Hilbert space with the inner product 
-    \begin{equation*}
-        \langle u, v \rangle_\G := u^T \G v,
-    \end{equation*}
-    with $\G \in \R^{N_h \times N_h}$ being a symmetric positive definite matrix. If now
+    Let $(\R^{N_h}, \langle \cdot, \cdot \rangle_\G)$ be the Hilbert space from above. If now
     $\A \in \R^{N_h \times N_A}$ is a $\G$-orthonormal matrix, then
     \begin{equation*}
         P := \A \A^T \G
@@ -89,6 +98,19 @@ can be understood with the following definition:
         &= u^T \G \A \A^T \G v \\
         &= u^T \G P v = \langle u, Pv \rangle_\G.
     \end{align*}
+\end{proof}
+
+\begin{lemma} \label{lemma: opnorm A}
+    Let $(\R^{N_h}, \langle \cdot, \cdot \rangle_\G)$ be the Hilbert space from above.
+    If now
+    $\A \in \R^{N_h \times N_A}$ is a $\G$-orthonormal matrix, then
+    \begin{equation*}
+        \opnorm{\A} = 1.
+    \end{equation*}
+\end{lemma}
+\begin{proof}
+    This is directly clear, since $\opnorm{\A} = \sqrt{\lambda_\text{max}(\A^T \G \A)} =
+    \sqrt{\lambda_\text{max}(\I)} = 1$.
 \end{proof}
 
 
@@ -268,8 +290,9 @@ for $N \leq N_A \leq N_h$ is also $\G$-orthonormal. This is quantified by the fo
     \begin{equation*}
         \V = \A \tilde{\V},
     \end{equation*}
-    where $\A \in \R^{N_A \times N}$
-    for $N \leq N_A \leq N_h$ is also $\G$-orthonormal. Then we have, for any 
+    where $\A \in \R^{N_h \times N_A}$
+    is also $\G$-orthonormal and $\tilde{\V} \in \R^{N_A \times N}$ for $N \leq N_A \leq N_h$. 
+    Then we have, for any 
     $u \in \R^{N_h}$, that
     \begin{equation*}
         \norm{u - \V \V^T \G u}^2 = c_\A + \euknorm{u_\text{pre-red} - \tilde{\V} \tilde{\V}^T u_\text{pre-red}}^2,
@@ -287,7 +310,7 @@ for $N \leq N_A \leq N_h$ is also $\G$-orthonormal. This is quantified by the fo
         &= \norm{u - \A \A^T \G u}^2 + \norm{\A \A^T \G u - \A \tilde{\V} \tilde{\V}^T \A^T \G u}^2 \\
         &= \norm{u - \A \A^T \G u}^2 + \euknorm{\A^T \G u - \tilde{\V} \tilde{\V}^T \A^T \G u}^2,
     \end{align*}
-    where the last step is justified by showing that for any $u \in \R^{N_h}$
+    where the last step is justified by showing that for any $u \in \R^{N_A}$
     \begin{equation*}
         \norm{\A u} = \langle \A u, \A u \rangle_\G = (\A u)^T \G \A u = u^T \A^T \G \A u = u^T u = \euknorm{u}.
     \end{equation*}

@@ -75,15 +75,14 @@ The mass matrix is defined for each $\mu \in \Theta$ as follows
         \langle \varphi_{N_h}(\mu), \varphi_1(\mu) \rangle_{\Hcal_h} & \cdots & \langle \varphi_{N_h}(\mu), \varphi_{N_h}(\mu) \rangle_{\Hcal_h}
         \end{bmatrix}.
 \end{equation*}
-This allows us to equip $\R^{N_h}$, the space of the coefficients of any solution in $\Hcal_h$, with the following
-norm
+This allows us to equip $\Scal \subset \R^{N_h}$, the space of the coefficients 
+of any solution in $\Hcal_h$, with the following
+inner product
 \begin{equation} \label{eq: definition mass matrix norm}
-    \norm{\uht} := \sqrt{(\uht)^T \, M(\mu) \, \uht},
+    \langle \uht, u_h^{\mu', \nu', t'} \rangle_M := (\uht)^T M(\mu) u_h^{\mu', \nu', t'},
 \end{equation}
+for each $\mu, \mu' \in \Theta, \nu, \nu' \in \Theta'$ and $t, t' \in [0, T]$ and an induced norm $\norm{\cdot}$
 which is, in fact, the equivalent of the norm above, i.e. $\norm{\uht} = \norm{u_h(\cdot, t; \mu, \nu)}_{\Hcal_h}$.
-
-\notdone{Introducing the mass matrix norm will make all data driven procedures somewhat intrusive, since the norm will
-depend on mu and nu, maybe not even a problem, since the choice needs to be done a priori, but what about pod and projections}
 
 Note that it is indeed possible to arrive at that discretization without skipping to a weak formulation, e.g.
 using finite differences or finite volume schemes, but since any existence statement needs a more general space

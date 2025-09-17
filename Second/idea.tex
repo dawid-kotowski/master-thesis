@@ -307,3 +307,20 @@ will be shown afterwards.
     See \cite[p. 185-191]{brezis2011}.
 \end{proof}
 
+
+
+% equivalent estimate to order of N and N', but this time starting from the assumed N = N'
+
+However, we want to start with the focus on the \emph{potential} upper relative error bound. We
+remind the reader of the results in Theorem (\ref{theo: relative error POD+DNN}) 
+and (\ref{theo: relative error DOD+DNN}). These specify, that if ubiquitously 
+$N_s, N_t \to \infty$, $N_A = N_h$ and the complexity of the coefficient searching neural networks
+becomes very large, we have
+\begin{equation*}
+    \Ecal_\text{R}^\text{POD+DNN} \approx \Ecal_{\text{POD}, \infty} = 
+    \Ocal\left( N^{-2\alpha} \right) 
+    \quad \text{and} \quad
+    \Ecal_\text{R}^\text{DOD+DNN} \approx \Ecal_{\text{DOD}, \infty} = 
+    \Ocal\left( (N')^{-2\beta} \right).
+\end{equation*}
+This is of course equivalent to the previous mentioned order of $N$ and $N'$ under the same assumptions.
