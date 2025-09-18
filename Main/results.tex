@@ -1393,13 +1393,15 @@ in the respective proofs of the upper complexity bounds, where Yarosky Theorem
 we set $n \leq 2(p + q) + 3$ in general, and $s \gg s' \geq 2$ in the preliminaries of 
 Section (\ref{section: upper complexity bounds}). This quantifies all relevant complexity numbers.
 Namely, we want to analyse three distinct cases, starting with a general agnostic one, where
-$r, m$ are close to $1$, in a sense that $n/(s-1) < (p+1)/m$ and $n/(s-1) = (p+q+1)/r$. 
+$r, m$ are close to $1$, in a sense that $n/(s-1) \leq (p+1)/m$ and $n/(s-1) \leq (p+q+1)/r$. 
 This directly results in 
 \begin{align*}
     \omega_\text{POD-DL-ROM} &= \Ocal\left( N \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1}) + 
     n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
-    &\lesssim \Ocal\left( N \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1})\right) \\
-    &\ll \Ocal\left( N_h N' \varepsilon^{-(p+1)/m} \log(\varepsilon^{-1}) \right) \\
+    &\leq \Ocal\left( N \varepsilon^{-(p+1)/m} \log(\varepsilon^{-1}) +
+    n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
+    &\ll \Ocal\left( N_h N' \varepsilon^{-(p+1)/m} \log(\varepsilon^{-1}) + 
+    n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1}) \right) \\
     &\lesssim \omega_\text{DOD+DFNN},
 \end{align*}
 where we used, that $N \ll N_h$ and the fact that $n \ll N'(\beta, \varepsilon), N(\alpha, \varepsilon)$
@@ -1408,20 +1410,120 @@ same heuristic can be done for DOD-DL-ROM active weights bound, since essentiall
 dominated by the DOD neural network contribution anyways. The situation changes, however, if we can 
 assert a high regularity for the optimal DOD $s$, i.e. if $m \to \infty$ such that $(p+1)/m \approx 0$, 
 since then the contribution of 
-the DOD to the complexity is minimal and we get
+the DOD to the complexity is neglectable and we get
 \begin{align*}
     \omega_\text{DOD-DL-ROM} &\approx \Ocal\left(N' \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1})
     + n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
-    &\lesssim \Ocal\left(N \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1}) \right) \\
+    &\leq \Ocal\left(N \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1}) 
+    + n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
     &\approx \omega_\text{POD-DL-ROM}.
 \end{align*}
-This can be easily attributed to the fact, that $N' + n \lesssim N$, because of Equation (\ref{eq: order of N, N'}).
+This can be easily attributed to the fact, that $N' + n \ll N$, because of Equation (\ref{eq: order of N, N'}).
 Here, we have also still prescribed the dominance of the decoder complexity over the forward pass,
-therefore awarding the DOD-DL-ROM with a huge bonus due to the inherently better approximation under the smooth
+therefore awarding the DOD-DL-ROM a bonus due to the inherently better approximation under existence the smooth
 optimal decoder map $\zeta_* \in C^s(\R^n; \R^{N'})$. In fact,
 \begin{align*}
     \omega_\text{DOD-DL-ROM} &\approx \Ocal\left(N' \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1})
     + n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
-    &\lesssim \Ocal\left(N \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1}) \right) \\
-    &\approx \omega_\text{POD-DL-ROM}.
+    &\leq \Ocal\left(N' \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1}) 
+    + n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
+    &\approx \omega_\text{DOD+DFNN}.
 \end{align*}
+In the third scenario, where we set both $r, m$ to be very large, in a sense that
+$(p+1)/m \approx 0$ and $n/(s-1) > (p+q+1)/r$, we get a better complexity for the more
+direct approach of the DOD+DFNN as opposed to the DOD-DL-ROM, i.e.
+\begin{align*}
+    \omega_\text{DOD+DFNN} &\approx \Ocal\left(N' \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
+    &\lesssim \Ocal\left(N' \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1})
+    + n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
+    &\approx \omega_\text{DOD-DL-ROM}.
+\end{align*}
+We can still show, that even in this case, both DOD-based approaches work better, than the POD-DL-ROM in general,
+since the argument of the lower chosen $N'$ can be applied. 
+As a less relevant note, we can see in \cite[p.32-33]{brivio2023} that indeed in the case of low
+parameter-to-solution map regularity, we would actually get a similar comparison between a naive POD+DFNN and the 
+POD-DL-ROM. This is not surprising, because it follows the same line of thought as our argument does. 
+To briefly sum up, 
+we want to pose the following result:
+
+If the optimal DOD map $s$, mapping
+\begin{equation*}
+    (\mu, t) \mapsto \underset{\V \in [-1, 1]^{N_h \times N'}}{\operatorname{arg \, min}} 
+    \frac{\euknorm{\Theta'}}{N_{s_2}} \sum_{\nu \in \Pcal_2} \norm{\uht - \V \V^T \G \uht}^2,
+\end{equation*}
+has high regularity in a Sobolev sense, i.e. $m \gg 1$, then it can generally be of advantage to
+use a DOD-based ROM. In addition, if we know the parameter-to-solution map $\Gcal$, mapping
+\begin{equation*}
+    (\mu, \nu, t) \mapsto \uht,
+\end{equation*}
+to be of high regularity in a Sobolev sense, i.e. $r \gg 1$, then it is adviced to use the "cruder" architecture
+of the DOD+DFNN above the DOD-DL-ROM. If this is not the case, then the employment of an autoencoder
+can exploit the presumably superior nonlinear KnW with the control inherent to autoencoder training, and hence
+attain a similar result with less cost.
+
+Finally, one can attest to the rather non-rigorous treatment of the second and third cases, where we
+denoted $(p+1)/m \approx 0$, which is not a very precise formulation. To remedy this, one can reformulate
+it without changing the discussion in the following manner:
+
+\begin{proposition}
+    Let a precision $0 < \varepsilon < 1$ be given, which bounds the respective relative errors of
+    the three proposed ROMs with probability $0 < 1 - \delta < 1$ as is given by Theorems
+    (\ref{theo: PAC bound for POD-DL-ROM}), (\ref{theo: PAC bound for DOD-DL-ROM}) and 
+    (\ref{theo: PAC bound for DOD+DFNN}) under the Assumptions 
+    (\ref{assumption sample}, \ref{assumption parameter-to-solution map}, \ref{assumption perfect embedding}, 
+    \ref{assumption: dimension hierarchy}), 
+    i.e.
+    \begin{equation*}
+        \Ecal_\text{R}^\text{POD-DL-ROM} < \varepsilon, \quad
+        \Ecal_\text{R}^\text{DOD-DL-ROM} < \varepsilon, \quad
+        \Ecal_\text{R}^\text{DOD+DFNN} < \varepsilon,
+    \end{equation*}
+    and the optimal DOD map $s \in W^{m, \infty}(\Theta \times [0,T])$,
+    such that 
+    \begin{equation*}
+        m \gtrsim \frac{p+1}{\frac{n}{s-1} - \log(\varepsilon^{-1}) \log\left(\frac{N - N'}{N_h N'}\right)}
+    \end{equation*}
+    is true, guarantees that either
+    \begin{equation*}
+        \omega_\text{DOD-DL-ROM} \lesssim \omega_\text{POD-DL-ROM}, \quad \text{or} \quad
+        \omega_\text{DOD+DFNN} \lesssim \omega_\text{POD-DL-ROM},
+    \end{equation*}
+    depending on $r \geq 1$ setting the regularity 
+    of the parameter-to-solution map $\Gcal \in W^{r, \infty}(\Theta \times \Theta' \times [0, T])$.
+    If we additionally set up Assumption (\ref{assumption KnW decay}) with the constants $0 < \alpha < 1$
+    and $\beta \geq 1$, and let $N_s, N_t \to \infty$, we may infer a sharper minimal order of $m$, with
+    \begin{equation*}
+        m \gtrsim \frac{p+1}{\frac{n}{s-1} + \frac{\alpha - \beta}{\alpha \beta} 
+        + \log_\varepsilon\left(\frac{1}{N_h}\right)}.
+    \end{equation*}
+\end{proposition}
+\begin{proof}
+    For the following, we want to start with the wanted statement and simply rearrange the wanted inequality
+    until it poses a lower bound for $m$. Therefore, we may write for the case, that if $r \geq (s-1)(p+q+1)/n$,
+    we have that the number of maximal weights is larger for the DOD-DL-ROM by the previous discussion, and
+    therefore 
+    \begin{equation*}
+        \omega_\text{DOD-DL-ROM} \lesssim \omega_\text{POD-DL-ROM}
+    \end{equation*}
+    is enough as a starting point. This itself implies, since we can subtract the latent dynamics contribution
+    without changing the order, that
+    \begin{equation*}
+        N_h N' \varepsilon^{-(p+1)/m} + 
+        N' \varepsilon^{-n/(s-1)} \lesssim N \varepsilon^{-n/(s-1)}.
+    \end{equation*}
+    From here, we subtract the decoder contribution from the left to fit it to the right, then divide by 
+    the positive term $\varepsilon^{-n/(s-1)}$ and set the constants on one side, to attain
+    \begin{equation*}
+        \varepsilon^{-\left(\frac{(p+1)}{m} + \frac{n}{(s-1)}\right)} \lesssim \frac{N - N'}{N_h N'}.
+    \end{equation*}
+    Then taking the logarithm with regard to $\varepsilon < 1$ as base, i.e. with $\log(\varepsilon)<0$, therefore 
+    fliping the inequality, 
+    and subsequently rearranging and multiplying by negative one, 
+    leaves us with
+    \begin{equation*}
+        \frac{p+1}{m} \lesssim \frac{n}{s-1} + \log_\varepsilon\left( \frac{N - N'}{N_hN'} \right).
+    \end{equation*}
+    We can follow this up, with the argument, that by Assumption (\ref{assumption: dimension hierarchy}),
+    we have that $0 < (N-N')/(N_hN') \leq (N + N')/(N_hN') < 1$. This means that the both sides are strictly positive,
+    hence resulting in the wanted bound.
+\end{proof}
