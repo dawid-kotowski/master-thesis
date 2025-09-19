@@ -1502,7 +1502,7 @@ it without changing the discussion in the following manner:
     If we additionally set up Assumption (\ref{assumption KnW decay}) with the constants $0 < \alpha < 1$
     and $\beta \geq 1$, and let $N_s, N_t \to \infty$, we may infer a sharper minimal order of $m$, with
     \begin{equation*}
-        m \gtrsim \frac{p+1}{\frac{n}{s-1} - \log(\varepsilon^{-1})^{-1} \log(N_h) + 
+        m \gtrsim \frac{p+1}{\frac{n}{s-1} - \frac{\log(N_h)}{\log(\varepsilon^{-1})} + 
         \frac{\beta - \alpha}{\beta \alpha}}.
     \end{equation*}
 \end{proposition}
@@ -1555,21 +1555,45 @@ it without changing the discussion in the following manner:
         \log_\varepsilon\left(\frac{N-N'}{N_h N'}\right) = 
         -\frac{\log\left(\frac{N-N'}{N_h N'}\right)}{\log(\varepsilon^{-1})}
         \gtrsim -\frac{\log(1/N_h)}{\log(\varepsilon^{-1})} + \frac{\alpha - \beta}{\alpha \beta}
-        = \log(\varepsilon^{-1})^{-1} \log(N_h) - \frac{\beta - \alpha}{\beta \alpha},
+        = \frac{\log(N_h)}{\log(\varepsilon^{-1})} - \frac{\beta - \alpha}{\beta \alpha},
     \end{equation*}
     which concludes our proof. Note, that we rewrite the logarithms in such a way, that the signs make sense
     in the context of the constants.
 \end{proof}
 
-\begin{remark}
+\begin{remark}[Discussion]
     One can quickly deduce some of the implication of Proposition 
     (\ref{prop: regularity discussion for POD vs DOD}) for applicational purposes, namely, we 
-    expect the number of degrees of freedom $N_h$ of the basis to be $\approx 10^6 - 10^18$, and
+    expect the number of degrees of freedom $N_h$ of the basis to be $\approx 10^6 - 10^{18}$, and
     the precision level $\varepsilon$ to be very small maybe $\approx 10^{-6} - 10^{-3}$. 
 
-    From the heuristic for $s \gg s' \geq 2$, and usually $p, q \approx 1$ implying
-    $n \leq 2(p+q+1)+3 \approx 9 \ll s-1$, 
-    we might infer, that the contribution of $n/(s-1)$
-    can be neglected, thus offering $m$ to be of order $\approx 1 - 2$, assuming that the difference between
-    $\alpha$ and $\beta$ is .
+    From the heuristic for $s \gg s' \geq 2$, and usually $p, q \approx 10^0 - 10^1$ suggesting
+    $n/(s-1) \leq 2(p+q+1)/(s-1)+3 \approx 10^0 - 10^1$, 
+    we might infer, that the contribution of $n/(s-1) - \log(N_h)/\log(\varepsilon^{-1})$
+    could be of order $\approx 10^0 - 10^1$, 
+    thus offering $m$ to be of order $\approx 10^0 - 10^1$, depending on the difference $\beta - \alpha$,
+    where we may specifically point out, that a higher difference constitutes a smaller regularity imposition
+    on the optimal DOD map. This estimate is nothing but very crude, but it does point to the fact, that
+    the levels of regularity, which need to be assumed, are not completely unrealistic, and might be met by some 
+    problems.
 \end{remark}
+
+As a final difference between the POD-based ROMs and the DOD-based ROMs, one can focus the lower bound
+Theorems (\ref{theo: lower bound pod+dnn}) for the POD-based and (\ref{theo: lower bound dod+dnn}) for
+the DOD-based methods. These are of course highly connected to the proposition above, as we have just assumed, 
+that we might want to take $N, N'$ arbitrarily such that the subsequent loss under the projection attains
+the needed fraction of the fixed $\varepsilon > 0$ precision level, but in a case, where the complexity
+cost poses no issue and we want to simply have the most accurate possible method, the DOD-based ROMs
+take the win. Generally, such a situation is mostly fictitious because we only coarsely know, that
+there is an advantage, but the cost is never completely ignored, especially since these theorems do not
+deny the possibility, that the cost blows up before any significant benefit can be gained; it only
+describes the character of a hypothetical limit. 
+
+
+
+
+\subsection{Literature Comparison to other data-driven ROMs}
+
+
+
+
