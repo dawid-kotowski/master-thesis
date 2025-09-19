@@ -1465,7 +1465,7 @@ Finally, one can attest to the rather non-rigorous treatment of the second and t
 denoted $(p+1)/m \approx 0$, which is not a very precise formulation. To remedy this, one can reformulate
 it without changing the discussion in the following manner:
 
-\begin{proposition}
+\begin{proposition} \label{prop: regularity discussion for POD vs DOD}
     Let a precision $0 < \varepsilon < 1$ be given, which bounds the respective relative errors of
     the three proposed ROMs with probability $0 < 1 - \delta < 1$ as is given by Theorems
     (\ref{theo: PAC bound for POD-DL-ROM}), (\ref{theo: PAC bound for DOD-DL-ROM}) and 
@@ -1478,34 +1478,44 @@ it without changing the discussion in the following manner:
         \Ecal_\text{R}^\text{DOD-DL-ROM} < \varepsilon, \quad
         \Ecal_\text{R}^\text{DOD+DFNN} < \varepsilon,
     \end{equation*}
-    and the optimal DOD map $s \in W^{m, \infty}(\Theta \times [0,T])$,
-    such that 
+    and if the constants $N_h, n, s \in \N$ attain
     \begin{equation*}
-        m \gtrsim \frac{p+1}{\frac{n}{s-1} - \log(\varepsilon^{-1}) \log\left(\frac{N - N'}{N_h N'}\right)}
+        \frac{n}{s-1} > \frac{\log(N_h)}{\log(\varepsilon^{-1})},
     \end{equation*}
-    is true, guarantees that either
+    and the optimal DOD map $s \in W^{m, \infty}(\Theta \times [0,T])$ has $m \in \N$,
+    such that
     \begin{equation*}
-        \omega_\text{DOD-DL-ROM} \lesssim \omega_\text{POD-DL-ROM}, \quad \text{or} \quad
-        \omega_\text{DOD+DFNN} \lesssim \omega_\text{POD-DL-ROM},
+        m \gtrsim \frac{p+1}{\frac{n}{s-1} - \log_\varepsilon\left(\frac{N - N'}{N_h N'}\right)}
     \end{equation*}
-    depending on $r \geq 1$ setting the regularity 
+    is true, then it is guaranteed that either
+    \begin{equation*}
+        \omega_\text{DOD+DFNN} \lesssim \omega_\text{DOD-DL-ROM} \lesssim \omega_\text{POD-DL-ROM}, 
+        \qquad \text{for } r \geq \frac{1}{n}(s-1)(p+q+1),
+    \end{equation*}
+    or only
+    \begin{equation*}
+        \omega_\text{DOD-DL-ROM} \lesssim \omega_\text{POD-DL-ROM},
+        \qquad \text{for } r \leq \frac{1}{n}(s-1)(p+q+1),
+    \end{equation*}
+    depending on $r \in \N$ setting the regularity 
     of the parameter-to-solution map $\Gcal \in W^{r, \infty}(\Theta \times \Theta' \times [0, T])$.
     If we additionally set up Assumption (\ref{assumption KnW decay}) with the constants $0 < \alpha < 1$
     and $\beta \geq 1$, and let $N_s, N_t \to \infty$, we may infer a sharper minimal order of $m$, with
     \begin{equation*}
-        m \gtrsim \frac{p+1}{\frac{n}{s-1} + \frac{\alpha - \beta}{\alpha \beta} 
-        + \log_\varepsilon\left(\frac{1}{N_h}\right)}.
+        m \gtrsim \frac{p+1}{\frac{n}{s-1} - \log(\varepsilon^{-1})^{-1} \log(N_h) + 
+        \frac{\beta - \alpha}{\beta \alpha}}.
     \end{equation*}
 \end{proposition}
 \begin{proof}
-    For the following, we want to start with the wanted statement and simply rearrange the wanted inequality
-    until it poses a lower bound for $m$. Therefore, we may write for the case, that if $r \geq (s-1)(p+q+1)/n$,
-    we have that the number of maximal weights is larger for the DOD-DL-ROM by the previous discussion, and
-    therefore 
+    For the following, we want to start with the wanted statement and simply rearrange the targeted inequality
+    until it poses a lower bound for $m$. Note beforehand, that in the case $r \geq (s-1)(p+q+1)/n$,
+    we know the number of maximal weights for the DOD-DL-ROM to be larger than for the DOD+DFNN, excusing
+    the distinction.
+    We can now set up
     \begin{equation*}
         \omega_\text{DOD-DL-ROM} \lesssim \omega_\text{POD-DL-ROM}
     \end{equation*}
-    is enough as a starting point. This itself implies, since we can subtract the latent dynamics contribution
+    as a starting point. This itself implies, since we can subtract the latent dynamics contributions
     without changing the order, that
     \begin{equation*}
         N_h N' \varepsilon^{-(p+1)/m} + 
@@ -1514,16 +1524,52 @@ it without changing the discussion in the following manner:
     From here, we subtract the decoder contribution from the left to fit it to the right, then divide by 
     the positive term $\varepsilon^{-n/(s-1)}$ and set the constants on one side, to attain
     \begin{equation*}
-        \varepsilon^{-\left(\frac{(p+1)}{m} + \frac{n}{(s-1)}\right)} \lesssim \frac{N - N'}{N_h N'}.
+        \varepsilon^{-\left(\frac{(p+1)}{m} - \frac{n}{(s-1)}\right)} \lesssim \frac{N - N'}{N_h N'},
     \end{equation*}
-    Then taking the logarithm with regard to $\varepsilon < 1$ as base, i.e. with $\log(\varepsilon)<0$, therefore 
+    where, by Assumption (\ref{assumption: dimension hierarchy}),
+    we have that $0 < (N-N')/(N_hN') \leq (N + N')/(N_hN') < 1$. 
+    Then taking the logarithm with regard to $\varepsilon < 1$ as base, hence being 
+    a monotonely decreasing function, therefore 
     fliping the inequality, 
     and subsequently rearranging and multiplying by negative one, 
     leaves us with
     \begin{equation*}
-        \frac{p+1}{m} \lesssim \frac{n}{s-1} + \log_\varepsilon\left( \frac{N - N'}{N_hN'} \right).
+        \frac{p+1}{m} \lesssim \frac{n}{s-1} - \log_\varepsilon\left( \frac{N - N'}{N_hN'} \right).
     \end{equation*}
-    We can follow this up, with the argument, that by Assumption (\ref{assumption: dimension hierarchy}),
-    we have that $0 < (N-N')/(N_hN') \leq (N + N')/(N_hN') < 1$. This means that the both sides are strictly positive,
-    hence resulting in the wanted bound.
+    With the note, that $\log_\varepsilon(\cdot) = -\log(\cdot)/\log(\varepsilon^{-1})$ 
+    we can conclude, through the assumption on $N_h, n$ and $s$ from
+    the statement of the proposition that both sides are strictly positive,
+    hence resulting in the wanted bound after inverting and multiplying by $(p+1)$. 
+
+    Let us now assume $N_s, N_t \to \infty$ and the Assumption (\ref{assumption KnW decay}) in order
+    to prove the extension of the proposition. Immediately, one can recognize from the beginning of
+    the section, that $N = \Ocal(\varepsilon^{-1/\alpha})$ and $N' = \Ocal(\varepsilon^{-1/\beta})$.
+    We now deduce, that
+    \begin{equation*}
+        \frac{N - N'}{N_h N'} = \frac{1}{N_h} \left( \frac{N}{N'} - 1 \right) = \Ocal\left( 
+            \frac{1}{N_h} \left( \varepsilon^{-\frac{1}{\alpha} + \frac{1}{\beta}} - 1 \right) \right)
+            \lesssim \frac{1}{N_h} \varepsilon^{\frac{\alpha - \beta}{\alpha \beta}},
+    \end{equation*}
+    thus implying by monotonicity of the logarithm
+    \begin{equation*}
+        \log_\varepsilon\left(\frac{N-N'}{N_h N'}\right) = 
+        -\frac{\log\left(\frac{N-N'}{N_h N'}\right)}{\log(\varepsilon^{-1})}
+        \gtrsim -\frac{\log(1/N_h)}{\log(\varepsilon^{-1})} + \frac{\alpha - \beta}{\alpha \beta}
+        = \log(\varepsilon^{-1})^{-1} \log(N_h) - \frac{\beta - \alpha}{\beta \alpha},
+    \end{equation*}
+    which concludes our proof. Note, that we rewrite the logarithms in such a way, that the signs make sense
+    in the context of the constants.
 \end{proof}
+
+\begin{remark}
+    One can quickly deduce some of the implication of Proposition 
+    (\ref{prop: regularity discussion for POD vs DOD}) for applicational purposes, namely, we 
+    expect the number of degrees of freedom $N_h$ of the basis to be $\approx 10^6 - 10^18$, and
+    the precision level $\varepsilon$ to be very small maybe $\approx 10^{-6} - 10^{-3}$. 
+
+    From the heuristic for $s \gg s' \geq 2$, and usually $p, q \approx 1$ implying
+    $n \leq 2(p+q+1)+3 \approx 9 \ll s-1$, 
+    we might infer, that the contribution of $n/(s-1)$
+    can be neglected, thus offering $m$ to be of order $\approx 1 - 2$, assuming that the difference between
+    $\alpha$ and $\beta$ is .
+\end{remark}
