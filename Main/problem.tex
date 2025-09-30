@@ -445,7 +445,66 @@ training data $\Pcal$, which is a huge advantage when compared to the direct POD
 
 
 
-\notdone{Add some literature}
+In this subsection, we want to briefly introduce relevant ROMs, which handle situations in which $N \neq 0$
+according to Equation (\ref{eq: fom ppde}). Under Finite Element Methods, such situations can be found, in case
+the associated weak form of the PPDE has a non-affine representation in the respective space in regard
+to the parameters. Each of these methods, try to overcome the issue of $N_h$-dimensional workflow in 
+the $N$ operator. This is straightforward, if one would try to use an RB-method in order to substitute
+the Equation (\ref{eq: fom ppde}) in the same way as we have done in both POD methods;
+we would get
+\begin{equation*}
+    \begin{cases}
+        M_\text{red}(\mu) \hat{\partial}_t u_\text{red}^{\mu, \nu}(t) + A_\text{red}(\mu, \nu) u_\text{red}^{\mu, \nu}(t)
+        + V^T N(V u_\text{red}^{\mu, \nu}(t), \mu, \nu)= f_\text{red}(t; \mu, \nu) \quad &t \in \Tcal, \\
+        u_\text{red}^{\mu, \nu}(0) = V^T u_0(\mu, \nu) \quad &t = 0,
+    \end{cases}
+\end{equation*}
+with $\uhhat(t) \approx V u_\text{red}^{\mu, \nu}(t)$ for each $t \in [0, T]$ and some reduction operator
+$V$, hence still relying on 
+the high dimensional evaluation of the non-linear term.
+In the following, we will list some of the intrusive ROMs to overcome such evaluating, and
+give a brief description of their workflow.
+
+\paragraph{Empirical Interpolation Method (EIM)}
+
+In essence, the EIM leverages on interpolation functionals, which are defined iteratively;
+one minimizes with regard to $\inf_{z \in W_{M-1}} \norm{N(\cdot, \mu, \nu) - z}_{L^\infty(\Omega)}$,
+where $W_{M-1}$ is the span of the last iteration, which appends all former ones. The start
+of this iteration is given by setting $W_1 := \operatorname{span}(\xi_1)$ with $\xi_1 := 
+N(u_h^{\mu_1, \nu_1, t_1}, \mu, \nu)$ for some solution snapshot.
+This constitutes finding a space, in which the non-affine (non-linear) opeartor $N$ is approximated well
+by interpolation. After sufficient steps, one breaks the creation of this space and takes the wanted
+amount $m < N_h$ of interpolation functionals spanning that space, and 
+then approximates with $U = [\xi_j]_{j=1}^m$ and $P \in \R^{N_h \times m}$ being the selection matrix the
+non-linear term under a less costly interpolant
+\begin{equation*}
+    N(\uhhat, \mu, \nu) \approx U (P^T U)^{-1} P^T N(\uhthat, \mu, \nu),
+\end{equation*}
+since the expensive $U (P^T U)^{-1}$ term can be computed offline, 
+while only $m \ll N_h$ entries of $N(\uhhat, \mu, \nu)$ need to be assembled only. The EIM has been
+introduced in \cite{barrault2004}, but a more fitting definition in our framework can be found
+in \cite{quarteroni2015rb}.
+
+\paragraph{Gappy-POD Residual Minimization (GNAT)}
+
+For simplicity and consistency with the literatures notation, we will denote with $R: \R^{N_h} \to \R^{N_h}$
+given with
+\begin{equation*}
+    R(u) := M(\mu) \partial_t u + A(\mu, \nu) + N(u, \mu, \nu) - f(t; \mu, \nu)
+\end{equation*}
+the residual of the problem in Equation (\ref{eq: fom ppde}). The GNAT aims at reducing the dimensionality
+of an arbitrary residual realization by using a Petrov-Galerkin projection, thus limiting the domain of the
+residual to a less complex, intrinsically low dimensional, subspace of $\R^{N_h}$, by a use of 
+gappy POD and sampling. After this it
+solves a least-squares problem with a Gauss-Newton method, i.e.
+\begin{equation*}
+    \min\limits_{u_\text{red}} \norm{P^T R(V u_\text{red})}^2,
+\end{equation*}
+with $P \in \R^{N_h \times m}$ again being a basis selector and $V$ the reduction matrix.
+References to this are \cite{carlberg2013}
+and its idea basis in \cite{carlberg2011}.
+
+
 
 
 
@@ -535,7 +594,7 @@ Definition (\ref{def: neural network weights}) with the loss function
     \{u_h^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) =  \\
         \sum_{i=1}^{N_{s_1}} \sum_{j=1}^{N_{s_2}} 
         \sum_{k = 1}^{N_t} \, \frac{\omega_h}{2} \, 
-        \euknorm{u_h^{\mu_i, \nu_j, k \Delta t} - 
+        \norm{u_h^{\mu_i, \nu_j, k \Delta t} - 
         \left(R_\rho(\Psi_h(\theta_\text{D})) \circ R_\rho(\Phi_n(\theta_\text{DF}))\right) (\mu_i, \nu_j, k \Delta t)}^2 \\
         + \, \frac{1 - \omega_h}{2} \, \euknorm{R_\rho(\Psi'_n(\theta_\text{E}))(u_h^{\mu_i, \nu_j, k \Delta t}) 
         - R_\rho(\Phi_n^\text{DF}(\theta_\text{DF}))(\mu_i, \nu_j, k \Delta t)}^2.

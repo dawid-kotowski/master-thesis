@@ -1244,9 +1244,9 @@ This extension is presented by Gühring et al. \cite{gühring2019nn}.
 
 We have now introduced the framework for analytical discussion regarding complexity and potential of neural networks.
 What is clearly missing however, is the practical "achievement" of a true neural network $\Phi$ fitting the 
-function in question from some
-architecture $\Acal_\Phi$, that a machine learning engineer thought of. This crucial step in the process of 
-development is refered to as \emph{learning}. This subsection is my own work, if not cited otherwise.
+function in question from some fixed
+architecture $\Acal_\Phi$. This crucial step in the process of 
+development is refered to as \emph{learning}.
 
 In order to quantify the "falseness" of a potential attribution, we need a function, that compares a true solution
 to an output of the network operating with the true parameters connected to the true solution. We remark that
@@ -1280,8 +1280,7 @@ The general goal of all machine learning problems is to closely approximate that
     Suppose for some $d, L \in \N$ we have a neural network architecture $\Acal_\Phi$ 
     of input dimension $d$, $L$ layers and output 
     dimension $N_L$ according to Definition (\ref{def: neural network}) and $\Phi$ be a neural network of
-    that architecture (see Definition (\ref{def: neural network architecture})). Further let $f: \R^d \to \R^{N_L}$ 
-    be some arbitrary function. 
+    that architecture (see Definition (\ref{def: neural network architecture})).
     Define the \emph{masks of $\Acal_\Phi$} via
     \begin{equation*}
         I_l := \{ (i, j) \, : \, [A_l]_{ij} \neq 0 \}, \quad J_l := \{i \, : \, [b_l]_i \neq 0 \},
@@ -1310,15 +1309,83 @@ The general goal of all machine learning problems is to closely approximate that
             0, & \text{otherwise}.
         \end{cases}
     \end{equation*}
-
-
-    Then the network $\Phi$ will be called a \emph{fitting network with regard to $f$}, if 
-    $\Phi := \Phi(\theta^*)$ is given such that
+    Finally, this allows us to classify realizations of a neural network uniquely as
+    a map, when knowing
+    its architecture $\Acal_\Phi$ and a choice of neural network weights 
+    $\theta \in \Theta(\Acal_\Phi)$, via
     \begin{equation*}
-        \theta^* = \underset{\theta \in \Theta(\Acal_\Phi)}{\operatorname{arg \, min}} \,\, 
-        \Lcal\left(R_\rho(\Phi(\theta)) \vert \{x_1, \dots, x_N\}, \{f(x_1), \dots, f(x_N)\}\right)
+        R_\rho(\Phi(\theta)) : \R^d \to \R^{N_L}.
     \end{equation*}
-    for some sample $\{x_1, \dots, x_N\}_{i=1}^N \subset \R^d$ with $N \in \N$ and
-    a suitable choice of a loss function $\Lcal$. Note, that this minimizing condition and the architecture 
-    are what, not necessarily uniquely, determines the fitting network.
 \end{definition}
+
+
+We will often come in contact with this definition, since the goal of all approximation theory is to
+state theorems in terms of "existence of an architecture, such that there is a choice of neural
+network weights, attaining a close approximation of some function $f$". With this in mind, the natural
+next question is, how one could achieve a better choice of weights after the first inital guess is not
+sufficient. This simple question is one, which can not be easily answered. However, we will
+provide the reader with a crude overview of the techniques, we will be using in our implementation.
+The main goal here, is to minimize the associated loss function for some neural network $\Phi$ with architechture
+$\Acal_\Phi$ with regard to some optimal function $f$ we want to approximate, i.e.
+\begin{equation*}
+    \underset{\theta \in \Theta(\Acal_\Phi)}{\operatorname{arg \, min}} \,\, 
+    \Lcal\left(R_\rho(\Phi(\theta)) \vert \{x_1, \dots, x_N\}, \{f(x_1), \dots, f(x_N)\}\right)
+\end{equation*}
+
+In the following, a brief introduction to the topics of batching, normalization, optimizers and
+schedulars is given.
+
+\paragraph{Batching}
+
+The term \emph{batch} refers to a stack of a sample $\{x_i, y_i\}_{i=1}^N \subset \Xcal \times \mathcal{Y}$.
+This usually means, stacking along a new dimension. Conventionally this is the first dimension and the
+batches are chosen as large as possible, but such that a clustering of features is avoided.
+
+\paragraph{Normalization}
+
+Even though the world of approximation theoretic mathematics 
+does not care about the specific order of numbers, the world
+of computer science begs to differ, since scaling can affect the problem; in fact, regions of low magnitude
+can be ignored completely by the optimizer, when high value regions sway the loss function 
+in an overwhelming way, thus making the optimizer only consider those. This can be mitigated, by 
+a priori normalizing the input data and the output data. Consider, for example, a one-dimensional sample 
+$\{x_i, y_i\}_{i=1}^N \subset \R \times \R$,
+then we define the \emph{min-max normalization} via 
+\begin{equation*}
+    x_i \mapsto \frac{x_i - x_\text{min}}{x_\text{max} - x_\text{min}} \in [0, 1], \quad y_i \mapsto 
+    \frac{y_i - y_\text{min}}{y_\text{max} - y_\text{min}} \in [0, 1],
+\end{equation*}
+where we setup the maximum and minimum via
+\begin{equation*}
+    x_\text{max} = \max\limits_{i = 1, \dots, N} x_i, \quad x_\text{min} = \min\limits_{i = 1, \dots, N} x_i,
+\end{equation*}
+and for $y_\text{min}, y_\text{max}$ accordingly. It is important to remember to 
+denormalize the solution for evalution and comparative analysis with the deterministic inverse
+operation. For our later example, we will switch this into
+a multidimensional setting.
+
+\paragraph{Optimizer}
+
+The choice of optimization method is crucial for the practical performance of neural networks. 
+The original gradient descent scheme with stochastic approximation dates 
+back to Robbins and Monro \cite{robbins1951}, 
+and became widely adopted in the form of backpropagation \cite{rumelhart1986}. 
+A first improvement was the introduction of momentum terms \cite{qian1999}, 
+followed by adaptive step-size methods such as 
+Adagrad \cite{duchi2011} and RMSProp \cite{tieleman2012}. 
+The most popular adaptive optimizer in modern deep learning is Adam \cite{kingma2015}, 
+which combines momentum with adaptive learning rates, and its decoupled variant AdamW 
+for improved regularization \cite{loshchilov2019}. 
+In our implementations we will mainly rely on AdamW.
+
+\paragraph{Schedular}
+
+Learning rate schedulers control the step-size of the optimizer during training. 
+While constant learning rates are sufficient for convergence in theory, 
+in practice carefully designed schedules can significantly improve both training stability 
+and generalization. 
+One well-established approach is the use of \emph{cosine annealing with warm restarts} (SGDR) 
+introduced by Loshchilov and Hutter \cite{loshchilov2017}, 
+which periodically reduces and resets the learning rate. 
+Another popular technique is the class of cyclical learning rates \cite{smith2017}. 
+In this work, we adopt cosine warm restarts due to their good empirical performance on PDE-related problems.

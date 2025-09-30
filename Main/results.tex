@@ -542,7 +542,9 @@ Under the already given assumptions, we can pose its first existence result.
 
 \begin{remark} \label{remark: discrete optimal DOD}
     We have structured the Proposition (\ref{prop: DOD Existence}) with the $L^1$-integral in mind, but we 
-    may redefine it to $L^\infty$ and set the objective DOD functional for $\Pcal_2$ for the statement and proof
+    may completely omit the integral with regard to $d(\mu, t)$, 
+    by formally setting up a one element space, and set the 
+    objective DOD functional for $\Pcal_2$ for the statement and proof
     as
     \begin{equation*}
         J(\mu, t, \V) := \frac{\euknorm{\Theta'}}{N_{s_2}} \sum_{\nu \in \Pcal_2} \norm{\uht - \V \V^T \G \uht}^2.
@@ -552,20 +554,21 @@ Under the already given assumptions, we can pose its first existence result.
     and culminates in the following version of Proposition (\ref{prop: DOD Existence}) for $\V_{\mu, t} :=
     \V_{\mu, t}(\hat \theta^*_\text{DOD})$, when discarding the very last step in 
     Equation (\ref{eq: last step for optimal DOD})
-    \begin{multline*}
-        \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \frac{\euknorm{\Theta'}}{N_{s_2}} \sum_{\nu \in \Pcal_2}
+    \begin{equation*}
+        \frac{\euknorm{\Theta'}}{N_{s_2}} \sum_{\nu \in \Pcal_2}
         \norm{\uht - \V_{\mu, t}
         \V_{\mu, t}^T \G \uht}^2 \\
-        \leq \varepsilon  + c_\A' + \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \frac{\euknorm{\Theta'}}{N_{s_2}} 
+        \leq \varepsilon  + c_\A + \frac{\euknorm{\Theta'}}{N_{s_2}} 
         \min\limits_{\tilde{\V} \in \R^{N_A \times N'}} 
         \sum_{\nu \in \Pcal_2} 
-        \euknorm{\uhtprered - \tilde{V} \tilde{V}^T \uhtprered}^2.
-    \end{multline*}
+        \euknorm{\uhtprered - \tilde{V} \tilde{V}^T \uhtprered}^2,
+    \end{equation*}
+    for any choice of $(\mu, t) \in \Theta \times [0, T]$.
     Notice, that in general $\hat \theta^*_\text{DOD} \neq \theta^*_\text{DOD}$, since the change of the objective
     DOD functional induces a change to the optimal DOD and hence a potential change to the choice of neural network
     weights. 
     
-    As another note, it is clear, that if $N_A = N_h$, we have $c_\A' = c_\A = 0$ by the definition
+    As another note, it is clear, that if $N_A = N_h$, we have $c_\A = 0$ by the definition
     of the POD as a canonical $\G$-orthonormalization and the right-hand-side sum
     would be over the non-reduced quantity. This would simply constitute a case, where we 
     completely circumvent a pre-reduction.
@@ -693,7 +696,8 @@ that fulfill
     as in the proof of Theorem (\ref{theo: relative error POD+DNN}), 
     where we already assume for the fixed $N' \in \N$, the quasi-optimal choice of weights $\theta_\text{DOD}^* \in
     \Theta(\Phi_{\tilde{\V}})$ for the underlying DOD neural network in accordance to Remark
-    (\ref{remark: discrete optimal DOD}) for some fixed $\delta > 0$, fixed $c_\A'$ and its subsequently defined virtual discrete 
+    (\ref{remark: discrete optimal DOD}) for some fixed $\delta > 0$, the definition of
+    $c_\A>0$ and its subsequently defined virtual discrete 
     corrolation eigenvalues $\sigma(\mu, t)_k$
     in Equation (\ref{eq: definition virtual eigenvalues})
     \begin{align*}
@@ -707,12 +711,21 @@ that fulfill
         \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T 
         \G \uht}^2 d(\nu) -  \frac{\euknorm{\Theta'}}{N_{s_2}} \sum_{\nu \in \Pcal_2} \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2 
         d(\mu, t) \, \right\vert^{1/2}}_{=: \Ecal_\text{S}} \\
-        &+ \underbrace{m^{-1} \euknorm{\Theta \times [0, T]}^{1/2} c_\A'}_{=: \Ecal_\A} 
-        +\underbrace{m^{-1} \euknorm{\Theta \times [0, T]}^{1/2}\delta + m^{-1} \euknorm{\Theta \times [0, T]}^{1/2}
+        &+ \underbrace{m^{-1} \left( \int_{\Theta \times [0, T]} \norm{\uht - \A^T \A \G \uht}^2 d(\mu, t)
+        \right)^{1/2}}_{=: \Ecal_\A}\\
+        &+\underbrace{m^{-1} \euknorm{\Theta \times [0, T]}^{1/2} \delta^{1/2} + m^{-1} \euknorm{\Theta \times [0, T]}^{1/2}
         \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_k^2}}_{=: \Ecal_\text{DOD}}.
     \end{align*}
-
-    Deploying the same strategy as in the proof of Theorem (\ref{theo: relative error POD+DNN}), we
+    Here, we can easily see, that the supremum chosen in the last step is actually an exaggeration since the mean
+    \begin{equation*}
+        \Ecal'_\text{DOD} := m^{-1} \left( \int_{\Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)^2} 
+        d(\mu, t) \right)^{1/2} + \frac{\delta^{1/2} \euknorm{\Theta \times [0, T]}^{1/2}}{m}
+    \end{equation*} 
+    is a more direct bound, also satisfying the upcoming convergence. 
+    However, we state this in regard to the former definition to stay consistent
+    with the later discussion surrounding Assumption (\ref{assumption KnW decay}), that
+    is formulated in maximal terms.
+    From here, deploying the same strategy as in the proof of Theorem (\ref{theo: relative error POD+DNN}), we
     can assert, that indeed $\Ecal_\text{S} \to 0$ almost surely by the strong law of large numbers, and
     that $\E[\Ecal_\text{S}] \leq \Ocal(N_{s_2}^{-1/4})$ by
     Proposition (\ref{prop: order of convergence for sample}) with $N_t = 1, N_{s_1} = 1$.
@@ -720,13 +733,13 @@ that fulfill
     Moreover, we have from Proposition (\ref{prop: existence and convergence to sigma infty}),
     with $N_{s_1}, N_t = 1$, that 
     \begin{multline*}
-        \Ecal_\text{DOD} = \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m} \left( \delta + 
+        \Ecal_\text{DOD} = \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m} \left( \delta^{1/2} + 
         \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_k^2}
         \right) \\
         \underset{\N_{s_2} \to \infty}{\longrightarrow} 
         \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m}
         \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_{k, \infty}^2}
-        + \frac{\delta \euknorm{\Theta \times [0, T]}^{1/2}}{m}
+        + \frac{\delta^{1/2} \euknorm{\Theta \times [0, T]}^{1/2}}{m}
         =: \Ecal_{\text{DOD}, \infty} + \varepsilon,
     \end{multline*}
     which can be arbitrarily improved for a more complex choice of the inner DOD module architecture. This dependency
@@ -765,7 +778,7 @@ is not immediate under the preliminaries alone.
     In fact, we can again infer the sub-optimal choice of the projection coefficients under any neural network
     realization
     \begin{equation*}
-        \Ecal_\text{R} = \int\limits_{\Theta \times \Theta' \times [0, T]} 
+        \int\limits_{\Theta \times \Theta' \times [0, T]} 
         \frac{\norm{\uht - \V_{\mu, t} \hat{q}_{N'}(\mu, \nu, t)}^2}{\norm{\uht}^2} d(\mu, \nu, t)
         \geq
         \int\limits_{\Theta \times \Theta' \times [0, T]} 
@@ -1597,3 +1610,101 @@ describes the character of a hypothetical limit.
 
 
 
+As a final step in the theoretical setting, we would like to introduce a few important other 
+data-driven ROMs and compare them to the proposed DOD-based architechtures, we have analysed.
+These are meant to be only crude introductions, as the main focus lays on the comparability of
+the POD versus the DOD and most of the other architechtures simply adhere to a different set
+of problems and assumptions. 
+
+\paragraph{Linear Residual Nets (lin+Res)}
+Residual network architectures, originally popularized in the context of computer vision, 
+have also been adapted as linear regression surrogates for PDE models. In our setting,
+they may be understood as learning an approximation of the parameter-to-solution map $\Gcal$
+by means of a sequence of affine layers with skip connections. Such
+skip connections are simply defined as 
+\begin{equation*}
+    x \mapsto R_\rho(\Phi)(x) + x,
+\end{equation*}
+where $\Phi$ is some neural network. In order to overcome the limitation of necessarily
+retaining the same dimension as the input, they simply append their architechture with
+the definition of projection connections, which simply replace $x$ with (non-)trainable projectors.
+The skip structure allows
+the network to model perturbations of a baseline linear evolution in a stable fashion.
+This method was first proposed in \cite{kaiming2016}, and in our main source \cite{brivio2023}
+we can find the technical complexity bound of 
+\begin{equation*}
+    L_\text{lin+ResNet} = \Ocal(\varepsilon^{-1}), \quad \omega_\text{lin+ResNet} = 
+    \Ocal(N k \varepsilon^{-1}),
+\end{equation*}
+where $k \in \N$ represents the latent dimension to which the residual network is reduced, and $N \ll N_h$ is
+the linear projection potentially achieved by a non-trainable POD matrix.
+Hence, we can only assert that it should be outperformed by both DOD- and POD-based ROMs 
+in terms of layer numbers and, by the POD-based ROMs in terms of the non-zero weights
+
+\paragraph{Deep Operator Networks (DeepONets)}
+DeepONets, introduced in \cite{lu2021}, are designed to learn
+nonlinear operators in a discretization-independent manner. This completely seperates
+them from all the methods proposed up to this point, since
+their general framing allows the approximation of the overarching true PPDE problem,
+without a technical step down to a FOM. As such, they pose a very
+broad class of approximation problems; for any continuous function $u$ of an underlying 
+compact subset of a Banach space, the DeepONet tries to find the mapping 
+$u \mapsto \Gcal_\infty(u)$, where $\Gcal_\infty$ is some operator on the space of these
+continuous functions by using so-called sensor points,
+that try assuming the structure of $u$ before minimizing. 
+This is done using a \emph{branch net $b$}, which consists of
+an encoder $\Ecal$ employing the aforementioned sensors in order
+to send the continuous function $u$ to an empirical set of evaluation points,
+and an approximation network $\Acal$ attaining the wanted dimension and a \emph{trunk net $\tau$} (or
+their stacked linear combinations) lifting the reduced dimension up to the continous function
+output space of $\Gcal_\infty$, i.e.
+\begin{equation*}
+    \Gcal_\infty(u)(y) \approx b(u) \tau(y) = (\Ecal \circ \Acal)(u) \cdot \tau(y).
+\end{equation*}
+This is practical, when considering the parameters
+as, for example, some known boundary functions, but in our case, this appoach can be 
+specified to the \emph{POD-DeepONet} introduced in \cite{lu2022}, where the trunk net is
+specifically given by an a priori POD on the snapshots and the given function $u$ is meant
+as the infered parameter realization function (the identity). Therefore, we
+realistically aim at an approximation of the parameter-to-solution map $\Gcal$ using
+\begin{equation*}
+    \Gcal_\text{POD-DeepONet}(\mu, \nu, t) = \A \cdot R_\rho(\Acal)(\mu, \nu, t),
+\end{equation*}
+for the POD matrix $\A \in \R^{N_h \times N}$.
+It is to be remarked, that as discussed in \cite{brivio2023} it is completely within the framework 
+to introduce the solution part of the parameter-to-solution map, as an actual continous function
+with regard to the time dimension, which would then significantly vary this approach from
+the discussed POD-based ROM approach. How it stands, the POD-DeepONet can be interpreted as a more 
+general version of the POD+DNN (either POD-DL-ROM or POD+DFNN), but in case the domain introduces
+$\mu$ and $t$ as a part of the output domain, i.e. considering it being a function only
+mapping $\nu$ to its solution across all possible $(\mu, t)$, we could interpret the DOD-based
+architechtures as a special case of the DeepONets.
+
+\paragraph{Convolutional Neural Network (CNN)}
+
+CNNs, firstly used during the ImageNet competition and afterwards introduced
+in the paper \cite{krizhevsky2012}, are widely used as surrogates for PDE solutions 
+defined on regular grids. In our notation, the CNN directly approximates the parameter-to-solution
+map $\Gcal$ by applying successive local convolutions and pooling operations over the grid.
+The main difference between these and our inherent use of autoencoders in the midst of 
+DOD-DL-ROM and POD-DL-ROM is, that the CNNs actually leverage on the spatial structure of
+the FOM and require as such a equidistant grid. As a result, the CNNs are more closely
+related to Fourier Neural Networks \cite{kovachki2021}, since they try approximating
+the underlying "image-type" nature of the model. Since the analysis does also rely on
+such Fourier arguments, it is necessary to assert additionally, that the map resulting
+from the FOM is continuous, i.e. $u_h(\mu, \nu, t) \in C^\gamma(\Omega)$ for $\gamma \geq 1$. Then
+a bound for the non-zero weights is
+\begin{equation*}
+    \omega_\text{CNN} = \Ocal\left( \varepsilon^{-\frac{2}{2\gamma - 1}} \left( 
+        \varepsilon^{-\frac{p+q+1}{r}} (\log(\varepsilon^{-1}) + \log(N_h))
+    \right)\right),
+\end{equation*}
+from the discussion in \cite{brivio2023} and the fact $h^{-1} = \Ocal(N_h)$ by the argument
+of equidistant spacing. For the reasons of the specifications of the grid, both DOD-DL-ROM and
+POD-DL-ROM can be seen as more flexible alternatives and if we know the decoder map to be sufficiently
+regular, in a sense that $n/(s-1) > (p+q+1)/r$ similar to the discussions in 
+Proposition (\ref{prop: regularity discussion for POD vs DOD}), then the POD-DL-ROM outperforms the
+CNN architechture in terms of complexity efficiency (see \cite{brivio2023} for detailed discussion). 
+In the same line of thought, we know that if then additionally the regularity of the optimal DOD
+sufficies and the bottleneck property of the Proposition (\ref{prop: regularity discussion for POD vs DOD})
+is met for $N_h$ and $\varepsilon$, we can infer a potentially superiority of the DOD-DL-ROM above both.
