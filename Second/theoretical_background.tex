@@ -358,10 +358,10 @@ We base this subsection on \cite{quarteroni2015rb}, but import the generalizatio
 \begin{algorithm}
     \caption{Generalized Proper Orthogonal Decomposition (POD)} \label{algo: pod}
     \begin{algorithmic}[1]
-        \State \textbf{Input: } snapshot matrix $U = [U_j]_{j=1}^{N_s} \in \R^{N_h \times N_\text{data}}$, 
+        \Require snapshot matrix $U = [U_j]_{j=1}^{N_s} \in \R^{N_h \times N_\text{data}}$, 
         mass matrix $\G \in \R^{N_h \times N_h}$,
         reduction $N < N_h$
-        \State \textbf{Output: } POD basis matrix $\A^\mu = [\xi^\mu_1, \dots, \xi^\mu_N] \in \R^{N_h \times N}$
+        \Ensure POD basis matrix $\A^\mu = [\xi^\mu_1, \dots, \xi^\mu_N] \in \R^{N_h \times N}$
         \If{$N_\text{data} \leq N_h$}
             \State Form the correlation matrix $C = \frac{\vert \Theta \times [0, T] \vert}{N_{data}} U^T \G U
             \in \R^{N_\text{data} \times N_\text{data}}$

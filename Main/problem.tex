@@ -343,9 +343,9 @@ The parameter-to-solution map can be recovered by the following Algorithm (\ref{
 \begin{algorithm}
     \caption{POD-Galerkin} \label{algo: pod-galerkin}
     \begin{algorithmic}[1]
-        \State \textbf{Input:} $\left(\mu_j, \nu_j\right)_{j=1}^{N_s}$ data sample
+        \Require $\left(\mu_j, \nu_j\right)_{j=1}^{N_s}$ data sample
         and $n < N_h$ reduced dimension
-        \State \textbf{Output:} approximated parameter-to-solution-map $(\mu, \nu) \mapsto 
+        \Ensure approximated parameter-to-solution-map $(\mu, \nu) \mapsto 
         \hat{u}_h(\cdot, \cdot \, ; \mu, \nu)$
         \State Compute $\{u_h^{\mu_j, \nu_j, t_{k_m}}\}_{m=1}^{N_t}$ from 
         Equation (\ref{eq: full discrete ppde}) (with $N = 0$)
@@ -405,8 +405,8 @@ training data $\Pcal$, which is a huge advantage when compared to the direct POD
 \begin{algorithm}
     \caption{POD-Greedy-Galerkin} \label{algo: pod-greedy-galerkin}
     \begin{algorithmic}[1]
-        \State \textbf{Input: } \texttt{tol}, $\mathcal{Z} = 0$, $N = 0$, $(\mu_j, \nu_j)_{j=1}^{N_s}$, $N_1$ and $N_2$
-        \State \textbf{Output: } approximated parameter-to-solution-map $(\mu, \nu) \mapsto 
+        \Require \texttt{tol}, $\mathcal{Z} = 0$, $N = 0$, $(\mu_j, \nu_j)_{j=1}^{N_s}$, $N_1$ and $N_2$
+        \Ensure approximated parameter-to-solution-map $(\mu, \nu) \mapsto 
         \hat{u}_h(\cdot, \cdot \, ; \mu, \nu)$
         \For{$j = 1,\dots,N_s$}
             \State Compute $\{u_h^{\mu_j, \nu_j, t_{k_m}}\}_{m=1}^{N_t}$ from 
@@ -812,7 +812,7 @@ Definition (\ref{def: neural network weights}) can be given for each $(\mu, \nu,
 Same, as for the DOD+DNN, the training is done in series. One observes, that the training data can be again
 reduced with
 \begin{equation*}
-    u_{\text{red}^2}^{\mu, \nu, t} := \V_{\mu, t}(\theta^*_\text{DOD})^T \G \uht \in \R^{N} \qquad 
+    u_{\text{red}^2}^{\mu, \nu, t} := \V_{\mu, t}(\theta^*_\text{DOD})^T \G \uht \in \R^{N'} \qquad 
     \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal,
 \end{equation*}
 and then used to define the DOD-DL-ROM loss function utilizing the $\G$-orthonormality of the DOD, hence
