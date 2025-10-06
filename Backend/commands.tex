@@ -27,6 +27,38 @@
 \usepackage{setspace}
 \AtBeginEnvironment{algorithmic}{\setstretch{1.2}}
 
+% Figures
+\usepackage{graphicx,subcaption}
+\usepackage{calc}
+\newlength{\SidePairGap}
+\setlength{\SidePairGap}{0.012\textwidth}
+\newlength{\SideRowGap}
+\setlength{\SideRowGap}{8pt}
+\captionsetup[subfigure]{skip=2pt,justification=centering,font=small}
+\NewDocumentCommand{\sidepair}{O{0.24\textheight} m m m m m m}{%
+  \begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[t]{\dimexpr .5\textwidth - .5\SidePairGap\relax}
+      \centering
+      \includegraphics[height=#1,keepaspectratio]{#2}%
+      \caption{#3}
+    \end{subfigure}\hspace*{\SidePairGap}%
+    \begin{subfigure}[t]{\dimexpr .5\textwidth - .5\SidePairGap\relax}
+      \centering
+      \includegraphics[height=#1,keepaspectratio]{#4}%
+      \caption{#5}
+    \end{subfigure}
+    \caption{#6}
+    \label{#7}
+  \end{figure}%
+}
+
+% Architectures
+\usepackage{booktabs,tabularx,makecell}
+\newcommand{\conv}[5]{$\texttt{Conv2d}(#1 \to #2,\;k#3,\;s#4,\;p#5)$}
+\newcommand{\convt}[5]{$\texttt{Conv2dT}(#1 \to #2,\;k#3,\;s#4,\;p#5)$}
+\newcommand{\layers}[1]{$\texttt{[#1]}$}
+
 % Drawing
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,calc,patterns}

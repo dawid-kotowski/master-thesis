@@ -21,13 +21,26 @@ POD-DL-ROM, the DOD+DFNN and the DOD-DL-ROM plottet against a FOM solution, and 
 set up a comparison in relative error in relation to the active weights to compare the theoretical result
 to numerical ones.
 
+For all models, we uniformly use the LeakyReLU instead of the ReLU to form the neural networks
+contained in the models. This activation function is mathematically
+equivalent to the ReLU as justified by the paper \cite{geist2020}. Hence, we overwrite the
+definition of the ReLU with
+\begin{equation*}
+    \rho(x) := \begin{cases}
+        x, \quad \text{if }x \geq 0 \\
+        a x, \quad \text{if }x < 0.
+    \end{cases}
+\end{equation*}
+We will put $a = 0.1$ as the constant in every instance of the activation unit.
+
 In order to connect to the brief discussion of Statical Learning in Subsection (\ref{subsec: statistical learning}),
 we will start with the specific definitions of the training procedure, after attaining a set of data in
 the form of
 \begin{equation*}
     \left\{ (\mu_i, \nu_j, k \Delta t), 
     u_h^{\mu_i, \nu_j, k \Delta t}\right\}_{(i,j,k) = (1, 1, 1)}^{(N_{s_1}, N_{s_2}, N_t)} 
-    \subset (\Pcal_1 \times \Pcal_2 \times [0,T]) \times \R^{N_h}.
+    \in (\Pcal_1 \times \Pcal_2 \times \Tcal) \times \Gcal((\Pcal_1 \times \Pcal_2 \times \Tcal)) \subset
+    (\Theta \times \Theta' \times [0, T]) \times \R^{N_h}.
 \end{equation*}
 Here, we generate the solutions using the \texttt{pymor} module \cite{pymor2016}, and its builtin discretizers relying
 on \texttt{gmsh} meshing for the second, more complex, example. In general we use a CG discretizer technique
@@ -209,7 +222,7 @@ All source code required to reproduce the presented results, accompanied by a co
             from Subsection (\ref{subsec: dod-dl-rom}) on $(M^{\text{batch}}, N^\text{batch}, S_{N_A}^{\text{batch}})$ 
             \State $\theta^{n_e N_{\text{nb}}+k+1} = 
             \text{AdamW}(\eta^0, \nabla_\theta \mathcal{J}, \theta^{n_e N_{\text{nb}}+k})$
-            \State $\eta^{n_e + 1} \gets \text{CAWR}(\Lcal_\text{DOD})$
+            \State $\eta^{n_e + 1} \gets \text{CAWR}(\Lcal_\text{DOD-DL-ROM})$
         \EndFor
         \State Repeat instructions 9--24 on $(M^{\text{val}}, N^\text{val}, S_{N_A}^{\text{val}})$ 
         with the updated weights $\theta^{n_e N_{\text{nb}}+k+1}$
@@ -235,11 +248,11 @@ both have significantly faster KnW decay for fixed parameter $(\mu, t) \in \Thet
 
 
 We want to start with a simple problem on a relatively complex domain; a rotating wind 
-from a hole. To circumvent the CFL-barrier, we impose the time domain to $T=0.008$.
+from a hole. To circumvent the CFL-barrier, we impose the time domain to $T=0.009$.
 Consider a polygonal domain $\Omega \subset (0,1)^2$
 with two circular holes (see Figure \ref{fig:polygon-domain}). 
 Let $u^{\mu,\nu}$ be called a strong solution to the problem, if for each 
-$\mu \in (\pi+0.5, 2\pi)$ and $\nu \in (0.01,0.08)$ we have
+$\mu \in (\pi+0.5, 2\pi)$ and $\nu \in (0.01,0.3)$ we have
 
 \begin{equation*}
     \begin{cases}
@@ -273,6 +286,7 @@ where the advection, diffusion and reaction terms are given by
     \qquad
     \alpha = 10^{-1}.
 \end{equation*}
+
 Here, $\Gamma_D$ denotes the inner boundary of the small circular hole centered at $(0.65,0.35)$
 with radius $0.05$, on which Dirichlet boundary conditions are imposed,
 while $\Gamma_N$ denotes the outer boundary and the larger hole centered at $(0.35,0.65)$
@@ -280,66 +294,237 @@ with radius $0.10$, on which homogeneous Neumann boundary conditions are imposed
 
 
 
-  \begin{figure}[h]
-    \centering
+\begin{figure}[h]
+\centering
+
+
+\begin{tikzpicture}[x=5cm,y=5cm,>=Latex,
+    neumann/.style   ={very thick},
+    dirichlet/.style ={very thick,dashed},
+    coord/.style     ={black,fill=black,circle,inner sep=0.6pt}
+    ]
     
-
-    \begin{tikzpicture}[x=5cm,y=5cm,>=Latex,
-        neumann/.style   ={very thick},
-        dirichlet/.style ={very thick,dashed},
-        coord/.style     ={black,fill=black,circle,inner sep=0.6pt}
-      ]
-      
-      \coordinate (p1)  at (0.00,0.00);
-      \coordinate (p2)  at (1.00,0.00);
-      \coordinate (p3)  at (1.00,0.20);
-      \coordinate (p4)  at (0.80,0.20);
-      \coordinate (p5)  at (0.80,0.40);
-      \coordinate (p6)  at (1.00,0.40);
-      \coordinate (p7)  at (1.00,1.00);
-      \coordinate (p8)  at (0.00,1.00);
-      \coordinate (p9)  at (0.00,0.20);
-      \coordinate (p10) at (0.30,0.20);
-      \coordinate (p11) at (0.30,0.10);
-      \coordinate (p12) at (0.00,0.10);
-      
-      \def\hcA{(0.65,0.35)}
-      \def\hrA{0.05}   
-      \def\hcB{(0.35,0.65)} 
-      \def\hrB{0.10}       
-      
-      \fill[gray!12]
-        (p1)--(p2)--(p3)--(p4)--(p5)--(p6)--(p7)--(p8)--(p9)--(p10)--(p11)--(p12)--cycle;
-      \fill[white] \hcA circle[radius=\hrA];
-      \fill[white] \hcB circle[radius=\hrB];
-      
-      \draw[neumann]
-        (p1)--(p2)--(p3)--(p4)--(p5)--(p6)--(p7)--(p8)--(p9)--(p10)--(p11)--(p12)--cycle;
-      
-      \draw[dirichlet] \hcA circle[radius=\hrA];
-      \draw[neumann]   \hcB circle[radius=\hrB];
-      
-      \foreach \k in {1,...,12}{
-        \path (p\k) node[coord]{};
-      }
-      
-      \begin{scope}[xshift=0.02cm,yshift=0.02cm]
-        \draw[neumann] (0.03,0.95) -- ++(0.08,0) node[right,black,scale=0.9]{Neumann};
-        \draw[dirichlet] (0.03,0.88) -- ++(0.08,0) node[right,black,scale=0.9]{Dirichlet};
-      \end{scope}
-      
-      \node[scale=0.9] at ($(0.65,0.35)+(0, -0.1)$) {$\Gamma_D$};
-      \node[scale=0.9] at ($(1,0.65)+(-0.07, 0)$) {$\Gamma_N$};
-      \node[scale=0.9] at ($(0,0.35)+(+0.07, 0)$) {$\Gamma_N$};
-      \node[scale=0.9] at ($(0.65,1)+(0, -0.07)$) {$\Gamma_N$};
-      \node[scale=0.9] at ($(0.65,0)+(0, +0.05)$) {$\Gamma_N$};
-      \node[scale=0.9] at ($(0.35,0.65)+(0,  -0.15)$) {$\Gamma_N$};
-    \end{tikzpicture}
+    \coordinate (p1)  at (0.00,0.00);
+    \coordinate (p2)  at (1.00,0.00);
+    \coordinate (p3)  at (1.00,0.20);
+    \coordinate (p4)  at (0.80,0.20);
+    \coordinate (p5)  at (0.80,0.40);
+    \coordinate (p6)  at (1.00,0.40);
+    \coordinate (p7)  at (1.00,1.00);
+    \coordinate (p8)  at (0.00,1.00);
+    \coordinate (p9)  at (0.00,0.20);
+    \coordinate (p10) at (0.30,0.20);
+    \coordinate (p11) at (0.30,0.10);
+    \coordinate (p12) at (0.00,0.10);
+    
+    \def\hcA{(0.65,0.35)}
+    \def\hrA{0.05}   
+    \def\hcB{(0.35,0.65)} 
+    \def\hrB{0.10}       
+    
+    \fill[gray!12]
+    (p1)--(p2)--(p3)--(p4)--(p5)--(p6)--(p7)--(p8)--(p9)--(p10)--(p11)--(p12)--cycle;
+    \fill[white] \hcA circle[radius=\hrA];
+    \fill[white] \hcB circle[radius=\hrB];
+    
+    \draw[neumann]
+    (p1)--(p2)--(p3)--(p4)--(p5)--(p6)--(p7)--(p8)--(p9)--(p10)--(p11)--(p12)--cycle;
+    
+    \draw[dirichlet] \hcA circle[radius=\hrA];
+    \draw[neumann]   \hcB circle[radius=\hrB];
+    
+    \foreach \k in {1,...,12}{
+    \path (p\k) node[coord]{};
+    }
+    
+    \begin{scope}[xshift=0.02cm,yshift=0.02cm]
+    \draw[neumann] (0.03,0.95) -- ++(0.08,0) node[right,black,scale=0.9]{Neumann};
+    \draw[dirichlet] (0.03,0.88) -- ++(0.08,0) node[right,black,scale=0.9]{Dirichlet};
+    \end{scope}
+    
+    \node[scale=0.9] at ($(0.65,0.35)+(0, -0.1)$) {$\Gamma_D$};
+    \node[scale=0.9] at ($(1,0.65)+(-0.07, 0)$) {$\Gamma_N$};
+    \node[scale=0.9] at ($(0,0.35)+(+0.07, 0)$) {$\Gamma_N$};
+    \node[scale=0.9] at ($(0.65,1)+(0, -0.07)$) {$\Gamma_N$};
+    \node[scale=0.9] at ($(0.65,0)+(0, +0.05)$) {$\Gamma_N$};
+    \node[scale=0.9] at ($(0.35,0.65)+(0,  -0.15)$) {$\Gamma_N$};
+\end{tikzpicture}
 
 
-    \caption{Polygonal subdomain of $(0,1)^2$ with Dirichlet and Neumann boundaries.}
-    \label{fig:polygon-domain}
-  \end{figure}
+\caption{Polygonal subdomain of $(0,1)^2$ with Dirichlet and Neumann boundaries.}
+\label{fig:polygon-domain}
+\end{figure}
+
+
+The training is achieved with $N_\text{epochs} = 300$ and $8$ restarts per model, meaning for each instance of 
+a seperate trainer, thus including the DOD (that uses $1000$ epochs instead) by 
+default aswell, and a patience of $40$. Furthermore,
+we attain $N_{s_1}, N_{s_2}= 30$ and $N_t = 30$ for the sample sizes. The discretizer here is the 
+\texttt{gmsh}-discretizer collecting a size of $N_h = 6376$ for the FOM results.
+
+As for the reduction, we set up $n = 2 < 2(p+q+1) + 3 = 9$, to reasonably satisfy Assumption 
+(\ref{assumption perfect embedding}), and $N_A = 64$ as the pre-reduction via POD to make
+the DOD easier to train. This achieves a retaining of about $\approx 98 \% $ of the energy for
+the problem. Furthermore, we use $N = 32$ and $N' = 8$ to achieve a noticable difference in reduction, 
+and present the adaptive method as one, which may substitute or even overcome the POD. 
+Assumption (\ref{assumption KnW decay}) is only used for the conditional result of 
+Proposition (\ref{prop: regularity discussion for POD vs DOD}), whose first part
+is true already if Assumption (\ref{assumption: dimension hierarchy}) is met, specifically if
+$N' < N$. To infer this, we can simply look at the KnW decays of both manifolds specified there.
+We can see in Figure (\ref{fig:visual-mu3-comparison-ex01}), that indeed the solution manifold exhibits significantly slower decay than 
+the submanifold for fixed $(\mu, t)$. Note, that in order to guarantee
+comparability, we employ a seperate way of gathering samples from $\Theta'$ to get a
+similar amount for the POD reduction, as the POD had with regards to the global solution manifold.
+
+
+\sidepair[0.15\textheight]{Figures/benchmarks_ex01/knw_global.png}{KnW decay of $\Scal$}%
+    {Figures/benchmarks_ex01/knw_sup.png}{KnW decal of $\sup_{(\mu, t)} \Scal_{\mu, t}$}%
+    {Linear Kolmogorov $n$-width decay of Example 1}
+    {fig: knw comparison for ex01}
+
+Finally, this leads us to the discussion regarding the hyperparameters. The averaging
+parameter for the POD-DL-ROM and the DOD-DL-ROM is chosen in unison as $\omega=0.6$, since this
+appears to provide the most reasonable results. Instead of providing reasonable data to show this behavior,
+we refer to \cite[p. 21--22]{fresca2020}, whose authors have already shown, that equidistant error
+fitting proves the most rentable. The architechture of models for the following visual presentation given in 
+Figure (\ref{fig:visual-mu3-comparison-ex01}) and (\ref{fig:visual-mu5-comparison-ex01}) 
+can be found in the Table (\ref{tab:arch-ex01}) below. 
+Here, we define for the DOD the layer composition of one of $N'$ root modules as given in Definition
+(\ref{def: DOD}), and the \texttt{Conv2d}-networks can be understood as concatenations of
+two dimensional convolutional operators with hidden channel switch, symmetric kernel size "k", stride "s"
+and padding "p". The DFNN is only a straight forward implementation of the respective layer size list 
+connecting in a dense manner.
+
+\begin{table}[H]
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}l l X X r@{}}
+\toprule
+\textbf{Model} & \textbf{DOD} & \textbf{Encoder} & \textbf{Decoder} & \textbf{DFNN} \\
+\midrule
+POD-DL-ROM &
+- &
+\conv{1}{8}{3}{1}{1} \conv{8}{16}{3}{2}{1} &
+\convt{16}{8}{3}{2}{1} \conv{8}{1}{3}{1}{1} &
+\layers{16, 8, 4} \\
+\addlinespace[2pt]
+DOD-DL-ROM &
+\layers{128, 64} &
+\conv{1}{8}{3}{2}{1} &
+\convt{8}{1}{3}{2}{1} &
+\layers{16, 8, 4} \\
+\addlinespace[2pt]
+DOD+DFNN &
+\layers{128, 64} &
+- &
+- & \layers{16, 8, 4} \\
+\bottomrule
+\end{tabularx}
+\caption{Model architectures in Example 1.}
+\label{tab:arch-ex01}
+\end{table}
+
+
+As discussed in the introduction, Reduced Order Models are mainly of interest, when they can significantly
+cut down execution time with an acceptible error rate. For the purpose of the analysis of such speed up, we want
+to compare the execution time of these architechtures in regards to their number of active weights, and
+the natural computation time of a Full Order Model. 
+
+\begin{table}[H]
+    \footnotesize
+    \begin{tabularx}{\textwidth}{@{} X X r r r @{}}
+    \toprule
+    \textbf{Model} & \textbf{\#parameters} & \textbf{training time} & \textbf{forward time [ms]} & \textbf{speed-up} \\
+    \midrule
+    Full Order Model(CPU) & - & - & 220.99 & 1 \\
+    POD-DL-ROM(GPU) &  91678 & 10 m & 87.46 & 0.39 \\
+    DOD-DL-ROM(GPU) & 107847 & 15 + 8 m & 108.35 & 0.49 \\
+    DOD+DFNN(GPU)    & 104226 & 15 + 7 m & 100.17 & 0.45 \\
+    \bottomrule
+    \end{tabularx}
+    \caption{Runtime comparison.}
+    \label{tab:runtime-ex01}
+    \end{table}
+
+
+Qualitatively, one can observe, that all three algorithms seem to appreciate the physics of the system to
+a noticable degree, but also, that the newly proposed methods provide worse results for this example in general. 
+Even though the reduced basis provided by the DOD should in theory show more adaptive behavior,
+this is not what we see in the figures so far. To be fair, the dimension $N$ used for the POD reduced basis
+is high enough in this problem, that most of the energy can be preserved without the need for an adaptive
+basis. This quality can be seen nicely in Figure (\ref{fig: knw comparison for ex01}), where
+we can observe, that already around $N \approx 30$ should suffice to describe this example.
+Additionally to that, we can see in Table (\ref{tab:runtime-ex01}), that indeed both DOD-based
+alternatives provide a signifantly worse speed up and also cost more time for training.
+
+Hence, the first example can be seen as a pathological one, in a case, where the KnW decay \emph{is}
+slower for the whole manifold, but not \emph{slow enough.}
+
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{\dimexpr .5\textwidth - .5\SidePairGap\relax}
+        \centering
+        \includegraphics[height=0.21\textheight,keepaspectratio]{Figures/visuals_ex01/mu3/dod_roms_mu3_t28_ex01.png}%
+        \caption{DOD+DFNN versus DOD-DL-ROM}\label{fig:visual-mu3-comparison-ex01a}
+    \end{subfigure}\hspace*{\SidePairGap}%
+    \begin{subfigure}[t]{\dimexpr .5\textwidth - .5\SidePairGap\relax}
+        \centering
+        \includegraphics[height=0.21\textheight,keepaspectratio]{Figures/visuals_ex01/mu3/dod_diff_mu3_t28_ex01.png}%
+        \caption{Absolute difference}\label{fig:visual-mu3-comparison-ex01b}
+    \end{subfigure}
+
+    \vspace*{\SideRowGap}
+
+    \begin{subfigure}[t]{\dimexpr .5\textwidth - .5\SidePairGap\relax}
+        \centering
+        \includegraphics[height=0.21\textheight,keepaspectratio]{Figures/visuals_ex01/mu3/dl_roms_mu3_t28_ex01.png}%
+        \caption{POD-DL-ROM versus DOD-DL-ROM}\label{fig:visual-mu3-comparison-ex01c}
+    \end{subfigure}\hspace*{\SidePairGap}%
+    \begin{subfigure}[t]{\dimexpr .5\textwidth - .5\SidePairGap\relax}
+        \centering
+        \includegraphics[height=0.21\textheight,keepaspectratio]{Figures/visuals_ex01/mu3/dl_diff_mu3_t28_ex01.png}%
+        \caption{Absolute difference}\label{fig:visual-mu3-comparison-ex01d}
+    \end{subfigure}
+
+    \caption{Comparison of ROMs for $\mu \approx 3.64$, $\nu \approx 2.4\cdot 10^{-2}$ and $t = 8.4\cdot 10^{-3}$.}
+    \label{fig:visual-mu3-comparison-ex01}
+    \end{figure}%
+
+\sidepair[0.21\textheight]%
+{Figures/visuals_ex01/mu5/dl_roms_mu5_t24_ex01.png}{POD-DL-ROM versus DOD-DL-ROM}%
+{Figures/visuals_ex01/mu5/dl_diff_mu5_t24_ex01.png}{Absolute difference}%
+{Comparison of DL-ROMs for $\mu \approx 5.09$, $\nu \approx 1.2 \cdot 10^{-2}$ and $t = 7.2 \cdot 10^{-3}$.}%
+{fig:visual-mu5-comparison-ex01}
+
+The main result of this thesis however, is the comparative analysis of both architechtures with regard to the
+number of weights for a fixed relative error $\Ecal_\text{R}$. For this, one can simply plot the 
+growing complexity (in exponential terms) with regard to the development of the relative error
+for each model. As already discussed, we notice the general inferiority of both DOD-based approaches,
+but on a more hopeful note, can also infer the potentially better development of the DOD-DL-ROM
+for very low relative errors and high complexity as seen in the slopes of Figure 
+(\ref{fig: weight comparison ex01}). 
+The existence of such a crosspoint outside the figures bound 
+intuitively makes sense, as the bottleneck for the feasability of
+the DOD-DL-ROM is mostly given by 
+\begin{equation*}
+    \frac{n}{s-1} > \frac{\log(N_h)}{\log(\varepsilon^{-1})},
+\end{equation*}
+from Proposition (\ref{prop: regularity discussion for POD vs DOD})
+for any fixed relative error tolerance $\varepsilon > 0$. Obviously, this is satisfied most likely for very
+small errors and containable $N_h$, but since $s$ is not known,
+one can not be sure how small the right-hand side needs to be. 
+Note, that the proposition uses $N_h = N_A$ and thus the
+actual bottleneck might be a bit less tight, because the complexity bound is only imposed upon the
+neural network parts of the model. If the earlier results of Theorem (\ref{theo: PAC bound for DOD-DL-ROM})
+would be expanded to situations of $N_A < N_h$, one might potentially achieve that.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=5cm]{Figures/benchmarks_ex01/shared_params_vs_error.png}
+    \caption{Comparison of active weights between ROMs}
+    \label{fig: weight comparison ex01}
+\end{figure}
 
 
 \subsection{Example 2: Wind Generation in a plain domain}
@@ -349,7 +534,7 @@ with radius $0.10$, on which homogeneous Neumann boundary conditions are imposed
 
 For the second example, we will look at a much simpler square domain $\Omega = (0, 1)^2$ 
 with last time point $T = 1$. Let $u^{\mu, \nu}$ be called a strong solution to the
-problem, if for each $\mu = (\mu_1, \mu_2, \mu_3) \in (0.3, 0.7)^3$ and $\nu \in (0.002, 0.005)$ we have 
+problem, if for some choice of $\mu = (\mu_1, \mu_2, \mu_3) \in (0.3, 0.7)^3$ and $\nu \in (0.002, 0.005)$ we have 
 
 \begin{equation*}
     \begin{cases}
@@ -378,3 +563,263 @@ where the advection and right-hand side terms are given by
     f(x;\mu) = 10 \exp\left(-\frac{(x_1-\mu_1)^2+(x_2-\mu_2)^2}{0.07^2}\right).
 \end{equation*}
 
+We use the same training parameters, as above. However, the discretizer for this 
+example is the discretizer inherent to the unit square domain, producing $N_h = 2381$ degrees of freedom.
+Furthermore, we employ most of the same training hyperparameters, such as $N_\text{epochs}$ and $N_t$ and 
+$N_{s_1}, N_{s_2}$ exactly as in the previous example. Significant changes are only the
+reduction dimension, as the problem here has much more obvious dependency on $\mu$, and hence slower
+KnW decay as can be seen in Figure (\ref{fig: knw comparison for ex02}).
+
+Therefore, for the reduction we choose $n = 2 < 2(p+q+1) + 3 = 13$, $N' = 8$, $N = 64$ and $N_A = 128$.
+
+\sidepair[0.15\textheight]{Figures/benchmarks_ex02/knw_global.png}{KnW decay of $\Scal$}%
+    {Figures/benchmarks_ex02/knw_sup.png}{KnW decal of $\sup_{(\mu, t)} \Scal_{\mu, t}$}%
+    {Linear Kolmogorov $n$-width decay of Example 2}
+    {fig: knw comparison for ex02}
+
+Since we can cleary see, that we already had non-signifant speed-up in the first example and the
+FOM there had more dofs to solve than here,
+we will skip the table for it, and only focus on architecture as well as the complexity comparison. 
+Note, that the \texttt{test.py} in the repository produces timings
+for any possible choice of an architecture. 
+
+Regarding the specific build of the models, the reader can look up Table (\ref{tab:arch-ex02}),
+which is written in the same convention as before. 
+
+\begin{table}[H]
+    \footnotesize
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabularx}{\textwidth}{@{}l l X X r@{}}
+    \toprule
+    \textbf{Model} & \textbf{DOD} & \textbf{Encoder} & \textbf{Decoder} & \textbf{DFNN} \\
+    \midrule
+    POD-DL-ROM &
+    - &
+    \conv{1}{8}{3}{1}{1} \conv{8}{16}{3}{2}{1} &
+    \convt{16}{8}{3}{2}{1} \convt{8}{1}{3}{1}{1} &
+    \layers{16, 8, 4} \\
+    \addlinespace[2pt]
+    DOD-DL-ROM &
+    \layers{256, 128}  &
+    \conv{1}{8}{3}{2}{1} &
+    \convt{8}{1}{3}{2}{1} &
+    \layers{16, 8, 4} \\
+    \addlinespace[2pt]
+    DOD+DFNN &
+    \layers{254, 128} &
+    - &
+    - & \layers{16, 8} \\
+    \bottomrule
+    \end{tabularx}
+    \caption{Model architectures in Example 2.}
+    \label{tab:arch-ex02}
+    \end{table}
+
+
+These models then produce the following comparative results as displayed in Figures 
+(\ref{fig:visual-mu060407-comparison-ex02}) and (\ref{fig:visual-mu030704-comparison-ex02}). In this
+case, we get suggestive results for the advantage of the DOD-DL-ROM above the POD-DL-ROM. The significant
+difference in the coefficient dimensions $N' = 8 < 64 = N$ sets up an optimistic interpretation, that
+even with such a relatively low dimension, the DOD has an edge over the POD, as it can capture the
+underlying solution manifold more adaptively. Additionally, the Autoencoder architecture might be favorable for this
+specific translation invariant problem, since the simple dense layer based neural network in the 
+DOD+DFNN need to work harder to attain the details of the problem for each parameter choice independently
+and the convolutional kernel can be applied to all of them better. Notice though, that here the convolutional
+Autoencoder does not work directly on the "picture" but instead on the POD modes, what makes the explaination
+more of an optimistic guess.
+
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{\dimexpr .5\textwidth - .5\SidePairGap\relax}
+        \centering
+        \includegraphics[height=0.21\textheight,keepaspectratio]{Figures/visuals_ex02/mu060407/dod_roms_t15_ex03.png}%
+        \caption{DOD+DFNN versus DOD-DL-ROM}\label{fig:visual-mu060407-comparison-ex02a}
+    \end{subfigure}\hspace*{\SidePairGap}%
+    \begin{subfigure}[t]{\dimexpr .5\textwidth - .5\SidePairGap\relax}
+        \centering
+        \includegraphics[height=0.21\textheight,keepaspectratio]{Figures/visuals_ex02/mu060407/dod_diff_t15_ex03.png}%
+        \caption{Absolute difference}\label{fig:visual-mu060407-comparison-ex02b}
+    \end{subfigure}
+
+    \vspace*{\SideRowGap}
+
+    \begin{subfigure}[t]{\dimexpr .5\textwidth - .5\SidePairGap\relax}
+        \centering
+        \includegraphics[height=0.21\textheight,keepaspectratio]{Figures/visuals_ex02/mu060407/dl_roms_t15_ex03.png}%
+        \caption{POD-DL-ROM versus DOD-DL-ROM}\label{fig:visual-mu060407-comparison-ex02c}
+    \end{subfigure}\hspace*{\SidePairGap}%
+    \begin{subfigure}[t]{\dimexpr .5\textwidth - .5\SidePairGap\relax}
+        \centering
+        \includegraphics[height=0.21\textheight,keepaspectratio]{Figures/visuals_ex02/mu060407/dl_diff_t15_ex03.png}%
+        \caption{Absolute difference}\label{fig:visual-mu060407-comparison-ex02d}
+    \end{subfigure}
+
+    \caption{Comparison of ROMs for $\mu \approx (0.62, 0.46, 0.7)$, $\nu \approx 3.1\cdot 10^{-3}$ and $t = 0.5$.}
+    \label{fig:visual-mu060407-comparison-ex02}
+    \end{figure}%
+
+
+\sidepair[0.21\textheight]%
+{Figures/visuals_ex02/mu030704/dl_roms_t23_ex02.png}{POD-DL-ROM versus DOD-DL-ROM}%
+{Figures/visuals_ex02/mu030704/dl_diff_t23_ex02.png}{Absolute difference}%
+{Comparison of DL-ROMs for $\mu \approx (0.3, 0.7, 0.46)$, $\nu \approx 2 \cdot 10^{-3}$ and $t = 0.77$.}%
+{fig:visual-mu030704-comparison-ex02}
+
+An interesting detail in the absolute differences can be observed in these figures: The DOD-based
+models provide errors, which propagate in parallel to the wind direction, hinting on the intrinsic
+potential of the DOD to appreciate the physical nature of the problem within its modes and only
+making mistakes, in a shifted regard.
+Finally in a concluding manner, the Figure (\ref{fig: weight comparison ex02}) shows the relation between relative 
+errors $\Ecal_\text{R}$ and the complexities of their respective models as has already been done 
+in the first example. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=5cm]{Figures/benchmarks_ex02/shared_params_vs_error.png}
+    \caption{Comparison of active weights between ROMs}
+    \label{fig: weight comparison ex02}
+\end{figure}
+
+\section{An Error Decomposition Example}
+
+
+The earlier examples both were obstructed by the fact, that $N_h$ is large and thus
+the direct exposition of the experimental results can not be nicely compared to 
+those of the theory provided in Chapter (\ref{chapter: results}).
+As a case study, an example introducing $N_h = N_A$ might be of interest
+for the error decomposition formulas, which state, that
+both errors can be unilaterally seperated in three forms. Notice, that
+this is not true if $N_h \neq N_A$, since then the DOD performs an additional 
+error with regard to the pre-reduction.
+However, such a result is more of didactiv in nature, since the speed up
+generated by the use of such a reduced order model would be virtually non-existent.
+
+For the following, we remind the reader of Theorems (\ref{theo: relative error POD+DNN}) and
+(\ref{theo: relative error DOD+DNN}), that provide us with upper bounds for the
+relative error for DOD-based and POD-based ROMs, and Theorems 
+(\ref{theo: lower bound pod+dnn}) and (\ref{theo: lower bound dod+dnn}), 
+which do the same for lower bounds. As such, in the case of using a POD-DL-ROM and
+a DOD-DL-ROM, we can provide a relatively transferable framework of comparison.
+Reduction to the coefficient dimensions $N$ and $N'$ can then be nicely examined
+in a context of minimal and maximal error. The reason to use both DL-ROMs is to have the
+neural network error $\Ecal_\text{NN}$ be comparable. 
+The example, we will be providing for this is the upcomming heat equation with initial condition.
+
+Let $u^{\mu, \nu}$ be called a strong solution to the
+problem, if for some choice of $\mu  \in (0.2,0.8)$ and $\nu \in  (10^{-4},10^{-2})$ we have 
+\begin{equation*}
+    \begin{cases}
+    \displaystyle
+    \partial_t u^{\mu,\nu}(x,t)
+    - \partial_x\big(\nu\,\partial_x u^{\mu,\nu}(x,t)\big)
+    = 0,
+    & (x,t)\in (0,1)\times(0,T], \\[0.8em]
+    \displaystyle
+    u^{\mu,\nu}(0,t) = 0,\quad u^{\mu,\nu}(1,t)=0,
+    & t\in (0,T], \\[0.8em]
+    \displaystyle
+    u^{\mu,\nu}(x,0) = u_0^{\mu}(x),
+    & x\in (0,1),
+    \end{cases}
+    \end{equation*}
+where the initial condition is given by
+\begin{equation*}
+    u_0^{\mu}(x) \;=\; \tfrac{1}{2}\Big(1 + \tanh\!\big(\tfrac{x-\mu}{\lambda}\big)\Big),
+    \quad \lambda = 10^{-2}.
+\end{equation*}
+In order to keep this section short and concise, we provide a short run-down of the relevant reduction
+values and two instances of the comparison between both DL-ROMs;
+the FOM size is $N_h = N_A = 101$ to keep training as light as possible, and we have set $n = 4$,
+as the parameter spaces both have only one dimension, and it is reasonable to assume that the latent
+dynamics are of low complexity here.  
+
+To stay true to our main framework of our problems, 
+we quickly show the KnW decay in Figure (\ref{fig: knw comparison for ex03}).
+
+\sidepair[0.15\textheight]{Figures/benchmarks_ex03/knw_global.png}{KnW decay of $\Scal$}%
+    {Figures/benchmarks_ex03/knw_sup.png}{KnW decal of $\sup_{(\mu, t)} \Scal_{\mu, t}$}%
+    {Linear Kolmogorov $n$-width decay of Example 3}
+    {fig: knw comparison for ex03}
+
+Moreover,
+Figure (\ref{fig:visual-comparison-ex03}) 
+shows two results of the DOD-DL-ROM in an overlay with the actual FOM solution and its point-wise difference.
+
+    
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{\dimexpr .5\textwidth - .5\SidePairGap\relax}
+        \centering
+        \includegraphics[height=0.21\textheight,keepaspectratio]{Figures/visuals_ex03/mu03/dod_dl_mu03_t10_ex03.png}%
+        \caption{$t = 1$}\label{fig:visual-comparison-ex03a}
+    \end{subfigure}\hspace*{\SidePairGap}%
+    \begin{subfigure}[t]{\dimexpr .5\textwidth - .5\SidePairGap\relax}
+        \centering
+        \includegraphics[height=0.21\textheight,keepaspectratio]{Figures/visuals_ex03/mu03/dod_dl_mu03_t24_ex03.png}%
+        \caption{$t = 2.4$}\label{fig:visual-comparison-ex03b}
+    \end{subfigure}
+
+    \vspace*{\SideRowGap}
+
+    \begin{subfigure}[t]{\dimexpr .5\textwidth - .5\SidePairGap\relax}
+        \centering
+        \includegraphics[height=0.21\textheight,keepaspectratio]{Figures/visuals_ex03/mu05/dod_dl_mu05_t10_ex03.png}%
+        \caption{$t = 1$}\label{fig:visual-comparison-ex03c}
+    \end{subfigure}\hspace*{\SidePairGap}%
+    \begin{subfigure}[t]{\dimexpr .5\textwidth - .5\SidePairGap\relax}
+        \centering
+        \includegraphics[height=0.21\textheight,keepaspectratio]{Figures/visuals_ex03/mu05/dod_dl_mu05_t24_ex03.png}%
+        \caption{$t = 2.4$}\label{fig:visual-comparison-ex03d}
+    \end{subfigure}
+
+    \caption{Two solutions of the DOD-DL-ROM}
+    \label{fig:visual-comparison-ex03}
+\end{figure}
+
+It is directly apparent, that the decay here again does not really satisfy Assumption (\ref{assumption KnW decay}),
+but at least shows a clear superiority in case the geometric and time parameters are kept in place.
+
+\sidepair[0.21\textheight]%
+{Figures/benchmarks_ex03/sample_error_pod.png}{$\Ecal^\text{POD-DL-ROM}_\text{S} \sim N_s^{-1/4}$}%
+{Figures/benchmarks_ex03/sample_error_dod.png}{$\Ecal^\text{DOD-DL-ROM}_\text{S} \sim N_{s_2}^{-1/4}$}%
+{Dependency on sample size for DOD-DL-ROM and POD-DL-ROM}{fig:sample-size-dependency-ex03}
+
+Connecting to the discusssion in the head of this section, we notice in Figure
+(\ref{fig:sample-size-dependency-ex03}), that the decay of both sample
+errors introduced in Theorems (\ref{theo: relative error POD+DNN}) and (\ref{theo: relative error DOD+DNN})
+is of different behavior, since the DOD's precision for each $(\mu, t) \in \Pcal_1 \times \Tcal$ only depends
+on the size of the training data for this choice $\Pcal_2$. This makes the error
+fall onto the line of $N_{s_2}^{-1/4}$ instead, hence greatly inducing the need for more sampling, since
+in general $N_{s_1} > 1$. Note, that numerically speaking, we cannot truly predict the actual errors as
+an integral, and we thus simply cheat by using the quadrature regarding the full size of the data we collected a priori.
+This produces a sample with $N_s = 900$ and $N_t = 30$ to predict the integrals, which should suffice for
+a general qualitative description.
+
+Attending to this reasoning, we might conclude, that therefore the size of 
+$N_{s_1}$ and $N_t$ does not matter, but what we conveniently left out is that the error $E_\text{S}$
+is an average over the whole space $\Theta \times [0, T]$, and thus a good sampling here is necessary as well.
+The exact nature of this dependency is not the main focus, since the average could be estimated in a similar 
+sense, but the order of convergence is determined by the size of the second parameter if seen as
+one over the worst mistake.
+
+
+\sidepair[0.21\textheight]%
+{Figures/benchmarks_ex03/error_decomp_pod.png}{Error Decomposition POD-DL-ROM}%
+{Figures/benchmarks_ex03/error_decomp_dod.png}{Error Decomposition DOD-DL-ROM}%
+{Comparison of Lower and Upper Error Bounds}{fig:comparison-errors-ex03}
+
+Lastly, we point the reader to Figure (\ref{fig:comparison-errors-ex03}), which is the main result of this thesis,
+as it shows the specific decomposition of the DOD-based time-dependent ROMs in a side by side to the one of the
+POD, which is inspired by \cite{brivio2023}, where the authors have shown the same decomposition. 
+For the discussion, we can easily remark, that the error decomposition of both methods is highly dominated by the 
+error contributions of $\Ecal_\text{DOD}$ and $\Ecal_\text{POD}$ respectively. Furthermore,
+the DOD-based method produce similar relative errors compared to the POD-based one, even though the maximal
+error is clearly larger, since the DOD-type one includes the mistake made by the network and the POD is
+already naturally the best fit. However, the interesting and hopeful interpretation of these graphs
+can also be, that the lower bound is significantly smaller than the one of the POD, thanks to the KnW decays.
+
+This, as shown by the theory, can only mean something in the case that the approximation capabilities
+of the choice of architecture we deliberately made here, is enough to fit the inner DOD module to
+the optimal DOD function, that might not even have enough smoothness to be accurately approximated by
+a network of containable size.
