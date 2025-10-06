@@ -88,9 +88,158 @@ As a special case, this applies to vectors as well.
 
 
 
+
+
+
 \chapter{Introduction}
 
-\notdone{Write an Introduction}
+
+
+
+
+Recent advances in artifical intelligence and specifically neural networks have sparked interest in approximation
+theory, a field now investigating the complexity of neural networks approximating functions of certain regularity.
+In itself, approximation theory existed in the context of partial differential equations long before the invention and
+popularization of neural networks, and has dealt with questions arising from discretization and interpolation 
+approximations. After all, numerical analysis 
+emerged as a field of mathematics to primarily deal with those analytical problems, answering
+questions like "How can one find a solution to a partial differential equation?", "In which space does the 
+approximative solution from a numerical solver live?" 
+and finally "For a given finite-dimensional space, how well can \emph{a solution} be approximated?", which is an example
+of a typical approximation theoretic problem. 
+This thesis will be handling the concept of that last question in a slightly varied form; instead 
+of asking how well \emph{one} solution could be approximated for a choice of a finite-dimensional sub-space of
+the solution space, the question of interest for us will be how one could approximate \emph{a group} of solutions
+for such a choice.
+This \emph{grouping} of partial differential equations is called a parametric partial differential equation, if
+there are parameter(s) that directly influence the equations and hence its solutions. In such a case,
+the meta-solution for which we actually search an approximation is not $\text{PDE} \mapsto u$, but more accurately
+\begin{equation*}
+    \Gcal_\infty: \Theta \to W; \quad \mu \mapsto u(\mu),
+\end{equation*}
+where $\Theta$ denotes some parameter set and $W$ is the solution space of the respective parametric partial
+differential equation. The infinity here denotes the general setting of "a solution in a 
+potentially infinite-dimensional solution space". Now the first direct approximation, which can be done,
+is one of using a finite-dimensional solution space, since otherwise it would be generally difficult to
+portray a non-analytical problem on a computer, and hence to use a numerical algorithm in order to find a solution.
+From here, such a map 
+\begin{equation*}
+    \Gcal_h: \Theta \to \Hcal_h; \quad \mu \mapsto u_h(\mu), 
+\end{equation*}
+where $\Hcal_h$ is some $(N_h \cdot N_t)$-dimensional subspace for $N_h, N_t \in \N$ and its 
+related map $\Gcal: \Theta \to \R^{N_h \times N_t}$ mapping to the coefficient representation, can be infered.
+Note, that $N_h$ means to represent some spatial discretization and $N_t$ some time stepping. 
+In fact, such a map always exists in the case, that
+there is some way of "solving" the partial differential equation for every parameter in a numerical way; it is simply 
+the corresponding numerical algorithm, for example one using Finite Differences or the Finite Element Method. 
+Generally, such a \emph{parameter-to-solution map} $\Gcal$ is expensive to compute, because the associated Full Order Model (FOM)
+has a very high dimension $N_h$. To resolve this, we might finally assert the main starting point of the thesis:
+Reduced Order Modeling.
+
+In this thesis, we will lay the groundwork for 
+the use of approximation theory for data-driven
+Reduced Order Modelling and propose a novel Reduced Order Model heavily inspired by the Deep Orthogonal Decomposition,
+which has been proposed for the stationary case in \cite{franco2024}, and combine it with the
+Autoencoder-based latent architecture of the DL-ROM introduced in the paper \cite{fresca2020} to attain
+the DOD-DL-ROM. As such, this model will have a lot of similarity to the POD-DL-ROM given by
+\cite{fresca2022} to which we will seek out comparisons in terms of complexity in relation to accuracy.
+We will find, that the adaptive nature of the Deep Orthogonal Decomposition will allow us
+to circumvent the Kolmogorov $N$-width barrier for certain problems, where a hybrid nature of the 
+Kolmogorov $N$-width decay can be assumed. This will be shown in theory and, with some room for
+statistical misidentification, by numerical implementation.
+
+
+\section{Motivation}
+
+
+
+In a lot of applications, the precision of Full Order Models can reach maschine precision for large enough $N_h$. 
+However, these models uniformly suffer from the computational cost, which in grows significantly quicker,
+than linear. Indeed, if we only consider the solution to a classical linear problem arising from a discretization
+of some parabolic problem, we get computational cost of order $\Ocal(N_t N_h^{\alpha})$ for $\alpha \in [1, 2]$
+depending on the sparsity qualities of the associated matrices. Results like this can be found in
+any classical numerics literature such as \cite{quarteroni2015rb}.
+This is a larger problem in a case, where we face \emph{many query} settings, such as research situations for
+aerodynamics engineering, medical identification, weather prediction and many more. 
+Furthermore, describing latent dynamics by using lower dimensions gives a nice new view onto the true nature
+of mathematical PDE, as it allows to focus attention on regions of interest.
+
+
+
+\section{Literature review}
+
+
+
+
+Over the past decades, the field of Reduced Order Modeling has undergone a noticible evolution,
+shifting from classical projection-based methods to modern data-driven architectures.
+The earliest intrusive ROMs originated from the \emph{Proper Orthogonal Decomposition} (POD)
+framework, introduced in turbulence analysis by \cite{lumley1967} and \cite{sirovich1987},
+and later consolidated in the POD-Galerkin formulation for parametrized PDEs
+by \cite{holmes1996} and \cite{kunischvolkwein2001}.
+Subsequent developments sought to address the computational bottlenecks of nonlinear problems
+through hyper-reduction techniques such as the \emph{Empirical Interpolation Method} (EIM)~\cite{barrault2004}
+and its discrete counterpart \emph{DEIM}~\cite{chaturantabut2010}.
+Alternative intrusive formulations include the least-squares Petrov-Galerkin projection~\cite{carlberg2011}
+and the GNAT method~\cite{carlberg2013}, which extended ROMs to highly nonlinear and turbulent regimes.
+
+In parallel, a non-intrusive and data-driven perspective emerged, aiming to approximate
+the parameter-to-solution map directly from snapshot data.
+Early methods such as \emph{Dynamic Mode Decomposition} (DMD)~\cite{schmid2010}
+and its interpretation via the Koopman operator~\cite{rowley2009}
+established a foundation for learning reduced dynamics without explicit projection.
+Further, regression-based frameworks such as \emph{Operator Inference}~\cite{peherstorfer2016}
+and \emph{POD with interpolation} (PODI)~\cite{barrault2004}
+demonstrated the feasibility of reconstructing reduced operators from data.
+
+The integration of deep learning with model reduction around 2020
+led to the first \emph{Deep Learning Reduced Order Models} (DL-ROMs)~\cite{fresca2020},
+which combined convolutional autoencoders and neural regressors to emulate low-dimensional dynamics.
+Their refinement, the \emph{POD-DL-ROM}~\cite{fresca2022,brivio2023},
+fused the interpretability of POD with the flexibility of deep networks,
+inspiring numerous follow-ups.
+Most recently, the \emph{Deep Orthogonal Decomposition} (DOD)~\cite{franco2024}
+introduced a continuously adaptive, data-driven basis construction,
+and the CoLoRA framework extended this idea toward compositional operator learning.
+Together, these developments mark a clear paradigm shift
+from fixed linear subspaces toward nonlinear manifolds learned from data,
+bridging the gap between numerical analysis and deep learning.
+
+
+
+
+\section{Outline}
+
+
+
+
+
+In order to briefly summarize the structure of this thesis, we want to point out the line of thought here,
+and remark the important results from each chapter. 
+
+The following two sections are meant to put the development
+and advances of partial differential equations and neural networks in a historical context and introduce some meaningful
+results and classification thereof. 
+Chapter (\ref{chapter: theoretical background}) is build in such a way, that even someone from the
+broad field of numerics might find interesting results and is written objective wise to firstly introduce 
+the reduced basis methods and auxilary information, which will be used to explain the Proper Orthogonal
+Decomposition and Deep Orthogonal Decomposition as linear projectors in a theoretical setting, and secondly 
+to give the needed approximation theory for the complexity bounds, we will achieve for the POD-DL-ROM and DOD-DL-ROM.
+
+In chapter (\ref{chapter: problem}), we introduce the actual problem formulations and all necessary assumpions in
+a rigorous notation, as well as some legacy Reduced Order Models, and finally define the proposed DOD-DL-ROM and
+a related, simpler model, that can be treated seperately, but also as a benchmark in testing.
+The main results of this thesis, however, are presented in Chapter (\ref{chapter: results}), 
+where we prove an upper and lower bounds for the relative errors of any POD-based and DOD-based Reduced Order Model,
+dictated by their intrinsic projection qualities, and thus emergent mismatches. Finally, 
+we use this to set up upper bounds for the complexities of the three proposed ROMs: the POD-DL-ROM,
+sourced from \cite{brivio2023}, the DOD-DL-ROM and the DOD+DFNN.
+
+In the last relevant Chapter (\ref{chapter: numerical experiments}), we compare those three algorithms
+in a numerical environment for one pathological, one positive and one analytic example.
+
+
+
 
 
 
@@ -162,13 +311,39 @@ the Sobolev and Bochner spaces admit any piecewise smooth function.
 
 
 
-\section{Motivation}
 
+In its essence, the origin of the artificial neural network has been made in the paper \cite{mcculloch1943}, 
+where the authors found a consistent logical calculation description of biological neurons and proposed a 
+mathematical way of fitting it. This, in a sense, became the leading idea for much of the later theory,
+since it served as inspiration for the \emph{perceptron}, the term coined by Rosenblatt in
+\cite{rosenblatt1958}. Even tough not realized then, this proposed mathematical model
+of a neuron could later on be described in a nowadays recognizable way, namely as a neural layer with very limited
+range and a specific activation function, i.e.
+\begin{equation*}
+    f: \R^n \to \{0, 1\}; \quad f(x) = h(w \cdot x + b),
+\end{equation*}
+where $h$ is the Heaviside function, returning $1$ for any positive value and $0$ otherwise and $w, b \in \R^n$ for
+$n \in \N$ being trainable constant vectors. 
+This inspired the later recognized definition of a Multi-Layered Perceptron (MLP), 
+that is another name for the (Deep) Feedforward Neural Network, interpretable as an composed evaluation of
+\begin{equation*}
+    f: \R^n \to \R^m; \quad f(x) = \rho(W x + b),
+\end{equation*}
+for $W \in \R^{m \times n}, b \in \R^m$ for $n, m \in \N$ being trainable features and $\rho$ some (most often the ReLU) activation
+function, with the last convolution skipping the activation function to retain full range. In the common
+nomenclature, a Neural Network is called \emph{deep}, if it has more than two layers (thus at least two hidden layers).
 
+In the following decades, the first steps towards universal approximation theory were made by
+Cybenko~\cite{cybenko1989}, who has build on the works of others to prove the fact, that any feedforward 
+neural network with one hidden layer can approximate any continuous function and following this 
+Hornik proved in \cite{hornik1991nn}, that any Neural Network with at least two hidden layers can approximate
+any $L^p$ function on a compact domain arbitrarily well. 
 
-\section{Literature review}
-
-
-
-\section{Outline}
-
+After this, a lot of subsequent architectures have been proposed, such as Convolutional Autoencoders for
+image classification and the method of \emph{backpropagation}, marking the first major breakthrough in 
+computational regard \cite{lecun1989}. Following this, was a wide range of different architecture propositions
+and some notable adaptations for general function fitting purposes, which finally culminated in the
+work of Yarotsky \cite{yarotsky2017nn} and Gühring \cite{gühring2019nn}. These two results not only show
+rigorous mathematical framework for Neural Networks; they also include complexity bounds for a fixed error 
+tolerance for arbitrary Sobolev funcitons on Lipschitz domains. We will not go into further detail from here, 
+since this will be done extensively in the upcomming chapter.

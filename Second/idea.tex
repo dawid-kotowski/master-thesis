@@ -324,3 +324,26 @@ becomes very large, we have
     \Ocal\left( (N')^{-2\beta} \right).
 \end{equation*}
 This is of course equivalent to the previous mentioned order of $N$ and $N'$ under the same assumptions.
+
+
+% vaulted CoLoRA
+\subsection{CoLoRA-DL-ROM}
+
+\almostdone{Introduce CoLoRA DL-ROM}
+
+Here we aim at minimizing the dimension through two major reductions; 
+the first being the reduction of the stationary DOD to the latent dimension 
+of the $\mu$-invariant solution manifold of the stationary equivalent to the problem 
+(regarding the Dirichlet boundary conditions as the initial conditions on some a priori defined boundary), 
+and the second concerning the actual reduction with CoLoRA-layered architecture to the 
+latent dynamic dimension $n << N_h$. The general workflow is thus given by 
+\begin{equation}
+    \hat{u}_h(t; \mu, \nu, \theta^*_{sDOD}, \theta_{C}) = \A \cdot 
+    \mathcal{C}_L( \dots (\mathcal{C}_2(\mathcal{C}_1(V_0(\mu, \theta^*_{sDOD}) 
+    \cdot \phi_0(\mu, \nu, \theta^*_{sDOD})), \theta_{C_1}), \theta_{C_2}), \theta_{C_L}),
+\end{equation}
+where $\mathcal{C}_i: \R^{N_A} \times \Theta_C \to \R^{N_A}; 
+\mathcal{C}_i(x, \theta_{C_i}) = W_i x + A_i \, \text{diag}(\alpha_i(\nu, t)) B_i x + b_i$ 
+for all $1 \leq i \leq L.$
+Remark, that we will still employ a pre-reduction using the rPOD matrix $\A$ stemming from the 
+same snapshot matrix $S$ as in both Options before.

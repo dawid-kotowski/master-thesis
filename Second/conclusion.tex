@@ -1,4 +1,58 @@
 \chapter{Conclusion}
 
-\notdone{Discuss results}
-\notdone{Insert outlook for future ideas and implementation}
+In this final chapter, the focus will be to briefly review the results, and present potential further aspect 
+of scientific research in that area. For this, we want to lastly seperated
+the portion into two sections, answering both concluding questions; what was achieved in this thesis
+and what might future developments be.
+
+\section{Review}
+
+
+This thesis introduced in Chapter (\ref{chapter: problem}) the newly proposed adaptive Deep
+Orthogal Decomposition based Deep Learning Reduced Order Model (DOD-DL-ROM)
+based on the founding idea of \cite{franco2024} and a crossing with the POD-DL-ROM
+given by \cite{fresca2022}, and
+concluded in its theoretical framework in Chapter (\ref{chapter: results}) 
+of approximation theoretic statements, that
+the Deep Orthogonal Decomposition based Reduced Order Model might pose a viable alternative to the 
+Proper Orthogonal Decomposition based one, as long as the aimed upon error tolerance $\varepsilon$ is significantly low,
+and enough regularity onto the optimal Deep Orthogonal Decomposition can be implied. The bottleneck
+criterion for this is most significantly given by 
+\begin{equation*}
+    \frac{n}{s-1} > \frac{\log(N_h)}{\log(\varepsilon^{-1})},
+\end{equation*}
+where $s$ denotes the implied regularity of the optimal non-linear embedding function between the coefficient
+space and the latent dynamics.
+
+We reached this conclusion through a rigorous application of results about arbitrary proximity to the
+optimal projection
+derived from the paper \cite{franco2024} in a context of approximation theory lifted, in notation and
+content, from \cite{gühring2019nn}. Furthermore, we could provide a distinct error decomposition upper and
+lower bound for any such Deep Orthogonal Decomposition based model, which we went on to visualize
+in the last of three examples, where the other two served the purpose of showing one instance of the
+superiority of the method over the legacy Proper Orthogonal data-driven model, and another of its limitations.
+
+
+\section{Research}
+
+
+In the following, a few different hot spots of potential sources of interest will be highlighted, even though
+the exact nature of their respective potential has not been investigated.
+For this, we will list a few of these talking points regarding the proposed DOD-DL-ROM and any other
+adaptations of the newly time-dependent DOD Definition (\ref{def: DOD}).
+\begin{enumerate}
+    \item[-] In Assumption (\ref{assumption additional lipschitz}), another imposition on the optimal DOD map
+    has been made, and further even $W^{m, \infty}$-smoothness
+    has been conditioned. There has been made no effort to show or discuss neither an example nor a criterion 
+    to guarantee such regularity yet.
+    \item[-] A simple comparison to a more direct approach like the older DL-ROM proposed by \cite{fresca2020} in
+    terms of complexity.
+    \item[-] In the same sense as the POD-DeepONet could be derived from the statement of the POD, there might
+    be a possibility to undertake a generalization of the DOD projection to DeepONets in order to consider features slowing
+    the KnW in a less strictly "parametric" way, leading to an adaptation of function space influence. 
+    In such a way, the approach could be a candidate to overcome the \emph{curse of dimensionality}, if the
+    features could be sampled in a dimension-independent way.
+    \item[-] As it stands, the DOD uses $t \in [0, T]$ as a simple parameter and thus introduces this as by
+    injection as a factor of slow KnW decay, which in some cases it might not be. Hence, an alternative
+    formulation might be of interest.
+\end{enumerate}
