@@ -4,7 +4,7 @@
 
 
 This chapter provides the main results of this thesis based on the data-driven ROMs 
-introduced in Chapter (\ref{chapter: problem}). As such we repeat, that in order to
+introduced in Chapter (\ref{chapter: problem}). As such, we repeat that in order to
 execute the reduction for the norm $\norm{\cdot}$ defined in that chapter,
 we require a mass matrix, that is independent of $\mu \in \Theta$, since otherwise the orthonormality 
 with regard to it cannot be computed under the generalized POD Algorithm (\ref{algo: pod}). However, we note, 
@@ -15,7 +15,7 @@ coefficient vectors. For our sitution though, we let
     \hat{u}_h(x, t; \mu, \nu) = \sum_{j=1}^{N_h} [\uhhat(t)]_j \varphi_j(x),
 \end{equation}  
 for all $x \in \Omega$, $t \in [0, T]$ and parameters $(\mu, \nu) \in \Theta \times \Theta'$, which simultaneously 
-specifies $[\G]_{ij} = \langle \varphi_i, \varphi_j \rangle = [M(\mu)]_{ij}$ as the mass matrix. The norm for
+specifies $[\G]_{ij} = \langle \varphi_i, \varphi_j \rangle_{\Hcal_h} = [M(\mu)]_{ij}$ as the mass matrix. The norm for
 this chapter will be, if not stated otherwise, the norm from Equation (\ref{eq: definition mass matrix norm}), so
 here
 \begin{equation*}
@@ -61,10 +61,10 @@ bound on the needed number of samples.
     Let $f \in L^2(\Theta \times \Theta' \times [0, T])$. 
     Under Assumption (\ref{assumption sample}), it is true, that
     \begin{equation*}
-        \E\left[ \bigg\vert \int_{\Theta \times \Theta' \times [0, T]} f(\mu, \nu, t) d(\mu, \nu, t) 
+        \E\bigg\vert \int_{\Theta \times \Theta' \times [0, T]} f(\mu, \nu, t) d(\mu, \nu, t) 
         - \frac{\vert \Theta \times \Theta' \times [0, T] \vert}{N_{data}} 
-        \sum_{i = 1}^{N_{s_1}} \sum_{j = 1}^{N_{s_2}} \sum_{k = 1}^{N_t} f(\mu_i, \nu_j, k \Delta t) \bigg\vert \right] 
-        \! \leq \mathcal{O}(N_s^{-1/2} + N_t^{-1}).
+        \sum_{i = 1}^{N_{s_1}} \sum_{j = 1}^{N_{s_2}} \sum_{k = 1}^{N_t} f(\mu_i, \nu_j, k \Delta t) \bigg\vert
+        \! \leq \mathcal{O}(N_s^{-1/4} + N_t^{-1/2}).
     \end{equation*}
 \end{proposition}
 \begin{proof}
@@ -125,7 +125,7 @@ Moreover we assume for this section to have after reordering and with $N_\text{d
 \begin{equation*}
     \left\{ (\mu_j, \nu_j, t_j), u_j \right\}_{j=1}^{N_\text{data}} :=
     \left\{(\mu_i, \nu_j, k \Delta t), u_h^{\mu_i, \nu_j, k \Delta t}\right\}_{(i, j, k)=(1, 1, 1)}^{(N_{s_1}, N_{s_2}, N_t)}
-    \subset \left( \Pcal_1 \times \Pcal_2 \times [0, T] \right) \times \R^{N_h}
+    \subset \left( \Theta \times \Theta' \times [0, T] \right) \times \R^{N_h}
 \end{equation*}
 a set of training data conforming to the label and feature notation in Definition (\ref{def: feature and label space}),
 where the labels have been sampled in accordance to Assumption (\ref{assumption sample}). 
@@ -434,7 +434,7 @@ Under the already given assumptions, we can pose its first existence result.
     a constant $c_\A' > 0$ only depending on $\A$ and the parameter space, such that
     \begin{equation*}
         \int_{\Theta \times \Theta' \times [0, T]} 
-        \norm{\uht - \V_{\mu, t}^2 \V_{\mu, t}^T \G \uht}^2 d(\mu, \nu, t)
+        \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2 d(\mu, \nu, t)
         \leq \varepsilon  + c_\A' + \int_{\Theta \times [0, T]} d_{N'}(\mathcal{S}^\text{pre-red}_{\mu, t})^2 d(\mu, t).
     \end{equation*}
 \end{proposition}

@@ -1,8 +1,6 @@
 \chapter{Formulation of the General Problem} \label{chapter: problem}
 
 
-\notdone{Definitely add traditional convergence and computational cost.}
-
 Let $\Theta \subset \R^{p}$ and $\Theta' \subset \R^q$ be compact and denote the geometric and physical parameter spaces 
 respectively. 
 Further we let $\Omega \subset \R^d$ be some Lipschitz domain and $[0, T]$ be a time interval
@@ -11,7 +9,7 @@ i.e. for any $\mu \in \Theta$ and $\nu \in \Theta'$
 \begin{equation*}
     u^{\mu, \nu} := u(\mu, \nu) , \quad \text{in a sufficiently smooth space},
 \end{equation*}
-is the (classical) solution of the PDE, for the choice of the space depending on the given
+is the (strong) solution of the PDE, for the choice of the space depending on the given
 specified problem, if
 \begin{equation*}\begin{cases}
     \displaystyle
@@ -77,12 +75,12 @@ The mass matrix is defined for each $\mu \in \Theta$ as follows
 \end{equation*}
 This allows us to equip $\Scal \subset \R^{N_h}$, the space of the coefficients 
 of any solution in $\Hcal_h$, with the following
-inner product
+norm
 \begin{equation} \label{eq: definition mass matrix norm}
-    \langle \uht, u_h^{\mu', \nu', t'} \rangle_M := (\uht)^T M(\mu) u_h^{\mu', \nu', t'},
+    \norm{\uht} := \sqrt{(\uht)^T M(\mu) \uht}
 \end{equation}
-for each $\mu, \mu' \in \Theta, \nu, \nu' \in \Theta'$ and $t, t' \in [0, T]$ and an induced norm $\norm{\cdot}$
-which is, in fact, the equivalent of the norm above, i.e. $\norm{\uht} = \norm{u_h(\cdot, t; \mu, \nu)}_{\Hcal_h}$.
+for each $\mu \in \Theta, \nu \in \Theta', t \in [0, T]$ and $\uht \in \Scal$
+which is, in fact, the adapted norm from before, i.e. $\norm{\uht} = \norm{u_h(\cdot, t; \mu, \nu)}_{\Hcal_h}$.
 
 Note that it is indeed possible to arrive at that discretization without skipping to a weak formulation, e.g.
 using finite differences or finite volume schemes, but since any existence statement needs a more general space
@@ -123,13 +121,15 @@ which are however clearly embedded in $L^2$, since they are finite dimensional a
 
 From this point forward, we want to consistenly rely on the following few assumptions, which regulate the 
 discrete problem above. The first Assumption (\ref{assumption KnW decay}) justifies a nuanced approach regarding the
-geometric parameter $\mu$ and the physical parameter $\nu$. The second Assumption (\ref{assumption sample}) is necessary
+geometric parameter $\mu$ and the physical parameter $\nu$, but can be relaxed
+under some constraints. The second Assumption (\ref{assumption sample}) is necessary
 for the derivation of any convergence result to a true parameter-to-solution map, 
 when sampling an ever growing number of examples, while the third Assumption (\ref{assumption parameter-to-solution map})
 imposes regularity on the mentioned parameter-to-solution map. Interestingly enough, it is that Assumption, which ensures
 the existence of a true solution of the discrete problem for any specified parameter choice. Observing of course, that
 this does not translate into the solvability for the upstream general problem.
-The last Assumption (\ref{assumption perfect embedding}) gives us the ability to later use an Autoencoder for a reduction.
+The last Assumption (\ref{assumption perfect embedding}) gives us the ability to later meaningfully 
+use an Autoencoder for a reduction.
 
 
 \begin{assumption} \label{assumption KnW decay}
@@ -338,7 +338,8 @@ is the coefficient vector, that solves the following reduced equation
 
 Note, that in this construction $\A$ is \emph{not} $M(\mu)$-orthogonal, thus losing certain projection qualities
 with regard to the inherent $L^2$-norm of the underlying Hilbert space $\Hcal_h$.
-The parameter-to-solution map can be recovered by the following Algorithm (\ref{algo: pod-galerkin}).
+The parameter-to-solution map can be recovered by the following Algorithm (\ref{algo: pod-galerkin}), where the steps
+1--4 can be done \emph{offline} and 5--6 are called for each \emph{online} computation.
 
 \begin{algorithm}
     \caption{POD-Galerkin} \label{algo: pod-galerkin}
@@ -554,6 +555,8 @@ for $\Hcal_h$ is already done a priori to the training of the network and indepe
 thus setting $\G := M(\mu)$ for all $\mu \in \Theta$ as our mass matrix. Under Equation
 (\ref{eq: definition mass matrix norm}) this also implies a $\mu$-independent norm $\norm{\cdot}$, which in fact
 allow us to use the POD matrix, if constructed with $\G$, as a true projector onto the span of $\A$ in an $L^2$ sense.
+Note, that this could be relaxed, if a general equivalent norm would be known without imposing a $\mu$-independent
+basis.
 
 For clarity, we formulate the following as an assumption, since from experience, the reduction system across comparable
 architectures can get confusing, and the reader is therefore encouraged to revisit this assumption, whenever
@@ -569,9 +572,10 @@ the general setting appears to be unclear.
 
 A general Deep Learning based ROM (DL-ROM) first appeared in architecture and 
 training in the paper \cite{fresca2020}; to properly approximate the potentially 
-non-linear solution manifold of the high fidelity FOM, we employ an Autoencoder (AE), 
-and on the reduced manifold we employ some other Deep Learning architecture, 
-like the proposed Deep Feed-Forward Neural Network (DFNN), to learn the latent dynamics of the parametric PDE.
+non-linear solution manifold of the high fidelity FOM, an Autoencoder (AE) is deployed to map the degrees of freedom 
+to a coefficient dimension, 
+from where some other neural network architecture, 
+like the proposed Deep Feed-Forward Neural Network (DFNN), is used to learn the latent dynamics of the parametric PDE.
 This concludes in the following approximation of the FOM coefficient solution $\uht \in \R^{N_h}$ for each 
 $\mu \in \Theta$, $\nu \in \Theta'$ and $t \in \Tcal$
 \begin{equation} \label{eq: dl rom solution}
@@ -640,9 +644,14 @@ Then $f^\text{E}_n$ denotes the projection onto the reduced trial solution manif
 let $\Phi_n = \Phi_n^\text{DF}$  
 to be the DFNN architecture of input dimension $p + q + 1$ and output dimension $n$ same as before.
 
-The loss function has now the attribute of being fed only at most $N$ dimensional training data, and only
-evaluating at most $N$ dimensional euklidian norms, hence greatly 
-increasing performance, i.e. with $P$ being the network parallelization operator
+The loss function has now the attribute of being fed only at most $N$-dimensional training data, and only
+evaluating at most $N$-dimensional euklidian norms, hence greatly 
+increasing performance. The justification of using the euklidian norm here
+comes directly from the Proposition (\ref{prop: switch to euklidian norm}),
+where the averaging over all deterministic POD projection errors can be collectively ignored for training,
+without misrepresenting the solution as a bare vector in euklidian space.
+
+Hence, we can define with $P$ being the network parallelization operator the loss function with
 \begin{multline} \label{eq: loss function pod dl rom}
     \Lcal_\text{POD-DL-ROM}\left(R_\rho(P(\Psi_N \odot \Phi_n, \Psi'_n)(\theta)) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
     \{u_\text{red}^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) =  \\
@@ -653,11 +662,6 @@ increasing performance, i.e. with $P$ being the network parallelization operator
         + \, \frac{1 - \omega_h}{2} \, \euknorm{R_\rho(\Psi'_n(\theta_\text{E}))(u_\text{red}^{\mu_i, \nu_j, k \Delta t}) 
         - R_\rho(\Phi_n(\theta_\text{DF}))(\mu_i, \nu_j, k \Delta t)}^2 \bigg).
 \end{multline}
-
-\notdone{add a justification of the use of the reduced space and euklidian norm as done in franco2024}
-
-
-
 
 
 
@@ -730,9 +734,10 @@ in the same manner as before, i.e.
 \begin{equation*}
     u_\text{pre-red}^{\mu, \nu, t} := \A^T \G \uht \in \R^{N_A} \qquad \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal.
 \end{equation*}
-Then the loss function with regard to that data can be defined as follows
+Then the loss function with regard to that data can be defined, again justified by 
+Proposition (\ref{prop: switch to euklidian norm}), as follows
 \begin{multline} \label{eq: loss dod}
-    \Lcal_\text{DOD}\left(R_\rho(\Phi_{\tilde{\V}}(\theta_\text{DOD})) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,k}, 
+    \Lcal_\text{DOD}\left(R_\rho(\Phi_{\tilde{\V}}(\theta_\text{DOD})) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
     \{u_\text{pre-red}^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) \\
     = \frac{1}{N_\text{data}}\sum_{i=1}^{N_{s_1}} \sum_{j=1}^{N_{s_2}} 
     \sum_{k = 1}^{N_t} \, \euknorm{u_\text{pre-red}^{\mu_i, \nu_j, k \Delta t} - 

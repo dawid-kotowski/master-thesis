@@ -133,6 +133,12 @@ and discussed in \textcite{buchfink2023}.
 \section{Parametric Partial Differential Equations}
 
 
+In this section, we will prepare the reader for any upcoming result in direct context of 
+parametric partial differential equation. However, we will refrain from introducing any discretization
+methods or mathematical formulation beyond the needed space definition, since this will not be the focus 
+of this work. 
+
+
 
 \subsection{Sobolev Spaces}
 
@@ -244,11 +250,6 @@ from the sole position of Lipschitz continuity.
 
 \subsection{Reduced Basis Framework}  \label{subsec: reduced basis framework}
 
-
-
-
-
-\almostdone{Introduce KnW and its relation to the continous case}
 
 For this subsection we define $u(\mu_j, t_k) \in \R^{N_h}$ for $(\mu_j)_{j = 1}^{N_s} =: \Pcal \subset \Theta$ and 
 $(t_k)_{k = 1}^{N_t} =: \Tcal \subset [0, T]$ to be some vectors, later representing the solutions to a 
@@ -376,8 +377,12 @@ We base this subsection on \cite{quarteroni2015rb}, but import the generalizatio
     \end{algorithmic}
 \end{algorithm}
 
-\notdone{include theorem 6.1 from quarteroni2015rb}
 
+In addition, we can further explore the relation between the discrete correlation matrix and
+its singular values attained as a by-product from Algorithm (\ref{algo: pod}) and the continuous 
+correlation matrix defined above. A fact used in the proof, but not named in the following proposition
+is the qualitative assessment, that the limit singular values are, in general, smaller for each tail sum,
+which is interesting to note in the context of Kolmogorov $N$-width with the result following it.
 
 \begin{proposition} \label{prop: existence and convergence to sigma infty}
     Let $K$ and $K_\infty$ and their respective eigenvalues be defined as in Definition (\ref{def: POD}), 
@@ -430,20 +435,33 @@ We base this subsection on \cite{quarteroni2015rb}, but import the generalizatio
     Now by convergence of $\opnorm{K - K_\infty} \to 0$ almost surely for $N_s, N_t \to \infty$, we conclude the proof. 
 \end{proof}
 
+Following this, is a known legacy result, which may be the most used statement in the later part of this thesis.
+It relates the projection error of the Proper Orthogonal Decomposition with its eigen values. 
+These values are attained quite easily, which is important to keep in mind. 
+
+
 \begin{proposition} \label{prop: eigenvalues and optimal projection under sampling}
     Let $\mathcal{V}_N = \{ W \in \R^{N_h \times N} \, \vert \, W^T \G W = I_N \}$ be the set of all 
     $N$-dimensional $\G$-orthonormal matrices, 
-    $N_{data} := N_t N_s$ and $\A = [\xi]_{i=1}^N$ be the POD matrix according to Definition
+    $N_\text{data} := N_t N_s$ and $\A = [\xi]_{i=1}^N$ be the POD matrix according to Definition
     (\ref{def: POD}), then
     \begin{multline*}
-        \frac{\vert \, \Theta \times [0, T] \, \vert}{N_{data}} 
+        \frac{\euknorm{}\Theta \times [0, T]}{N_\text{data}}
         \sum\limits_{i \in I, k = 1, \dots, N_t} \norm{u(\mu_j, t_k) - \A \A^T \G u(\mu_j, t_k)}^2 \\
-        = \min\limits_{W \in \mathcal{V}_N} \frac{\vert \, \Theta \times [0, T] \, \vert}{N_{data}} 
+        = \min\limits_{W \in \mathcal{V}_N} \frac{\euknorm{}\Theta \times [0, T]}{N_\text{data}} 
         \sum\limits_{i \in I, k = 1, \dots, N_t} 
         \norm{u(\mu_j, t_k) - W W^T \G u(\mu_j, t_k)}^2 
         = \sum_{j=N+1}^r \sigma_k^2.
     \end{multline*}
 \end{proposition}
+\begin{proof}
+    See \cite[p.125--126]{quarteroni2015rb}.
+\end{proof}
+
+As already hinted, this result can be understood as an optimality statement under a sample $i \in I, k = 1, \dots, N_t$.
+Consequently, this, in combination with Proposition (\ref{prop: existence and convergence to sigma infty}), 
+enables us with a possibility to classify parametric partial differential equations regarding their "projectability
+onto a linear space" and the minimal dimension, where a significant error can be held. 
 
 \begin{definition}[Linear Kolmogorov $N$-width] \label{def: linear kolmogorov}
     Let $N \in \N$, $N \leq N_h$ and $\mathcal{S}_{N_h} = \{ u(\mu, t) \in \R^{N_h} \, 
@@ -454,6 +472,15 @@ We base this subsection on \cite{quarteroni2015rb}, but import the generalizatio
         \norm{u - V V^T \G u}.
     \end{equation*}
 \end{definition}
+
+The Kolmogorov $N$-width can then be generally approximated quite well using a large sample via the tail sums of
+the eigen values of the discrete correlation matrix. This quantity then allows us to already be able to assert a priori,
+how well any POD-based reduction method will work on the specific PPDE; if the tail sum for a choice of reduction 
+dimension $N \leq N_h$ is small, then the POD retains most of the energy and a linear reduction can yield high efficiency.
+
+However, problem with effective non-linear terms, and specifically hyperbolic and transport dominated PPDEs have
+the tendency to have slowly decaying Kolmogorov $N$-width, meaning they retain energy only for large choices of $N$.
+The reduction must then potentially commit a non-linear mapping, motivating the following definition:
 
 \begin{definition}[Nonlinear Kolmogorov $N$-width] \label{def: nonlinear kolmogorov}
     Let $N \in \N$, $N \leq N_h$ and $\mathcal{S}_{N_h}= \{ u(\mu, t) \in \R^{N_h} \, 
@@ -472,7 +499,8 @@ We base this subsection on \cite{quarteroni2015rb}, but import the generalizatio
 \section{Neural Networks} \label{section: background for nn}
 
 In this section, we will introduce the general notion of neural networks. Specifically important for us will be 
-concatenations of perceptrons, which are a specific subclass of networks, the so called \emph{feedforward neural network}.
+concatenations of dense linear layers, which are a specific subclass of networks, the so called 
+\emph{Deeo Feedforward Neural Network} (DFNN), and the \emph{Convolutional Autoencoder}.
 
 \begin{definition}[Neural Network] \label{def: neural network}
     Let $d, L \in \N$, then a \emph{neural network $\Phi$ with input dimension $d$ and $L$ layers} is defined via 
@@ -509,9 +537,8 @@ concatenations of perceptrons, which are a specific subclass of networks, the so
     As a note, we can rewrite known neural network architectures, such as a convolutional autoencoder, 
     as a neural network according to Definition (\ref{def: neural network}), see also \cite[p. 22]{gühring2020nn}.
 \end{remark}
-\notdone{Motivate this with some example.}
 
-From this we can infer a simpler architechture, describing a network which omits any connection of non-neighboring
+From this we can infer a simpler definition, describing a network which omits any connection of non-neighboring
 layers.
 
 \begin{definition}[Standard Neural Network] \label{def: standard neural network}
@@ -573,7 +600,8 @@ not mention the proof beyond this outline.
 \subsection{Network concatenations}
 
 In this subsection we will discuss the concatenations of multiple neural networks and the effects on the characteristic
-numbers of it. The complexity of a concatenated network can be given nicely, when the used activation function is 
+numbers of it. The complexity of a concatenated network can be given nicely, when the used activation function is the
+ReLU.
 
 \begin{definition}[Network Concatenation] \label{def: network concatenation}
     Let $L_1, L_2 \in \N$ and 
@@ -612,35 +640,16 @@ numbers of it. The complexity of a concatenated network can be given nicely, whe
         R_\rho(\Phi^1 \odot \Phi^2)(x) = R_\rho(\Phi^1) \circ R_\rho(\Phi^2)(x).
     \end{equation*}
 \end{lemma}
-\begin{proof}
-    \notdone{maybe include proof?}
-    Intuitively speaking the latter network must account for all "missing" links, which a direct concatenation
-    would necessarily be missing; any layer after the "switch" from the first to the latter needs to have a correction
-    term in the weights, additionally attributing all potential connections which the first network would impose.
-    
-
-    Let w.l.o.g. $L_2 = 2$, since the pass through the first layers of the combined network, is equivalent
-    to the pass through the first layers of the individual network. Then we can show by induction:
-    \begin{enumerate}
-        \item \underline{Base case:} $L_2 = 1$. We argue with $A_{L_1} x = A_{L_1, x_0} \, x$ for $x$ of output dimension of $\Phi^1$, since
-        the input dimension of $\Phi^1$ is the output of $\Phi^2$.
-        \begin{align*}
-            R_\rho(\Phi^1) \circ R_\rho(\Phi^2) (x_0) &= A_{L_1} 
-            \left(B_{L_2, x_0} x_0 + B_{L_2, x_1} x_1 + c_{L_2}\right) + b_{L_1} \\
-            &= A_{L_1, x_0} B_{L_2, x_0} x_0 + A_{L_1, x_0} B_{L_2, x_1} x_1 + \left(A_{L_1, x_0} c_{L_2} + b_{L_1}\right) \\
-            &= A_{L_1, x_0} B_{L_2} \begin{bmatrix}[c|c]x_0^T & x_{1}^T\end{bmatrix}^T + \left(A_{L_1, x_0} c_{L_2} + b_{L_1}\right) \\
-            &= R_\rho(\Phi^1 \bullet \Phi^2) (x_0)
-        \end{align*}
-        \item \underline{Induction assumption:} Let the statement be true for $L_2 \geq 2$ fixed.
-        \item \underline{Induction step:} $L_2 \mapsto L_2 + 1$.
-    \end{enumerate}
-\end{proof}
+\notdone{maybe include proof?}
 
 \subsection{Network parallelization}
 
-We have shown, that there is a possiblity to simply compose networks, as is possible with functions. To 
-further build upon that idea, we will now introduce stacking in the context of definiting a network $P(\Phi^1, \Phi^2)$
-from two networks $\Phi^1$ and $\Phi^2$ such that $R_\rho(P(\Phi^1, \Phi^2))(x) = (R_\rho(\Phi^1)(x), R_\rho(\Phi^2)(x))$ for all $x \in \R^d$.
+We have shown, that there is a possiblity to simply combine networks such that they show the same behavior as
+functions do. To 
+further build upon that idea, we will now introduce stacking in the context of defining a network $P(\Phi^1, \Phi^2)$
+from two networks $\Phi^1$ and $\Phi^2$ such that it
+emulates the parallel execution of 
+two functions, i.e. $R_\rho(P(\Phi^1, \Phi^2))(x) = (R_\rho(\Phi^1)(x), R_\rho(\Phi^2)(x))$ for all $x \in \R^d$.
 
 \begin{definition}[Network Parallelization] \label{def: network parallelization}
     Let $L_1, L_2 \in \N$ s.t. $L_1 \leq L_2$ and let 
@@ -707,6 +716,9 @@ from two networks $\Phi^1$ and $\Phi^2$ such that $R_\rho(P(\Phi^1, \Phi^2))(x) 
 
 \subsection{Standard Neural Networks}
 
+Here, we only want to briefly state an interesting fact, following from the definition of the standard networks, that
+motivates the treatment of any neural network as a standard one, omiting the cumbersome nature of complete connectivity.
+
 \begin{corollary} \label{cor: eqivalence nn and standard nn}
     Let $\rho$ be the ReLU activation function. Then there are constants $C_1, C_2 > 0$
     such that for any neural network $\Phi$ with $d$-dimensional input and $L = L(\Phi)$ layers, $N = N(\Phi)$
@@ -717,6 +729,9 @@ from two networks $\Phi^1$ and $\Phi^2$ such that $R_\rho(P(\Phi^1, \Phi^2))(x) 
     \end{equation*}
     for all $x \in \R^d$.
 \end{corollary}
+\begin{proof}
+    See \cite[p.9]{gühring2019nn}.
+\end{proof}
 
 \subsection{Approximation Theory}
 

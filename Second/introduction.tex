@@ -117,24 +117,56 @@ the meta-solution for which we actually search an approximation is not $\text{PD
 \begin{equation*}
     \Gcal_\infty: \Theta \to W; \quad \mu \mapsto u(\mu),
 \end{equation*}
-where $\Theta$ denotes some parameter set and $W$ is the solution space of the respective parametric partial
+where $\Theta$ denotes some parameter set and $W$ is the (time-sensitive) solution space of the respective parametric partial
 differential equation. The infinity here denotes the general setting of "a solution in a 
 potentially infinite-dimensional solution space". Now the first direct approximation, which can be done,
-is one of using a finite-dimensional solution space, since otherwise it would be generally difficult to
+is one of using a finite-dimensional spatial solution space, since otherwise it would be generally difficult to
 portray a non-analytical problem on a computer, and hence to use a numerical algorithm in order to find a solution.
 From here, such a map 
 \begin{equation*}
-    \Gcal_h: \Theta \to \Hcal_h; \quad \mu \mapsto u_h(\mu), 
+    \Gcal_h: \Theta \times [0, T] \to \Hcal_h; \quad (\mu, t) \mapsto u_h(\mu, t), 
 \end{equation*}
-where $\Hcal_h$ is some $(N_h \cdot N_t)$-dimensional subspace for $N_h, N_t \in \N$ and its 
-related map $\Gcal: \Theta \to \R^{N_h \times N_t}$ mapping to the coefficient representation, can be infered.
-Note, that $N_h$ means to represent some spatial discretization and $N_t$ some time stepping. 
+where $\Hcal_h$ is some $N_h$-dimensional subspace for $N_h \in \N$ and its 
+related map $\Gcal: \Theta \times [0, T] \to \R^{N_h}; (\mu, t) \mapsto u_h^{\mu, t}$ 
+mapping to the coefficient representation, can be infered.
+Note, that $N_h$ means to represent some spatial discretization and time discretization, for
+example using a piecewise constant functions. In general, we will assume, that this basis will be
+of finite size $N_t \in \N$. 
 In fact, such a map always exists in the case, that
 there is some way of "solving" the partial differential equation for every parameter in a numerical way; it is simply 
 the corresponding numerical algorithm, for example one using Finite Differences or the Finite Element Method. 
+Problematic can however be, that this solution can deviate substancially from the actually interesting strong
+solution mapped by $\Gcal_\infty$.
 Generally, such a \emph{parameter-to-solution map} $\Gcal$ is expensive to compute, because the associated Full Order Model (FOM)
 has a very high dimension $N_h$. To resolve this, we might finally assert the main starting point of the thesis:
 Reduced Order Modeling.
+
+\begin{figure}[H]
+    \centering
+    \begin{adjustbox}{max width=\linewidth}
+      \begin{tikzpicture}[
+        >=Latex, node distance=2.1cm and 2.2cm,
+        box/.style={draw, rounded corners, align=center, inner sep=6pt},
+        small/.style={font=\footnotesize},
+        every path/.style={line width=.9pt},
+        transform shape
+      ]
+        \node[box] (Theta) {$\Theta$\\\small parameter space};
+        \node[box, right=of Theta] (Winf) {$W$\\\small solution space};
+        \node[box, right=2.6cm of Winf] (Hh) {$\Hcal_h\simeq \R^{N_h}$\\\small discrete space};
+        \node[box, right=2.6cm of Hh] (coeff) {$\R^{N_h}$\\\small coefficients};
+  
+        \draw[->] (Theta) -- node[small, below] {$\Gcal_\infty: \mu \mapsto u(\mu)$} (Winf);
+        \draw[->] (Winf) -- node[small, below] {discretize} (Hh);
+        \draw[->] (Theta) to[bend left=15] node[small, above] {$\Gcal_h: (\mu, t) \mapsto u_h(\mu, t)$} (Hh);
+        \draw[->] (Hh) -- node[small, below] {portray} (coeff);
+        \draw[->, dashed] (Theta) to[bend left=25] node[small, above] {$\Gcal: (\mu, t) \mapsto u_h^{\mu, t}$} (coeff);
+      \end{tikzpicture}
+    \end{adjustbox}
+    \caption{From parameters to solutions.}
+    \label{fig:parameters-to-solutions}
+  \end{figure}
+  
 
 In this thesis, we will lay the groundwork for 
 the use of approximation theory for data-driven
@@ -153,7 +185,7 @@ statistical misidentification, by numerical implementation.
 
 
 
-In a lot of applications, the precision of Full Order Models can reach maschine precision for large enough $N_h$. 
+In a lot of applications, the precision of Full Order Models can reach machine precision for large enough $N_h$. 
 However, these models uniformly suffer from the computational cost, which in grows significantly quicker,
 than linear. Indeed, if we only consider the solution to a classical linear problem arising from a discretization
 of some parabolic problem, we get computational cost of order $\Ocal(N_t N_h^{\alpha})$ for $\alpha \in [1, 2]$
@@ -171,7 +203,7 @@ of mathematical PDE, as it allows to focus attention on regions of interest.
 
 
 
-Over the past decades, the field of Reduced Order Modeling has undergone a noticible evolution,
+Over the past decades, the field of Reduced Order Modeling has undergone a noticable evolution,
 shifting from classical projection-based methods to modern data-driven architectures.
 The earliest intrusive ROMs originated from the \emph{Proper Orthogonal Decomposition} (POD)
 framework, introduced in turbulence analysis by \cite{lumley1967} and \cite{sirovich1987},
@@ -198,12 +230,6 @@ which combined convolutional autoencoders and neural regressors to emulate low-d
 Their refinement, the \emph{POD-DL-ROM}~\cite{fresca2022,brivio2023},
 fused the interpretability of POD with the flexibility of deep networks,
 inspiring numerous follow-ups.
-Most recently, the \emph{Deep Orthogonal Decomposition} (DOD)~\cite{franco2024}
-introduced a continuously adaptive, data-driven basis construction,
-and the CoLoRA framework extended this idea toward compositional operator learning.
-Together, these developments mark a clear paradigm shift
-from fixed linear subspaces toward nonlinear manifolds learned from data,
-bridging the gap between numerical analysis and deep learning.
 
 
 

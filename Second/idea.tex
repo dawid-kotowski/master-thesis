@@ -347,3 +347,28 @@ where $\mathcal{C}_i: \R^{N_A} \times \Theta_C \to \R^{N_A};
 for all $1 \leq i \leq L.$
 Remark, that we will still employ a pre-reduction using the rPOD matrix $\A$ stemming from the 
 same snapshot matrix $S$ as in both Options before.
+
+% vaulted proof start of concatentations
+\begin{proof}
+    \notdone{maybe include proof?}
+    Intuitively speaking the latter network must account for all "missing" links, which a direct concatenation
+    would necessarily be missing; any layer after the "switch" from the first to the latter needs to have a correction
+    term in the weights, additionally attributing all potential connections which the first network would impose.
+    
+
+    Let w.l.o.g. $L_2 = 2$, since the pass through the first layers of the combined network, is equivalent
+    to the pass through the first layers of the individual network. Then we can show by induction:
+    \begin{enumerate}
+        \item \underline{Base case:} $L_2 = 1$. We argue with $A_{L_1} x = A_{L_1, x_0} \, x$ for $x$ of output dimension of $\Phi^1$, since
+        the input dimension of $\Phi^1$ is the output of $\Phi^2$.
+        \begin{align*}
+            R_\rho(\Phi^1) \circ R_\rho(\Phi^2) (x_0) &= A_{L_1} 
+            \left(B_{L_2, x_0} x_0 + B_{L_2, x_1} x_1 + c_{L_2}\right) + b_{L_1} \\
+            &= A_{L_1, x_0} B_{L_2, x_0} x_0 + A_{L_1, x_0} B_{L_2, x_1} x_1 + \left(A_{L_1, x_0} c_{L_2} + b_{L_1}\right) \\
+            &= A_{L_1, x_0} B_{L_2} \begin{bmatrix}[c|c]x_0^T & x_{1}^T\end{bmatrix}^T + \left(A_{L_1, x_0} c_{L_2} + b_{L_1}\right) \\
+            &= R_\rho(\Phi^1 \bullet \Phi^2) (x_0)
+        \end{align*}
+        \item \underline{Induction assumption:} Let the statement be true for $L_2 \geq 2$ fixed.
+        \item \underline{Induction step:} $L_2 \mapsto L_2 + 1$.
+    \end{enumerate}
+\end{proof}
