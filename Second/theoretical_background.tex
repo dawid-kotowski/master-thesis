@@ -500,7 +500,7 @@ The reduction must then potentially commit a non-linear mapping, motivating the 
 
 In this section, we will introduce the general notion of neural networks. Specifically important for us will be 
 concatenations of dense linear layers, which are a specific subclass of networks, the so called 
-\emph{Deeo Feedforward Neural Network} (DFNN), and the \emph{Convolutional Autoencoder}.
+\emph{Deep Feedforward Neural Network} (DFNN), and the \emph{Convolutional Autoencoder}.
 
 \begin{definition}[Neural Network] \label{def: neural network}
     Let $d, L \in \N$, then a \emph{neural network $\Phi$ with input dimension $d$ and $L$ layers} is defined via 
@@ -640,7 +640,9 @@ ReLU.
         R_\rho(\Phi^1 \odot \Phi^2)(x) = R_\rho(\Phi^1) \circ R_\rho(\Phi^2)(x).
     \end{equation*}
 \end{lemma}
-\notdone{maybe include proof?}
+\begin{proof}
+    This can be proven by direct computiation, see \cite{gühring2019nn}.
+\end{proof}
 
 \subsection{Network parallelization}
 
@@ -677,7 +679,7 @@ two functions, i.e. $R_\rho(P(\Phi^1, \Phi^2))(x) = (R_\rho(\Phi^1)(x), R_\rho(\
     \end{equation*}
 
     \begin{equation*}
-        C_{L_1} :=
+        C_{l} :=
         \begin{bmatrix}[c|cc|c|cc|c|c|c]
         B_{l,x_0} & 0 & B_{l, x_1} & \cdots & 0 & B_{l, x_{L_1 - 1}} & B_{l, x_{L_1}} & \cdots & B_{l, x_{l-1}} \\
         \end{bmatrix},
@@ -709,15 +711,21 @@ two functions, i.e. $R_\rho(P(\Phi^1, \Phi^2))(x) = (R_\rho(\Phi^1)(x), R_\rho(\
     $\omega_{P(\Phi^1, \Phi^2)} = \omega_{\Phi^1} + \omega_{\Phi^2}$ active weights and $N_{P(\Phi^1, \Phi^2)} = N_{\Phi^1} + N_{\Phi^2} - d$ neurons.
     Additionally, for all $x \in \R^d$, we have that
     \begin{equation*}
-        R_{\varrho}(P(\Phi^1, \Phi^2))(x) = (R_{\varrho}(\Phi^1)(x), R_{\varrho}(\Phi^2)(x)).
+        R_{\rho}(P(\Phi^1, \Phi^2))(x) = (R_{\rho}(\Phi^1)(x), R_{\rho}(\Phi^2)(x)).
     \end{equation*}
 \end{lemma}
-\notdone{maybe include proof?}
+\begin{proof}
+    If $L_1 = L_2 = 1$, then the parallelization follows directly. After this the proof can be done inductively,
+    starting with an evolution in $L_2$ and expanding to arbitrary $L_1$, 
+    which can be done using the separation approach. We omit the proof, here
+    because of the cumbersome notational nature. Remark, that the non-zero weights can simply be counted to
+    get the postulated equality. See \cite{gühring2019nn}.
+\end{proof}
 
 \subsection{Standard Neural Networks}
 
 Here, we only want to briefly state an interesting fact, following from the definition of the standard networks, that
-motivates the treatment of any neural network as a standard one, omiting the cumbersome nature of complete connectivity.
+motivates the treatment of any neural network architechture as a standard one, omiting the cumbersome nature of complete connectivity.
 
 \begin{corollary} \label{cor: eqivalence nn and standard nn}
     Let $\rho$ be the ReLU activation function. Then there are constants $C_1, C_2 > 0$
@@ -1261,7 +1269,7 @@ We have now introduced the framework for analytical discussion regarding complex
 What is clearly missing however, is the practical "achievement" of a true neural network $\Phi$ fitting the 
 function in question from some fixed
 architecture $\Acal_\Phi$. This crucial step in the process of 
-development is refered to as \emph{learning}.
+development is refered to as \emph{module training} or \emph{statistical learning}.
 
 In order to quantify the "falseness" of a potential attribution, we need a function, that compares a true solution
 to an output of the network operating with the true parameters connected to the true solution. We remark that
@@ -1336,7 +1344,9 @@ The general goal of all machine learning problems is to closely approximate that
 
 We will often come in contact with this definition, since the goal of all approximation theory is to
 state theorems in terms of "existence of an architecture, such that there is a choice of neural
-network weights, attaining a close approximation of some function $f$". With this in mind, the natural
+network weights, attaining a close approximation of some function $f$". This definition of neural network
+weights relates any two neural networks with the same architecture, as simply the same one at
+a different stage of training, i.e. with a different choice of weights. With this in mind, the natural
 next question is, how one could achieve a better choice of weights after the first inital guess is not
 sufficient. This simple question is one, which can not be easily answered. However, we will
 provide the reader with a crude overview of the techniques, we will be using in our implementation.
@@ -1344,7 +1354,7 @@ The main goal here, is to minimize the associated loss function for some neural 
 $\Acal_\Phi$ with regard to some optimal function $f$ we want to approximate, i.e.
 \begin{equation*}
     \underset{\theta \in \Theta(\Acal_\Phi)}{\operatorname{arg \, min}} \,\, 
-    \Lcal\left(R_\rho(\Phi(\theta)) \vert \{x_1, \dots, x_N\}, \{f(x_1), \dots, f(x_N)\}\right)
+    \Lcal\left(R_\rho(\Phi(\theta)) \, \vert \,  \{x_1, \dots, x_N\}, \{f(x_1), \dots, f(x_N)\}\right)
 \end{equation*}
 
 In the following, a brief introduction to the topics of batching, normalization, optimizers and

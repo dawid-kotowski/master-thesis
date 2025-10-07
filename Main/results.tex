@@ -85,9 +85,12 @@ of both, the POD-based data-driven ROM and the DOD-based data-driven ROM, into a
 recollection of the parameter spaces $\Theta$ and $\Theta'$, an error caused by the imperfect 
 projection given by the DOD or POD respectively and an error of imperfect attribution of latent dynamics
 on that projection space by a neural network. This seperation can be achieved in a similar manner for both types of algorithms.
+Note, that the general handling of "DOD-based"(DOD+DNN) or "POD-based"(POD+DNN) refers to any architecture, relying
+on a projection by DOD or by POD and using a neural network of any sort to fit the coefficients for the modes.
 
 Before we start with the formulation and proof of these decompositions, we want to predefine some elements of the
-corresponding theorems, to make them less cumbersome to read.
+corresponding theorems, to make them less cumbersome to read. The visual portrayal of this workflow
+is given by Figure (\ref{fig:dimensional-workflow-pod-dod}).
 
 Firstly let in general $n, N', N, N_A$ and $N_h$ be the fixed natural number hierarchy from 
 Assumption (\ref{assumption: dimension hierarchy}). 
@@ -120,6 +123,98 @@ for an a priori fixed parameter $\theta_\text{DOD} \in \Theta(\Phi_{\tilde{\V}})
 \end{equation*}
 be the realization of some neural network $\Phi^\text{D}_{N'}$ with input dimension $p + q + 1$ and output dimension $N'$,
 and an already fixed weight $\theta_\text{DDNN} \in \Theta(\Phi^\text{D}_{N'})$.
+
+
+\begin{figure}[tb]
+    \centering
+    \begin{adjustbox}{max width=\linewidth}
+    \begin{tikzpicture}[
+      >=Latex,
+      node distance=10mm and 14mm,
+      every path/.style={line width=.9pt},
+      box/.style={draw, rounded corners=2pt, align=center, inner sep=5pt},
+      head/.style={draw, rounded corners=2pt, align=center, inner sep=6pt, fill=black!5},
+      small/.style={font=\footnotesize},
+      tiny/.style={font=\scriptsize},
+      lbl/.style={font=\scriptsize, inner sep=1pt},
+      op/.style={draw, align=center, inner sep=4pt, rounded corners=2pt},
+      dashedop/.style={op, dash pattern=on 2.1pt off 1.4pt},
+      transform shape
+    ]
+    \node[head, minimum width=7.6cm] (PODHEAD) {POD+DNN workflow};
+    \node[head, minimum width=8.6cm, right=22mm of PODHEAD] (DODHEAD) {DOD+DNN workflow};
+    \node[box, below=8mm of PODHEAD, xshift=0mm] (INP1) {$(\mu,\nu,t)\in\Theta\times\Theta'\times[0,T]$};
+    \node[box, below=8mm of DODHEAD] (INP2) {$(\mu,\nu,t)\in\Theta\times\Theta'\times[0,T]$};
+  
+    %==================== POD lane ====================
+    \node[op, below=10mm of INP1] (DNNP) {DNN $\Phi^{\mathrm{P}}_{N}$\\\tiny input $p{+}q{+}1$ $\rightarrow$ output $N$};
+    \node[box, below=8mm of DNNP] (QP) {$\hat q_{\mathrm{P}}(\mu,\nu,t)\in\mathbb{R}^{N}$};
+  
+    \node[op, below=10mm of QP] (AP) {$\A_{\mathrm{P}}\in\mathbb{R}^{N_h\times N}$\\\tiny POD basis (Alg.~\ref{algo: pod}) w.r.t. $\G$};
+  
+    \node[box, below=10mm of AP, fill=black!3] (UHP) {$\hat \uht =  \A_{\text{P}}\hat q_{\text{P}} \in \R^{N_h}$};
+  
+    \node[box, left=8mm of QP, yshift=0mm] (QPTrue) {$q_{\mathrm{P}}=\A_{\mathrm{P}}^{T}\G \uht \in \R^{N}$};
+    \node[dashedop, below=8mm of QPTrue, yshift=0mm] (APTG) {$\A_{\mathrm{P}}^{T} \G \in \R^{N \times N_h}$};
+    \node[box, below=8mm of APTG, yshift=0mm] (UTrueP) {$\uht \in \R^{N_h}$};
+  
+    \draw[->] (INP1) -- (DNNP);
+    \draw[->] (DNNP) -- (QP);
+    \draw[->] (QP) -- (AP);
+    \draw[->] (AP) -- (UHP);
+  
+    \draw[->, dashed] (UTrueP) -- (APTG);
+    \draw[->, dashed] (APTG) -- (QPTrue);
+    \draw[->, dashed] (QPTrue.east) -- ($(QP.west)+(0,0)$);
+  
+  
+    %==================== DOD lane ====================
+    \node[op, below=10mm of INP2] (DNND) {DNN $\Phi^{\mathrm{D}}_{N'}$\\\tiny input $p{+}q{+}1$ $\rightarrow$ output $N'$};
+    \node[op, right=8mm of INP2] (DODINNER) {$\tilde \V_{\mu,t}(\theta_{\mathrm{DOD}})\in\mathbb{R}^{N_A\times N'}$\\\tiny ORTH \& stack};
+
+    \node[dashedop, right=8mm of DODINNER] (ATG) {$\A^{T} \G \in \R^{N_A \times N_h}$};
+    \node[box, below=8mm of ATG] (UTrueD2) {$\uht \in \R^{N_h}$};
+
+    \node[op, below=6mm of DODINNER] (AUP) {$\A \in ^{N_h\times N'}$\\\tiny POD basis (Alg.~\ref{algo: pod}) w.r.t. $\G$};
+    \node[box, below=6mm of AUP] (VMT) {$\V_{\mu,t}=\A \tilde \V_{\mu,t} \in \R^{N_h\times N'}$};
+  
+    \node[box, below=8mm of DNND] (QD) {$\hat q_{\mathrm{D}}(\mu,\nu,t)\in\mathbb{R}^{N'}$};
+  
+    \node[box, below=20mm of QD, fill=black!3] (UHD) {$\hat u_h(\mu,\nu,t)= \V_{\mu,t} \hat q_{\mathrm{D}}\in\R^{N_h}$};
+  
+    \node[box, left=8mm of QD] (QDTrue) {$q_{\mathrm{D}} = \V_{\mu,t}^T \G \uht \in \R^{N'}$};
+    \node[dashedop, below=8mm of QDTrue] (VTTG) {$\A^{T} \G \in \R^{N_A \times N_h}$};
+    \node[box, below=8mm of VTTG] (UTrueD) {$\uht \in \R^{N_h}$};
+  
+    \draw[->] (INP2) -- (DODINNER);
+    \draw[->] (DODINNER) -- (AUP);
+    \draw[->] (AUP) -- (VMT);
+    \draw[->] (INP2) -- (DNND);
+    \draw[->] (DNND) -- (QD);
+    \draw[->] (VMT) -- (UHD);
+    \draw[->] (QD) -- (UHD);
+  
+    \draw[->, dashed] (UTrueD) -- (VTTG);
+    \draw[->, dashed] (VTTG) -- (QDTrue);
+    \draw[->, dashed] (QDTrue.east) -- ($(QD.west)+(0,0)$);
+    \draw[->, dashed] (ATG) -- (DODINNER);
+    \draw[->, dashed] (UTrueD2) -- (ATG);
+
+    %==================== NEW: dotted soft-gray fit-box around both DNN nodes ====================
+    \begin{pgfonlayer}{background}
+      \node[draw, rounded corners=3pt, dotted, line width=.9pt, fill=black!4, inner sep=8pt,
+            fit=(DNNP)(DNND)] (SWBOX) {};
+    \end{pgfonlayer}
+    \node[tiny, fill=white, inner sep=1pt] at ([yshift=1.6mm]SWBOX.north) {switchable};
+
+    \end{tikzpicture}
+    \end{adjustbox}
+    \caption{Dimensional workflow for POD+DNN (left) and DOD+DNN (right). 
+    Solid arrows show forward workflow and dashed arrows show training input}
+    \label{fig:dimensional-workflow-pod-dod}
+  \end{figure}
+
+
 
 Moreover we assume for this section to have after reordering and with $N_\text{data} = N_{s_1} N_{s_2} N_t$
 \begin{equation*}
@@ -201,7 +296,7 @@ of the DOD+DNN or the POD+DNN.
     $\norm{v}_{L^2_\omega} = 0$ for some $v \in L^2(\Theta \times \Theta' \times [0, T])$, then assuming $v \neq 0$ 
     yields with Assumption (\ref{assumption parameter-to-solution map})
     \begin{equation*}
-        \norm{v}_{L^2_\omega}^2 \geq  m^{-1} \int_{\Theta \times \Theta' \times [0, T]} \norm{v(\mu, \nu, t)} d(\mu, \nu, t) 
+        \norm{v}_{L^2_\omega}^2 \geq  m^{-1} \int_{\Theta \times \Theta' \times [0, T]} \norm{v(\mu, \nu, t)}^2 d(\mu, \nu, t) 
         > 0,
     \end{equation*}
     hence reaching a contradiction.
@@ -260,7 +355,7 @@ of the DOD+DNN or the POD+DNN.
         M^2 \opnorm{I_{N_A} - \A_\text{P}} < \infty.
     \end{equation*}
     Thus with $f \in L^2(\Theta \times \Theta' \times [0, T])$, we know that by Proposition 
-    (\ref{prop: order of convergence for sample}), $\E[\mathcal{E}_\text{S}] \leq \mathcal{O}(N_s^{-1/4} + N_t^{-1})$.
+    (\ref{prop: order of convergence for sample}), $\E[\mathcal{E}_\text{S}] \leq \mathcal{O}(N_s^{-1/4} + N_t^{-1/2})$.
     
     By the strong law of large numbers, we can thus conclude, that $\mathcal{E}_\text{S} \to 0$ almost surely, 
     as $N_t, N_s \to \infty$, and further by Proposition (\ref{prop: existence and convergence to sigma infty}), 
@@ -341,7 +436,7 @@ but the Kolmogorov $N'$-width under fixed $(\mu, t)$.
     assumptions, as given above, its minimizer with regard to the matrix entry does not 
     necessarily inherit any regularity and Yarotsky
     does require Sobolev-type smoothness. However, we will set up the proof for the following lemma in such a way,
-    that Yarotsky can be directly interchanged, if a higher regularity for the optimal objective functional is
+    that Yarotsky can be directly interchanged, if a higher regularity for the optimal DOD is
     imposed.
 \end{remark}
 
@@ -362,7 +457,7 @@ The source for the following proposition and its framework is generally \cite{fr
     \end{equation*}
     for any compact set $\Xcal \subset \Theta'$ with $\text{dim}(\Xcal) = q$.
     Then we call a Borel measurable map $s: \Theta \times [0, T] \to [-1, 1]^{N_A \times N'}$ 
-    producing w.l.o.g. orthonormal
+    producing w.l.o.g. $\G$-orthonormal
     matrices given by
     \begin{equation*}
         s: (\mu, t) \mapsto \underset{{\V \in [-1, 1]^{N_A \times N'}}}{\text{argmin}}  
@@ -381,10 +476,9 @@ Under the already given assumptions, we can pose its first existence result.
 \end{lemma}
 \begin{proof}
     Let $\mu, \mu' \in \Theta$, $t, t' \in [0, T]$ 
-    and $\V, \V' \in \R^{N_h \times N'}$ arbitrary.
+    and $\V, \V' \in [-1, 1]^{N_h \times N'}$ arbitrary.
     For the following calculation, we compose the preliminary identity for 
-    $u := \uht$ and $u' := u_h^{\mu', \nu, t'}$ for each $\mu \in \Theta, \nu \in \Xcal$
-    and $t \in [0, T]$, 
+    $u := \uht$ and $u' := u_h^{\mu', \nu, t'}$,
     and the projectors $P := \V \V^T \G$, $P' := \V' (\V')^T \G$,
     \begin{equation} \label{eq: optimal dod help equation}
         \begin{aligned}
@@ -414,8 +508,12 @@ Under the already given assumptions, we can pose its first existence result.
     \end{align*}
     where our last step is justfied with the projector quality of $\V \V^T \G$ from 
     Lemma (\ref{lemma: orthogonal projector on span of A}), thus explicitly having eigenvalues $0$ and $1$,
-    and therefore making $J$ Lipschitz continous.
-    \notdone{include existence of s}
+    and therefore making $J$ Lipschitz continous. To prove existence of the optimal DOD $s: \Theta \times [0, T]
+    \to [-1, 1]^{N_A \times N'}$, we remark, that the space $[-1, 1]^{N_A \times N'}$ is a compact one,
+    and the objective DOD functional $J$ is continous, which allows us to use 
+    the Kuratowski-Ryll-Nardzewski Theorem, found in \cite{kuratowski1965}. The specifications of
+    how this theorem can be applied to this specific situation can be found in \cite[Appendix B.]{franco2024},
+    whereas we will refrain from an extensive discussion, since we assume a stronger quality later on anyways.
 \end{proof}
 
 
@@ -445,7 +543,10 @@ Under the already given assumptions, we can pose its first existence result.
     \begin{equation*}
         s: (\mu, t) \mapsto \underset{{\tilde{\V} \in [-1, 1]^{N_A \times N'}}}{\text{argmin}}  J(\mu, t, \A \tilde{\V}).
     \end{equation*}
-    is bounded (given by continuity of J and compactness of its image) and therefore 
+    is bounded (given by continuity of J and compactness of its image). Notice, that by the reasoning of
+    Lemma (\ref{lemma: opnorm A}), we know that for $\V = \A \tilde{\V}$ being $\G$-orthonormal, its operator
+    norm is $1$, and hence after rescaling each entry can be infered to be w.l.o.g. in $[-1, 1]$. This is
+    due to the norm equivalence on this finite dimensional matrix space. Continuing the reasoning from before, we have 
     $s \in L^2(\Theta \times [0, T]; \R^{N_A \times N'})$, i.e.
     \begin{equation*}
         \norm{s}^2_{L^2(\Theta \times [0, T]; \R^{N_A \times N'})} := 
@@ -635,7 +736,7 @@ that fulfill
         \]
         satisfies $\mathcal{E}_\text{S} \to 0$ as $N_{s_2} \to \infty$, with expectation 
         \[
-            \E[\mathcal{E}_\text{S}] \leq \mathcal{O}(N_{s_2}^{-1/4}).
+            \E_\nu[\mathcal{E}_\text{S}] \leq \mathcal{O}(N_{s_2}^{-1/4}).
         \]
     
         \item The ambient error
@@ -726,9 +827,12 @@ that fulfill
     with the later discussion surrounding Assumption (\ref{assumption KnW decay}), that
     is formulated in maximal terms.
     From here, deploying the same strategy as in the proof of Theorem (\ref{theo: relative error POD+DNN}), we
-    can assert, that indeed $\Ecal_\text{S} \to 0$ almost surely by the strong law of large numbers, and
-    that $\E[\Ecal_\text{S}] \leq \Ocal(N_{s_2}^{-1/4})$ by
-    Proposition (\ref{prop: order of convergence for sample}) with $N_t = 1, N_{s_1} = 1$.
+    can assert, that indeed $\Ecal_\text{S} \to 0$ almost surely by the strong law of large numbers.
+    This is easily seen, by the fact, that the objective DOD functional is Lipschitz, and thus bounded on compact domains.
+    Further, we know with that boundedness of the underlying
+    that $\E_\nu[\Ecal_\text{S}] \leq \Ocal(N_{s_2}^{-1/4})$ by
+    Proposition (\ref{prop: order of convergence for sample}) with $N_t = 1, N_{s_1} = 1$. Remark, that $\E_\nu$
+    means to denote the integral with regard to the samples in $\Theta'$.
 
     Moreover, we have from Proposition (\ref{prop: existence and convergence to sigma infty}),
     with $N_{s_1}, N_t = 1$, that 
@@ -740,9 +844,11 @@ that fulfill
         \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m}
         \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_{k, \infty}^2}
         + \frac{\delta^{1/2} \euknorm{\Theta \times [0, T]}^{1/2}}{m}
-        =: \Ecal_{\text{DOD}, \infty} + \varepsilon,
+        =: \Ecal_{\text{DOD}, \infty} + \varepsilon.
     \end{multline*}
-    which can be arbitrarily improved for a more complex choice of the inner DOD module architecture. This dependency
+    To attain true convergence in $L^\infty$, it is sufficient to remark, that indeed on this compact domain
+    uniform boundedness can be shown for the underlying tail sums.
+    Here, the $\varepsilon$ can be arbitrarily improved for a more complex choice of the inner DOD module architecture. This dependency
     on the complexity is suggested by Yarotsky Theorem (\ref{theo: yarotsky}), since the $L^\infty$ error 
     correlates with the 
     $\Hcal_h$ representation error by the compactness of the time-parameter space, that is given
@@ -799,13 +905,13 @@ is not immediate under the preliminaries alone.
     get using the definition of the proof of Theorem (\ref{theo: relative error DOD+DNN})
     \begin{align}
         (\Ecal'_{\text{DOD}, \infty})^2 &= m^{-2} 
-        \int_{(\mu, t) \in \Theta \times [0, T]} \sum_{k > N'} \sigma(\mu, t)_{k,\infty}^2 \, d(\mu, t) \\
+        \int_{\Theta \times [0, T]} \sum_{k > N'} \sigma(\mu, t)_{k,\infty}^2 \, d(\mu, t) \\
         &= m^{-2}
-        \int_{(\mu, t) \in \Theta \times [0, T]} 
+        \int_{\Theta \times [0, T]} 
         \int_{\Theta'} \norm{\uht - \A^\infty_{\mu, t} (\A^\infty_{\mu, t})^T \G \uht}^2 d(\nu) d(\mu, t)
         \label{align: lower bound dod 1} \\
         &\leq m^{-2}
-        \int_{(\mu, t) \in \Theta \times [0, T]}
+        \int_{\Theta \times [0, T]}
         \int_{\Theta'} \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2 d(\nu) d(\mu, t)
         \label{align: lower bound dod 2} \\
         &= m^{-2} \int_{\Theta \times \Theta' \times [0, T]} \frac{\norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2}{\norm{\uht}^2}

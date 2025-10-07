@@ -6,33 +6,34 @@
 
 \begin{document}
 
+% --- FRONT MATTER ---
+\pagenumbering{gobble}
+
 \input{Backend/titlepage}
 
-\pagebreak
-
+\cleardoublepage
+\pagestyle{empty}
 \tableofcontents
-\thispagestyle{empty}
+
+\clearpage
 \listoftodos
+\cleardoublepage
 
-\pagebreak
-
+% --- MAIN MATTER ---
+\mainmatter
 \pagestyle{fancy}
-\setcounter{page}{1}
+
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+}
 
 \include{Second/introduction}
-
 \include{Second/theoretical_background}
-
-
 \include{Main/problem}
-
 \include{Main/results}
-
 \include{Main/numerical}
-
-
 \include{Second/conclusion}
-
 
 \printbibliography
 
