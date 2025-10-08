@@ -412,14 +412,14 @@ This observation can be reformulated into the following theorem.
 \end{proof}
 
 
-We have now discussed some general relative error results for any POD+DNN ROM for some given
-neural network weights. As a next step, one can do the same for the DOD+DNN ROM. First, we need
+We have now discussed some general relative error results for any POD+DNN for some given
+neural network weights. As a next step, one can do the same for the DOD+DNN. First, we need
 an auxilary statement, that precidents the similarity of the definition of the DOD projection error to the POD projection
 error, since the former depends on the architecture of the inner DOD module and thus must be at least sub-optimal 
 to some degree. 
 
 The key idea here being, that one can employ Horniks Theorem to ensure existence of a neural network architecture and corresponding neural 
-network of such architecture, such that it finds $\V*$ minimizing the objective functional 
+network of such architecture, such that it finds $s(\mu, t)$ minimizing the objective functional 
 \begin{equation*}
     (\mu, t, \V) \mapsto \int_{\Theta'} \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2 d (\nu),
 \end{equation*}
@@ -530,14 +530,14 @@ result.
     $(\mu, t)$-invariant pre-reduced solution submanifold, where $\A \in \R^{N_h \times N_A}$ is a 
     $\G$-orthonormal matrix. 
     Then, under the Assumptions (\ref{assumption sample}) and (\ref{assumption parameter-to-solution map}), 
-    for every $\varepsilon > 0$ there are weights $\theta_\text{DOD}^* \in \Theta(\Phi_{\tilde{\V}})$ 
+    for every $\epsilon > 0$ there are weights $\theta_\text{DOD}^* \in \Theta(\Phi_{\tilde{\V}})$ 
     for a DOD of output dimension $N_h \times N'$ accoring to Definition (\ref{def: DOD}), denoting
     $\V_{\mu, t} := \V_{\mu, t}(\theta_\text{DOD}^*)$ for each $(\mu, t) \in \Theta \times [0, T]$ and
     a constant $c_\A' > 0$ only depending on $\A$ and the parameter space, such that
     \begin{equation*}
         \int_{\Theta \times \Theta' \times [0, T]} 
         \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2 d(\mu, \nu, t)
-        \leq \varepsilon  + c_\A' + \int_{\Theta \times [0, T]} d_{N'}(\mathcal{S}^\text{pre-red}_{\mu, t})^2 d(\mu, t).
+        \leq \epsilon  + c_\A' + \int_{\Theta \times [0, T]} d_{N'}(\mathcal{S}^\text{pre-red}_{\mu, t})^2 d(\mu, t).
     \end{equation*}
 \end{proposition}
 \begin{proof}
@@ -563,7 +563,7 @@ result.
     $\Acal^{[\tilde{\V}_0]_{ij}}$ with  $(p+1)$-dimensional input and one-dimensional ouput, 
     and a neural network of that architecture $[\tilde{\V}_0]_{ij}$, satisfying
     \begin{equation*}
-        \norm{[s]_{ij} - R_\rho([\tilde{\V}_0]_{ij})}^2_{L^2(\Theta \times [0, T]; \R)} \leq \varepsilon,
+        \norm{[s]_{ij} - R_\rho([\tilde{\V}_0]_{ij})}^2_{L^2(\Theta \times [0, T]; \R)} \leq \epsilon,
     \end{equation*}
     for each $(i, j) \in \{1, \dots, N_A\} \times \{1, \dots, N'\}$, and then using network parallelization 
     as in Definition (\ref{def: network parallelization}), we can set the optimal DOD neural network as
@@ -575,7 +575,7 @@ result.
     since it attains the wanted accuracy
     \begin{equation*}
         \norm{s - R_\rho(\tilde{\V}_0)}^2_{L^2(\Theta \times [0, T]; \R^{N_A \times N'})} \leq
-        \varepsilon.
+        \epsilon.
     \end{equation*}
     To now ensure, that the provided realization of the almost DOD neural network are indeed in the pre-image of $J$, 
     we need to ensure, that there is a network, which indeed attains the accuracy, but is also entrywise $[-1,1]$.
@@ -623,7 +623,7 @@ result.
         \int_{\Theta \times [0, T]} \norm{\V_{\mu, t} - \A s(\mu, t)}^2 d(\mu, t)
         \leq \int_{\Theta \times [0, T]} \euknorm{R_\rho(\tilde{\V}_0)(\mu, t) - s(\mu, t)}^2
         d(\mu, t)
-        \leq \varepsilon,
+        \leq \epsilon,
     \end{equation*}
     by the $1$-Lipschitz propert of $R_\rho(\zeta(\theta^*_\text{DOD}))$ and the same argument as was used in the proof
     of Proposition (\ref{prop: switch to euklidian norm}).
@@ -638,9 +638,9 @@ result.
         \leq \int_{\Theta \times [0, T]}
         \left\vert J(\mu, t, \V_{\mu, t}) - J(\mu, t, \A s(\mu, t)) \right\vert d(\mu, t) +
         \int_{\Theta \times [0, T]} J(\mu, t, \A s(\mu, t)) d(\mu, t) \\
-        \leq \varepsilon + \int_{\Theta \times [0, T]} \left( \min\limits_{\V \in \R^{N_A \times N'}} J(\mu, t, \A \V)\right) 
+        \leq \epsilon + \int_{\Theta \times [0, T]} \left( \min\limits_{\V \in \R^{N_A \times N'}} J(\mu, t, \A \V)\right) 
         d(\mu, t) \\
-        \leq \varepsilon + c_\A' + \int_{\Theta \times [0, T]} \left( \min\limits_{\tilde{\V} \in \R^{N_A \times N'}} 
+        \leq \epsilon + c_\A' + \int_{\Theta \times [0, T]} \left( \min\limits_{\tilde{\V} \in \R^{N_A \times N'}} 
         \sup\limits_{\nu \in \Theta'} \euknorm{\uhtprered - \tilde{\V} \tilde{\V}^T \uhtprered}^2 \right) d(\mu, t).
     \end{multline}
 \end{proof}
@@ -652,10 +652,10 @@ result.
     objective DOD functional for $\Pcal_2$ for the statement and proof
     as
     \begin{equation*}
-        J(\mu, t, \V) := \frac{\euknorm{\Theta'}}{N_{s_2}} \sum_{\nu \in \Pcal_2} \norm{\uht - \V \V^T \G \uht}^2.
+        \hat J(\mu, t, \V) := \frac{\euknorm{\Theta'}}{N_{s_2}} \sum_{\nu \in \Pcal_2} \norm{\uht - \V \V^T \G \uht}^2.
     \end{equation*}
-    Then the entire proof can be done in the same way, since the Lipschitz property of $J$ in Lemma
-    (\ref{lemma: DOD functional is lipschitz}) remains true, 
+    Then the entire proof can be done in the same way, since the Lipschitz property of $\hat J$ in Lemma
+    (\ref{lemma: DOD functional is lipschitz}) can be transfered, 
     and culminates in the following version of Proposition (\ref{prop: DOD Existence}) for $\V_{\mu, t} :=
     \V_{\mu, t}(\hat \theta^*_\text{DOD})$, when discarding the very last step in 
     Equation (\ref{eq: last step for optimal DOD})
@@ -663,7 +663,7 @@ result.
         \frac{\euknorm{\Theta'}}{N_{s_2}} \sum_{\nu \in \Pcal_2}
         \norm{\uht - \V_{\mu, t}
         \V_{\mu, t}^T \G \uht}^2 \\
-        \leq \varepsilon  + c_\A + \frac{\euknorm{\Theta'}}{N_{s_2}} 
+        \leq \epsilon  + c_\A + \frac{\euknorm{\Theta'}}{N_{s_2}} 
         \min\limits_{\tilde{\V} \in \R^{N_A \times N'}} 
         \sum_{\nu \in \Pcal_2} 
         \euknorm{\uhtprered - \tilde{\V} \tilde{\V}^T \uhtprered}^2,
@@ -856,15 +856,15 @@ that fulfill
     Moreover, we have from Proposition (\ref{prop: existence and convergence to sigma infty}), that 
     for any $(\mu, t) \in \Theta \times [0, T]$
     \begin{equation*}
-        J(\mu, t, \A s(\mu, t)) = \sum_{k > N'} \sigma(\mu, t)_k^2 \underset{N_{s_2} \to \infty}{\longrightarrow} \sum_{k > N'}  
+        \hat J(\mu, t, \A s(\mu, t)) = \sum_{k > N'} \sigma(\mu, t)_k^2 \underset{N_{s_2} \to \infty}{\longrightarrow} \sum_{k > N'}  
         \sigma(\mu, t)_{k, \infty}^2,
     \end{equation*}
-    where $J: \Theta \times [0, T] \times [-1, 1]^{N_A \times N'}$ is the objective DOD functional, 
+    where $\hat J: \Theta \times [0, T] \times [-1, 1]^{N_A \times N'}$ is the objective DOD functional, 
     $s \in L^2(\Theta \times [0, T]; [-1, 1]^{N_A \times N'})$ the
     optimal DOD and $\A \in \R^{N_h \times N'}$ is the pre-reduction POD matrix, from
-    Definition (\ref{def: DOD functional}). Remark, that this allows us to assert, that indeed via
+    Remark (\ref{remark: discrete optimal DOD}). Remark, that this allows us to assert, that indeed via
     an argument of restriction 
-    the map $(\mu, t) \mapsto J(\mu, t, \A s(\mu, t))$ is continuous 
+    the map $(\mu, t) \mapsto \hat J(\mu, t, \A s(\mu, t))$ is continuous 
     and bounded by Lemma (\ref{lemma: DOD functional is lipschitz}).
     Hence
     \begin{equation*}
@@ -960,7 +960,7 @@ is not immediate under the preliminaries alone.
     for Step (\ref{align: lower bound dod 2}) and the first equation of this proof in 
     Step (\ref{align: lower bound dod 3}) with the rather obvious use of the bound on $\norm{\uht}$ from Assumption
     (\ref{assumption parameter-to-solution map}). Notice, that this statement works independent of 
-    the pre-reduction problem, since $\A_{\mu, t}^\infty$ is just the optimal of any $(N_h \times N')$-dimensional
+    the pre-reduction problem, since $\A_{\mu, t}^\infty$ is just the optimal of any $(N_h \cdot N')$-dimensional
     matrix-based projector,
     and subsequently does not suffer from the pre-reduction.
 \end{proof}
@@ -1341,16 +1341,16 @@ of scaling with the total POD eigenvalues.
         \prob[\Ecal_S < \varepsilon / 4] > 1 - \delta.
     \end{equation}
     Now recall the definition of $\Ecal_{\text{DOD}}$ in the proof of Theorem (\ref{theo: relative error DOD+DNN}) and 
-    further setting the $\varrho > 0$ from the upstream Remark (\ref{remark: discrete optimal DOD}) realizing
-    an "optimal" discrete approximation for a fixed data size $N_{s_2}$ as
+    further setting the $\epsilon > 0$ from the upstream Remark (\ref{remark: discrete optimal DOD}), realizing
+    an "optimal" discrete approximation for a fixed data size $N_{s_2}$, as
     \begin{equation*}
-        \varrho = \frac{\varepsilon m}{4 \euknorm{\Theta \times [0, T]}^{1/2}}
+        \epsilon = \frac{\varepsilon m}{4 \euknorm{\Theta \times [0, T]}^{1/2}}.
     \end{equation*}
-    concluding, under the additional use of definition of $N'$ in Equation
+    Hence concluding, under the additional use of definition of $N'$ in Equation
     (\ref{eq: definition of N, N'}), in the following approximation for the DOD error:
     \begin{equation} \label{eq: dod error dod-dl-rom}
         \begin{aligned}
-            \Ecal_{\text{DOD}} &= \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m} \left( \varrho + 
+            \Ecal_{\text{DOD}} &= \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m} \left( \epsilon + 
             \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_k^2} \right) \\
             &< \frac{\varepsilon}{4} + \left( \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m}
             \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_k^2}
@@ -1364,7 +1364,7 @@ of scaling with the total POD eigenvalues.
     Under the Assumption (\ref{assumption additional lipschitz}), we get that a neural network can
     be indeed found, such that it realizes 
     \begin{equation*}
-        \norm{[s]_{ij} - R_\rho([\tilde{\V}_0]_{ij})}_{L^\infty(\Theta \times [0, T]; \R)} \leq \varrho,
+        \norm{[s]_{ij} - R_\rho([\tilde{\V}_0]_{ij})}_{L^\infty(\Theta \times [0, T]; \R)} \leq \epsilon,
     \end{equation*}
     for each $(i, j) \in \{1, \dots, N_A\} \times \{1, \dots, N'\}$
     inside the proof of Proposition (\ref{prop: DOD Existence}) under the specifications of Remark
@@ -1438,9 +1438,39 @@ This does not change basically anything regarding the proof, as the choice of $N
     \end{enumerate}
     for the Deep Feed-Forward Neural Network.
 \end{theorem}
-
-\notdone{add quick complexity bound for the dod+dfnn architecture}
-
+\begin{proof}
+    This proof is in its essence the same as the one of Theorem (\ref{theo: PAC bound for DOD-DL-ROM});
+    it leverages Theorem (\ref{theo: relative error DOD+DNN}) and the preliminaries to attain the bounds
+    \begin{equation*}
+        \Ecal_\text{DOD} < \frac{\varepsilon}{2} \quad \text{and} \quad \Ecal_\text{S} < \frac{\varepsilon}{4}
+    \end{equation*}
+    in the exact same way, and then uses the Lipschitz property of $\Gcal$ under 
+    Assumption (\ref{assumption parameter-to-solution map}). 
+    Indeed, let $\Phi_*: \R^{p+q+1} \to \R^{N'}$ define the optimal coefficient map, that satisfies
+    \begin{equation*}
+        \Phi_*(\mu, \nu, t) := \V_{\mu, t}^T \G \uht, \quad \text{for all } (\mu, \nu, t) \in \Theta \times \Theta' \times [0, T].
+    \end{equation*}
+    This map then inherits the Lipschitz continuity, i.e. for any pair $(\mu, \nu, t), (\mu', \nu', t') 
+    \in \Theta \times \Theta' \times [0, T]$, we have
+    \begin{align*}
+        \euknorm{\Phi_*(\mu, \nu, t) - \Phi_*(\mu', \nu', t')} &= \euknorm{\V_{\mu, t}^T \G (\uht - u_h^{\mu', \nu', t'})}
+        \\
+        &\leq \euknorm{\uht - u_h^{\mu', \nu', t'}} \\
+        &\leq L \cdot (\euknorm{\mu - \mu'} + \euknorm{\nu - \nu'} + 
+        \euknorm{t - t'}).
+    \end{align*}
+    Here, we have exploited Lemma (\ref{lemma: opnorm A}) because $\V_{\mu, t}$ is $\G$-orthonormal
+    for any parameter choice.
+    Following that, we use Theorem (\ref{theo: lipschitz implies sobolev}), to achieve the placement
+    of this optimal function in the space $\Fcal_{1, p+q+1, \infty, L 
+    \cdot \text{diam}(\Theta \times \Theta' \times [0, T])}$. With that argument, we can 
+    use Yarotsky Theorem (\ref{theo: yarotsky}) to get the complexities entry-wise, as seen before,
+    with error margin
+    \begin{equation*}
+        \Ecal_\text{NN} < \frac{\varepsilon}{4}.
+    \end{equation*}
+    Combining all these, eventually gets us the wanted bounds.
+\end{proof}
 
 
 
@@ -1555,37 +1585,39 @@ This directly results in
     n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
     &\leq \Ocal\left( N \varepsilon^{-(p+1)/m} \log(\varepsilon^{-1}) +
     n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
-    &\ll \Ocal\left( N_h N' \varepsilon^{-(p+1)/m} \log(\varepsilon^{-1}) + 
-    n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1}) \right) \\
-    &\lesssim \omega_\text{DOD+DFNN},
+    &\lesssim \Ocal\left( N_h N' \varepsilon^{-(p+1)/m} \log(\varepsilon^{-1}) + 
+    N' \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1}) \right) \\
+    &= \omega_\text{DOD+DFNN},
 \end{align*}
-where we used, that $N \ll N_h$ and the fact that $n \ll N'(\beta, \varepsilon), N(\alpha, \varepsilon)$
+where we used, that $N < N_h$ and the fact that $n < N'(\beta, \varepsilon), N(\alpha, \varepsilon)$
 by Assumption (\ref{assumption: dimension hierarchy}). The 
 same heuristic can be done for DOD-DL-ROM active weights bound, since essentially the number of weights are
 dominated by the DOD neural network contribution anyways. The situation changes, however, if we can 
-assert a high regularity for the optimal DOD $s$, i.e. if $m \to \infty$ such that $(p+1)/m \approx 0$, 
-since then the contribution of 
+assert a high regularity for the optimal DOD $s$, i.e. if $m \to \infty$ such that $(p+1)/m \approx 0$,
+and $N_h$ "small enough" in relation to the other summands. 
+Then the contribution of 
 the DOD to the complexity is neglectable and we get
 \begin{align*}
     \omega_\text{DOD-DL-ROM} &\approx \Ocal\left(N' \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1})
     + n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
-    &\leq \Ocal\left(N \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1}) 
+    &\lesssim \Ocal\left(N \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1}) 
     + n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
     &\approx \omega_\text{POD-DL-ROM}.
 \end{align*}
-This can be easily attributed to the fact, that $N' + n \ll N$, because of Equation (\ref{eq: order of N, N'}).
+This can be attributed to the heuristic, that $N' + n < N$, because of Equation (\ref{eq: order of N, N'}).
 Here, we have also still prescribed the dominance of the decoder complexity over the forward pass,
-therefore awarding the DOD-DL-ROM a bonus due to the inherently better approximation under existence the smooth
+therefore awarding the DOD-DL-ROM a bonus due to the inherently better approximation under existence of a smooth
 optimal decoder map $\zeta_* \in C^s(\R^n; \R^{N'})$. In fact,
 \begin{align*}
     \omega_\text{DOD-DL-ROM} &\approx \Ocal\left(N' \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1})
     + n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
-    &\leq \Ocal\left(N' \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1}) 
+    &\lesssim \Ocal\left(N' \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1}) 
     + n \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
     &\approx \omega_\text{DOD+DFNN}.
 \end{align*}
 In the third scenario, where we set both $r, m$ to be very large, in a sense that
-$(p+1)/m \approx 0$ and $n/(s-1) > (p+q+1)/r$, we get a better complexity for the more
+$(p+1)/m \approx 0$ and $n/(s-1) > (p+q+1)/r$, and $N_h$ still small in a relative
+proportion to the other summands, we get a better complexity for the more
 direct approach of the DOD+DFNN as opposed to the DOD-DL-ROM, i.e.
 \begin{align*}
     \omega_\text{DOD+DFNN} &\approx \Ocal\left(N' \varepsilon^{-(p+q+1)/r} \log(\varepsilon^{-1})\right) \\
@@ -1617,7 +1649,8 @@ can exploit the presumably superior nonlinear KnW with the control inherent to a
 attain a similar result with less cost.
 
 Finally, one can attest to the rather non-rigorous treatment of the second and third cases, where we
-denoted $(p+1)/m \approx 0$, which is not a very precise formulation. To remedy this, one can reformulate
+denoted $(p+1)/m \approx 0$ and $N_h$ "small enough", 
+which is not a very precise formulation. To remedy this, one can reformulate
 it without changing the discussion in the following manner:
 
 \begin{proposition} \label{prop: regularity discussion for POD vs DOD}
@@ -1640,7 +1673,7 @@ it without changing the discussion in the following manner:
     and the optimal DOD map $s \in W^{m, \infty}(\Theta \times [0,T])$ has $m \in \N$,
     such that
     \begin{equation*}
-        m \gtrsim \frac{p+1}{\frac{n}{s-1} - \log_\varepsilon\left(\frac{N - N'}{N_h N'}\right)}
+        m \geq \frac{p+1}{\frac{n}{s-1} - \log_\varepsilon\left(\frac{N - N'}{N_h N'}\right)}
     \end{equation*}
     is true, then it is guaranteed that either
     \begin{equation*}

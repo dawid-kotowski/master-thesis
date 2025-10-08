@@ -19,7 +19,10 @@ $\I_d := \text{diag}(1, \dots, 1) \in \R^{d \times d}$
 for any $d \in \N$. Sometimes we abbreviate $\I = \I_d$, when the dimensionality is clear.
 
 Let $(a_n)_{n \in \N} \in \R$ be some sequence, then we say $(a_n)_n$ has \emph{(convergence of) order} $n$,
-if there is $c \in \R$ independent of $n$, s.t. $a_n = c \cdot n$ for all $n \in \N$. We then denote $a_n = \Ocal(n)$.
+if there is $c \in \R$ independent of $n$, s.t. $a_n = c \cdot n$ for all $n \geq N$ and some $N \in \N$. 
+We then denote $a_n = \Ocal(n)$.
+In a similar vein, we use $a_n \lesssim b_n$, to describe the situation of $a_n \leq C b_n$ 
+for all $n \in \N$ and some constant $C > 0$.
 
 When writing $a \ll b$ for $a, b \in \R$, the reader can infer, that $a < b$, but also, that the difference 
 is "substancial".
