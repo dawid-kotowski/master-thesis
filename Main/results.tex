@@ -444,7 +444,9 @@ Before we start, we would like to define the aforementioned objective functional
 since further assumptions
 on the PDE can expose the needed further regularity.
 
-The source for the following proposition and its framework is generally \cite{franco2024}.
+The source for the following proposition and its framework is generally \cite{franco2024}, even though
+we have specified the proofs in accordance to their proposed definition of the DOD. It now also reflects
+the pre-reduction loss seperately.
 
 \begin{definition}[Optimal DOD] \label{def: DOD functional}
     Let $N', N_A, N_h \in \N$ be fixed by Assumption (\ref{assumption: dimension hierarchy}). 
@@ -466,7 +468,9 @@ The source for the following proposition and its framework is generally \cite{fr
     the \emph{optimal DOD} for $\Xcal$, if it is uniquely defined.
 \end{definition}
 
-Under the already given assumptions, we can pose its first existence result.
+Under the already given assumptions, we can pose its first existence and an important smoothness
+result. 
+
 \begin{lemma} \label{lemma: DOD functional is lipschitz}
     Let $J: \Theta \times [0, T] \times [-1, 1]^{N_h \times N'} \to \R$ be an objective DOD functional
     for some $\Xcal \subset \Theta'$ with $\text{dim}(\Xcal) = q$ as in 
@@ -520,7 +524,7 @@ Under the already given assumptions, we can pose its first existence result.
 
  
 
-\begin{proposition}[Optimal Deep Orthogonal Decomposition] \label{prop: DOD Existence}
+\begin{proposition}[Deep Orthogonal Decomposition Bound] \label{prop: DOD Existence}
     For each geometric parameter $\mu \in \Theta$, let $\Scal^\text{pre-red}_{\mu, t} :=
     \{ \A^T \G \uht \}_{\nu \in \Theta'}$ be the 
     $(\mu, t)$-invariant pre-reduced solution submanifold, where $\A \in \R^{N_h \times N_A}$ is a 
@@ -662,7 +666,7 @@ Under the already given assumptions, we can pose its first existence result.
         \leq \varepsilon  + c_\A + \frac{\euknorm{\Theta'}}{N_{s_2}} 
         \min\limits_{\tilde{\V} \in \R^{N_A \times N'}} 
         \sum_{\nu \in \Pcal_2} 
-        \euknorm{\uhtprered - \tilde{V} \tilde{V}^T \uhtprered}^2,
+        \euknorm{\uhtprered - \tilde{\V} \tilde{\V}^T \uhtprered}^2,
     \end{equation*}
     for any choice of $(\mu, t) \in \Theta \times [0, T]$.
     Notice, that in general $\hat \theta^*_\text{DOD} \neq \theta^*_\text{DOD}$, since the change of the objective
@@ -750,16 +754,16 @@ that fulfill
             \mathcal{E}_{\text{DOD}} = \mathcal{E}_{\text{DOD}}\left(\mathcal{G}, 
             (\mu_i, \nu_i, t_i)_{i = 1}^{N_{\text{data}}}, N'\right)
         \]
-        satisfies $\mathcal{E}_{\text{DOD}} \to \mathcal{E}_{\text{DOD}, \infty} + \varepsilon$
+        satisfies $\mathcal{E}_{\text{DOD}} \to \mathcal{E}_{\text{DOD}, \infty} + \varrho$
         almost surely as $N_{s_2} \to \infty$
-        for any $\varepsilon = \varepsilon(\Phi_{\tilde{\V}})> 0$ arbitrarily small depending on
+        for any $\varrho = \varrho(\Phi_{\tilde{\V}})> 0$ arbitrarily small depending on
         the size and choice of weights of the inner DOD module, where
         \[
             \mathcal{E}_{\text{DOD}, \infty} = \mathcal{E}_{\text{DOD}, \infty}(\mathcal{G}, N')
         \]
         is independent of the data snapshots and of 
         order of the maximal linear KnW of the solution submanifold 
-        $\mathcal{S}_{\mu, t} = \{ \uht \, \vert \, \nu \in \Theta' \}$ for any $(\mu, t) \Theta \times [0,T]$.
+        $\mathcal{S}_{\mu, t} = \{ \uht \, \vert \, \nu \in \Theta' \}$ for any $(\mu, t) \in \Theta \times [0,T]$.
     
         \item The neural network approximation error
         \[
@@ -788,7 +792,7 @@ that fulfill
     In turn, from here we can already infer the error stemming from the latent dynamics identification under the 
     neural network realization $\hat{q}_\text{D}$, i.e.
     \begin{equation}
-        \mathcal{E}_{NN} = \left( \int_{\Theta \times \Theta' \times [0, T]} 
+        \mathcal{E}_\text{NN} = \left( \int_{\Theta \times \Theta' \times [0, T]} 
         \frac{\norm{\V_{\mu, t} q_{N'}(\mu, \nu, t) - \V_{\mu, t} \hat{q}_\text{D}(\mu, \nu, t)}^2}{\norm{\uht}^2} 
         d(\mu, \nu, t) \right)^{1/2}.
     \end{equation}
@@ -826,36 +830,69 @@ that fulfill
     However, we state this in regard to the former definition to stay consistent
     with the later discussion surrounding Assumption (\ref{assumption KnW decay}), that
     is formulated in maximal terms.
-    From here, deploying the same strategy as in the proof of Theorem (\ref{theo: relative error POD+DNN}), we
-    can assert, that indeed $\Ecal_\text{S} \to 0$ almost surely by the strong law of large numbers.
-    This is easily seen, by the fact, that the objective DOD functional is Lipschitz, and thus bounded on compact domains.
+    From here, deploying the same strategy as in the proof of Theorem (\ref{theo: relative error POD+DNN}). We
+    can assert, that $\Ecal_\text{S} \to 0$ almost surely by the uniform strong law of large numbers \cite{newey1994}.
+    In fact, we calculate
+    \begin{equation*}
+        \hat f(\nu; \mu, t) := \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2 \leq M^2 \opnorm{I_{N_h} - \V_{\mu, t}\V_{\mu,t}^T \G}^2
+        \leq 2M^2 < \infty,
+    \end{equation*}
+    uniformly bounded and continuous 
+    in $(\mu, t) \in \Theta \times [0, T]$ by Lemma (\ref{lemma: DOD functional is lipschitz}).
+    Note, that Assumption (\ref{assumption sample}) gives compactness of $\Theta \times [0, T]$.
+    With this, we can use the mentioned uniform law, to get a bound on the supremum, i.e.
+    \begin{equation*}
+        \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \left\vert
+            \int_{\Theta'} \hat f(\nu; \mu, t) d(\nu) - 
+            \frac{\euknorm{\Theta'}}{N_{s_2}} \sum_{\nu \in \Pcal_2} f(\nu; \mu, t)
+        \right\vert \underset{\text{a.s.}}{\longrightarrow} 0.
+    \end{equation*}
+    And since this is an upper bound for the $L^2$-integral, we get the wanted result.
     Further, we know with that boundedness of the underlying
-    that $\E_\nu[\Ecal_\text{S}] \leq \Ocal(N_{s_2}^{-1/4})$ by
-    Proposition (\ref{prop: order of convergence for sample}) with $N_t = 1, N_{s_1} = 1$. Remark, that $\E_\nu$
+    that $\E_\nu[\Ecal_\text{S}] \leq \Ocal(N_{s_2}^{-1/4})$ as a special case of
+    Proposition (\ref{prop: order of convergence for sample}). Remark, that $\E_\nu$
     means to denote the integral with regard to the samples in $\Theta'$.
 
-    Moreover, we have from Proposition (\ref{prop: existence and convergence to sigma infty}),
-    with $N_{s_1}, N_t = 1$, that 
+    Moreover, we have from Proposition (\ref{prop: existence and convergence to sigma infty}), that 
+    for any $(\mu, t) \in \Theta \times [0, T]$
+    \begin{equation*}
+        J(\mu, t, \A s(\mu, t)) = \sum_{k > N'} \sigma(\mu, t)_k^2 \underset{N_{s_2} \to \infty}{\longrightarrow} \sum_{k > N'}  
+        \sigma(\mu, t)_{k, \infty}^2,
+    \end{equation*}
+    where $J: \Theta \times [0, T] \times [-1, 1]^{N_A \times N'}$ is the objective DOD functional, 
+    $s \in L^2(\Theta \times [0, T]; [-1, 1]^{N_A \times N'})$ the
+    optimal DOD and $\A \in \R^{N_h \times N'}$ is the pre-reduction POD matrix, from
+    Definition (\ref{def: DOD functional}). Remark, that this allows us to assert, that indeed via
+    an argument of restriction 
+    the map $(\mu, t) \mapsto J(\mu, t, \A s(\mu, t))$ is continuous 
+    and bounded by Lemma (\ref{lemma: DOD functional is lipschitz}).
+    Hence
+    \begin{equation*}
+        (\mu, t) \mapsto \sqrt{\sum_{k>N'} \sigma(\mu, t)_k^2}
+    \end{equation*}
+    is continuous aswell. This allows for the same use of the uniform strong law of large numbers
+    \cite{newey1994}, resulting in
     \begin{multline*}
-        \Ecal_\text{DOD} = \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m} \left( \delta^{1/2} + 
-        \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_k^2}
-        \right) \\
-        \underset{\N_{s_2} \to \infty}{\longrightarrow} 
+        \Ecal_\text{DOD} = \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m}
+        \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_{k}^2}
+        + \frac{\delta^{1/2} \euknorm{\Theta \times [0, T]}^{1/2}}{m}
+        \\
+        \underset{N_{s_2} \to \infty}{\longrightarrow} 
         \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m}
         \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_{k, \infty}^2}
         + \frac{\delta^{1/2} \euknorm{\Theta \times [0, T]}^{1/2}}{m}
-        =: \Ecal_{\text{DOD}, \infty} + \varepsilon.
+        =: \Ecal_{\text{DOD}, \infty} + \varrho(\Phi_{\tilde{\V}}).
     \end{multline*}
-    To attain true convergence in $L^\infty$, it is sufficient to remark, that indeed on this compact domain
-    uniform boundedness can be shown for the underlying tail sums.
-    Here, the $\varepsilon$ can be arbitrarily improved for a more complex choice of the inner DOD module architecture. This dependency
+    Here, the $\varrho(\Phi_{\tilde{\V}})$ can be arbitrarily improved for a more complex choice of the 
+    inner DOD module architecture. This dependency
     on the complexity is suggested by Yarotsky Theorem (\ref{theo: yarotsky}), since the $L^\infty$ error 
     correlates with the 
-    $\Hcal_h$ representation error by the compactness of the time-parameter space, that is given
-    by Assumption (\ref{assumption sample}), but is only proveable under additional assumptions as argued in 
+    $\Hcal_h$ representation error. This is due to the compactness of the time-parameter space, that is given
+    by Assumption (\ref{assumption sample}). But that correlation is only truly
+    proveable under additional assumptions as argued in 
     Remark (\ref{remark: regularity for s}).
 
-    Finally, we know that by Remark (\ref{remark: discrete optimal DOD}) $c_\A' = 0$ implying 
+    Finally, we know that by Remark (\ref{remark: discrete optimal DOD}) $c_\A = 0$ implying 
     $\Ecal_\A = 0$, if $N_A = N_h$, which thus
     concludes the proof.
 \end{proof}
@@ -875,7 +912,7 @@ is not immediate under the preliminaries alone.
     where we set
     \begin{equation*}
         \Ecal'_{\text{DOD}, \infty} := m^{-1}
-    \int_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_{k, \infty}^2} d(\mu, t),
+    \int_{\Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_{k, \infty}^2} d(\mu, t),
     \end{equation*}
     and $\sigma(\mu, t)_{k, \infty}$ the eigenvalues for a non-reduced continuous correlation matrix.
 \end{theorem}
@@ -1304,16 +1341,16 @@ of scaling with the total POD eigenvalues.
         \prob[\Ecal_S < \varepsilon / 4] > 1 - \delta.
     \end{equation}
     Now recall the definition of $\Ecal_{\text{DOD}}$ in the proof of Theorem (\ref{theo: relative error DOD+DNN}) and 
-    further setting the $\delta > 0$ from the upstream Remark (\ref{remark: discrete optimal DOD}) realizing
+    further setting the $\varrho > 0$ from the upstream Remark (\ref{remark: discrete optimal DOD}) realizing
     an "optimal" discrete approximation for a fixed data size $N_{s_2}$ as
     \begin{equation*}
-        \delta = \frac{\varepsilon m}{4 \euknorm{\Theta \times [0, T]}^{1/2}}
+        \varrho = \frac{\varepsilon m}{4 \euknorm{\Theta \times [0, T]}^{1/2}}
     \end{equation*}
     concluding, under the additional use of definition of $N'$ in Equation
     (\ref{eq: definition of N, N'}), in the following approximation for the DOD error:
     \begin{equation} \label{eq: dod error dod-dl-rom}
         \begin{aligned}
-            \Ecal_{\text{DOD}} &= \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m} \left( \delta + 
+            \Ecal_{\text{DOD}} &= \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m} \left( \varrho + 
             \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_k^2} \right) \\
             &< \frac{\varepsilon}{4} + \left( \frac{\euknorm{\Theta \times [0, T]}^{1/2}}{m}
             \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \sqrt{\sum_{k > N'} \sigma(\mu, t)_k^2}
@@ -1327,7 +1364,7 @@ of scaling with the total POD eigenvalues.
     Under the Assumption (\ref{assumption additional lipschitz}), we get that a neural network can
     be indeed found, such that it realizes 
     \begin{equation*}
-        \norm{[s]_{ij} - R_\rho([\tilde{\V}_0]_{ij})}_{L^\infty(\Theta \times [0, T]; \R)} \leq \delta,
+        \norm{[s]_{ij} - R_\rho([\tilde{\V}_0]_{ij})}_{L^\infty(\Theta \times [0, T]; \R)} \leq \varrho,
     \end{equation*}
     for each $(i, j) \in \{1, \dots, N_A\} \times \{1, \dots, N'\}$
     inside the proof of Proposition (\ref{prop: DOD Existence}) under the specifications of Remark
@@ -1402,7 +1439,6 @@ This does not change basically anything regarding the proof, as the choice of $N
     for the Deep Feed-Forward Neural Network.
 \end{theorem}
 
-\notdone{do something about the delta and varepsilon definitions}
 \notdone{add quick complexity bound for the dod+dfnn architecture}
 
 
