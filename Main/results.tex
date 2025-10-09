@@ -163,9 +163,9 @@ and an already fixed weight $\theta_\text{DDNN} \in \Theta(\Phi^\text{D}_{N'})$.
     \draw[->] (QP) -- (AP);
     \draw[->] (AP) -- (UHP);
   
-    \draw[->, dashed] (UTrueP) -- (APTG);
-    \draw[->, dashed] (APTG) -- (QPTrue);
-    \draw[->, dashed] (QPTrue.east) -- ($(QP.west)+(0,0)$);
+    \draw[->] (UTrueP) -- (APTG);
+    \draw[->] (APTG) -- (QPTrue);
+    \draw[dash pattern=on 3pt off 1.5pt] (QPTrue.east) -- ($(QP.west)+(0,0)$);
   
   
     %==================== DOD lane ====================
@@ -194,11 +194,11 @@ and an already fixed weight $\theta_\text{DDNN} \in \Theta(\Phi^\text{D}_{N'})$.
     \draw[->] (VMT) -- (UHD);
     \draw[->] (QD) -- (UHD);
   
-    \draw[->, dashed] (UTrueD) -- (VTTG);
-    \draw[->, dashed] (VTTG) -- (QDTrue);
-    \draw[->, dashed] (QDTrue.east) -- ($(QD.west)+(0,0)$);
-    \draw[->, dashed] (ATG) -- (DODINNER);
-    \draw[->, dashed] (UTrueD2) -- (ATG);
+    \draw[->] (UTrueD) -- (VTTG);
+    \draw[->] (VTTG) -- (QDTrue);
+    \draw[dash pattern=on 3pt off 1.5pt] (QDTrue.east) -- ($(QD.west)+(0,0)$);
+    \draw[dash pattern=on 3pt off 1.5pt] (ATG) -- (DODINNER);
+    \draw[->] (UTrueD2) -- (ATG);
 
     %==================== NEW: dotted soft-gray fit-box around both DNN nodes ====================
     \begin{pgfonlayer}{background}
@@ -210,7 +210,7 @@ and an already fixed weight $\theta_\text{DDNN} \in \Theta(\Phi^\text{D}_{N'})$.
     \end{tikzpicture}
     \end{adjustbox}
     \caption{Dimensional workflow for POD+DNN (left) and DOD+DNN (right). 
-    Solid arrows show the forward calls; dashed arrows show pre-reduction of training data flow.}
+    Solid arrows show the inference; dashed lines denote training.}
     \label{fig:dimensional-workflow-pod-dod}
   \end{figure}
 
@@ -1080,10 +1080,10 @@ it is build in structure exactly like the DOD+DNN.
     \node[box, below=8mm of DODHEAD] (INP2) {$(\mu,\nu,t)\in\Theta\times\Theta'\times[0,T]$};
   
     %==================== POD-DL-ROM lane ====================
-    % DFNN then Decoder (psi_N)
     \node[op, below=10mm of INP1] (DFNNP) {DFNN $\phi_{n}$\\\tiny $\R^{p+q+1}\!\to\!\R^{n}$};
-    \node[op, below=5mm of DFNNP] (DECP) {Decoder $\psi_{N}$\\\tiny $\R^{n}\!\to\!\R^{N}$};
-    \node[box, below=8mm of DECP] (QP) {$\hat q_{\mathrm P}(\mu,\nu,t)\in\R^{N}$};
+    \node[op, above=9mm of QPTrue] (ENCP) {Encoder $\Psi'_{n}$\\\tiny $\R^{N}\!\to\!\R^{n}$};
+    \node[op, below=5mm of DFNNP] (DECP) {Decoder $\Psi_{N}$\\\tiny $\R^{n}\!\to\!\R^{N}$};
+    \node[box, below=10mm of DECP] (QP) {$\hat q_{\mathrm P}(\mu,\nu,t)\in\R^{N}$};
   
     \node[op, below=10mm of QP] (AP) {$\A_{\mathrm P}\in\R^{N_h\times N}$\\\tiny POD basis (Alg.~\ref{algo: pod}) w.r.t.\ $\G$};
     \node[box, below=10mm of AP, fill=black!3] (UHP) {$\hat \uht=\A_{\mathrm P}\,\hat q_{\mathrm P}\in\R^{N_h}$};
@@ -1098,12 +1098,14 @@ it is build in structure exactly like the DOD+DNN.
     \draw[->] (QP) -- (AP);
     \draw[->] (AP) -- (UHP);
   
-    \draw[->, dashed] (UTrueP) -- (APTG);
-    \draw[->, dashed] (APTG) -- (QPTrue);
-    \draw[->, dashed] (QPTrue.east) -- (QP.west);
+    \draw[->] (UTrueP) -- (APTG);
+    \draw[->] (APTG) -- (QPTrue);
+    \draw[dash pattern=on 3pt off 1.5pt] (QPTrue.east) -- (QP.west);
+  
+    \draw[dash pattern=on 3pt off 1.5pt] (ENCP) -- (DFNNP);
+    \draw[->] (QPTrue) -- (ENCP);
   
     %==================== DOD-DL-ROM lane ====================
-    % Inner DOD (unchanged)
     \node[op, right=8mm of INP2] (DODINNER) {$\tilde \V_{\mu,t}(\theta_{\mathrm{DOD}})\in\R^{N_A\times N'}$\\\tiny ORTH \& stack};
     \node[dashedop, right=8mm of DODINNER] (ATG) {$\A^{T}\G\in\R^{N_A\times N_h}$};
     \node[box, below=8mm of ATG] (UTrueD2) {$\uht\in\R^{N_h}$};
@@ -1111,10 +1113,10 @@ it is build in structure exactly like the DOD+DNN.
     \node[op, below=6mm of DODINNER] (AUP) {$\A\in\R^{N_h\times N_A}$\\\tiny POD basis (Alg.~\ref{algo: pod}) w.r.t.\ $\G$};
     \node[box, below=6mm of AUP] (VMT) {$\V_{\mu,t}=\A\,\tilde \V_{\mu,t}\in\R^{N_h\times N'}$};
   
-    % DFNN then Decoder (psi_{N'})
     \node[op, below=10mm of INP2] (DFNND) {DFNN $\phi_{n}$\\\tiny $\R^{p+q+1}\!\to\!\R^{n}$};
-    \node[op, below=5mm of DFNND] (DECD) {Decoder $\psi_{N'}$\\\tiny $\R^{n}\!\to\!\R^{N'}$};
-    \node[box, below=8mm of DECD] (QD) {$\hat q_{\mathrm D}(\mu,\nu,t)\in\R^{N'}$};
+    \node[op, above=9mm of QDTrue] (ENCD) {Encoder $\Psi'_{n}$\\\tiny $\R^{N'}\!\to\!\R^{n}$};
+    \node[op, below=5mm of DFNND] (DECD) {Decoder $\Psi_{N'}$\\\tiny $\R^{n}\!\to\!\R^{N'}$};
+    \node[box, below=10mm of DECD] (QD) {$\hat q_{\mathrm D}(\mu,\nu,t)\in\R^{N'}$};
   
     \node[box, below=20mm of QD, fill=black!3] (UHD) {$\hat u_h(\mu,\nu,t)=\V_{\mu,t}\,\hat q_{\mathrm D}\in\R^{N_h}$};
   
@@ -1131,25 +1133,29 @@ it is build in structure exactly like the DOD+DNN.
     \draw[->] (VMT) -- (UHD);
     \draw[->] (QD) -- (UHD);
   
-    \draw[->, dashed] (UTrueD) -- (VTTG);
-    \draw[->, dashed] (VTTG) -- (QDTrue);
-    \draw[->, dashed] (QDTrue.east) -- (QD.west);
-    \draw[->, dashed] (ATG) -- (DODINNER);
-    \draw[->, dashed] (UTrueD2) -- (ATG);
+    \draw[->] (UTrueD) -- (VTTG);
+    \draw[->] (VTTG) -- (QDTrue);
+    \draw[dash pattern=on 3pt off 1.5pt] (QDTrue.east) -- (QD.west);
+    \draw[dash pattern=on 3pt off 1.5pt] (ATG) -- (DODINNER);
+    \draw[->] (UTrueD2) -- (ATG);
   
-    %==================== dotted soft-gray fit-box around both DFNN→Decoder stacks ====================
+    \draw[dash pattern=on 3pt off 1.5pt] (ENCD) -- (DFNND);
+    \draw[->] (QDTrue) -- (ENCD);
+  
+    %==================== dotted soft-gray fit-box around DFNN→Decoder stacks ====================
     \begin{pgfonlayer}{background}
       \node[draw, rounded corners=3pt, dotted, line width=.9pt, fill=black!4, inner sep=8pt,
-            fit=(DFNNP)(DECP)(DFNND)(DECD)] (SWBOX) {};
+            fit=(ENCP)(ENCD)(DFNNP)(DECP)(DFNND)(DECD)] (SWBOX) {};
     \end{pgfonlayer}
     \node[tiny, fill=white, inner sep=1pt] at ([yshift=1.6mm]SWBOX.north) {switchable};
   
     \end{tikzpicture}
     \end{adjustbox}
-    \caption{Dimensional workflow for POD-DL-ROM (left) and DOD-DL-ROM (right). 
-    Solid arrows show the forward calls; dashed arrows show pre-reduction of training data flow.}
+    \caption{POD-DL-ROM (left) and DOD-DL-ROM (right) with autoencoder training. Solid arrows show inference; 
+    dashed lines denote training.}
     \label{fig:dimensional-workflow-pod-dlrom-dod-dlrom}
   \end{figure}
+  
   
 
 
