@@ -725,8 +725,81 @@ The following technically depicts a RB method.
     \begin{equation} \label{eq: DOD}
         \V_{\mu, t}(\theta_\text{DOD}) := \A \cdot \tilde{\V}_{\mu, t}(\theta_\text{DOD}) \in \R^{N_h \times N'}.
     \end{equation}
+    This is visualized in Figure (\ref{fig:dod-matrix-workflow}).
 \end{definition}
 
+
+\begin{figure}[ht]
+    \centering
+    \begin{adjustbox}{max width=\linewidth}
+    \begin{tikzpicture}[
+      >=Latex,
+      node distance=10mm and 14mm,
+      every path/.style={line width=.9pt},
+      box/.style={draw, rounded corners=2pt, align=center, inner sep=5pt},
+      head/.style={draw, rounded corners=2pt, align=center, inner sep=6pt, fill=black!5},
+      small/.style={font=\footnotesize},
+      tiny/.style={font=\scriptsize},
+      lbl/.style={font=\scriptsize, inner sep=1pt},
+      op/.style={draw, align=center, inner sep=4pt, rounded corners=2pt},
+      dashedop/.style={op, dash pattern=on 2.1pt off 1.4pt},
+      transform shape
+    ]
+  
+    %==================== Title ====================
+    \node[head, minimum width=15.8cm] (TITLE) {Deep Orthogonal Decomposition (DOD) realization};
+  
+    %==================== pre-reduction ====================
+    \node[box, below=8mm of TITLE, xshift=-40mm] (U) {$U=\big[u_h^{\mu_1,\nu_1}\mid\cdots\mid u_h^{\mu_{N_{s_1}},\nu_{N_{s_2}}}\big]^{\!T}\in\R^{N_h\times N_{\text{data}}}$};
+    \node[dashedop, below=8mm of U] (POD) {POD (Alg.~\ref{algo: pod}) w.r.t.\ $\G$};
+    \node[op, below=8mm of POD, fill=black!3] (A) {$\A\in\R^{N_h\times N_A}$};
+  
+    \draw[->, dashed] (U) -- (POD);
+    \draw[->, dashed] (POD) -- (A);
+  
+    %==================== inner DOD module ====================
+    \node[box, right=50mm of U] (INPT) {$(\mu,t)\in\Theta\times[0,T]$};
+  
+    \node[op, below=10mm of INPT] (SNET) {$s(\theta_\text{DOD}):\ \R^{p+1}\!\to\!\R^{\ell}$};
+    \draw[->] (INPT) -- (SNET);
+  
+    \node[op, below=8mm of SNET, minimum width=64mm] (PAR) {$\big( (R_1\!\odot\! s)(\theta_\text{DOD}),\ \dots,\ (R_{N'}\!\odot\! s)(\theta_\text{DOD})\big)$\\
+      \tiny $R_i:\ \R^{\ell}\!\to\!\R^{N_A}$ (parallel)};
+    \draw[->] (SNET) -- (PAR);
+  
+    \node[op, below=8mm of PAR] (STACK) {$\text{STACK}:\ \R^{N_A\cdot N'}\!\to\!\R^{N_A\times N'}$};
+    \node[op, below=8mm of STACK] (ORTH) {$\text{ORTH}:\ \R^{N_A\times N'}\!\to\!\R^{N_A\times N'}$\\\tiny span-preserving (e.g.\ QR)};
+    \node[box, below=8mm of ORTH] (Vt) {$\tilde{\V}_{\mu,t}(\theta_{\text{DOD}})\in\R^{N_A\times N'}$};
+  
+    \draw[->] (PAR) -- (STACK);
+    \draw[->] (STACK) -- (ORTH);
+    \draw[->] (ORTH) -- (Vt);
+  
+    \node[box, below=12mm of Vt, fill=black!3, minimum width=65mm] (V) {$\V_{\mu,t}=\A\,\tilde{\V}_{\mu,t}\in\R^{N_h\times N'}$};
+  
+    \draw[->] (Vt) -- (V);
+    \draw[->] (A.east) -- ++(16mm,0) |- (V.west);
+  
+    %==================== Annotations & grouping ====================
+    \begin{pgfonlayer}{background}
+      \node[draw, rounded corners=3pt, dash pattern=on 2.1pt off 1.4pt, inner sep=6pt,
+            fit=(U)(POD)(A)] (OFFBOX) {};
+    \end{pgfonlayer}
+    \node[tiny, fill=white, inner sep=1pt] at ([yshift=1.6mm]OFFBOX.north) {pre-reduction};
+  
+    \begin{pgfonlayer}{background}
+      \node[draw, rounded corners=3pt, inner sep=8pt, fill=black!3,
+            fit=(INPT)(SNET)(PAR)(STACK)(ORTH)(Vt)(V)] (ONBOX) {};
+    \end{pgfonlayer}
+    \node[tiny, fill=white, inner sep=1pt] at ([yshift=1.6mm]ONBOX.north) {forward call};
+  
+  
+    \end{tikzpicture}
+    \end{adjustbox}
+    \caption{Realization of the Deep Orthogonal Decomposition for given $\theta_\text{DOD} \in \Theta(\Phi_{\tilde{\V}})$}
+    \label{fig:dod-matrix-workflow}
+  \end{figure}
+  
 
 Nonetheless this does not warrant a "good" DOD, just a defined one. 
 For this one needs to assert a qualitative loss function and some data, which we will collect by pre-reduction

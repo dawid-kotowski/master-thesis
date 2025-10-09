@@ -210,7 +210,7 @@ and an already fixed weight $\theta_\text{DDNN} \in \Theta(\Phi^\text{D}_{N'})$.
     \end{tikzpicture}
     \end{adjustbox}
     \caption{Dimensional workflow for POD+DNN (left) and DOD+DNN (right). 
-    Solid arrows show forward workflow and dashed arrows show training input}
+    Solid arrows show the forward calls; dashed arrows show pre-reduction of training data flow.}
     \label{fig:dimensional-workflow-pod-dod}
   \end{figure}
 
@@ -1053,6 +1053,105 @@ the DOD-DL-ROM under weights $\theta_\text{DOD-DL-ROM} = (\theta_\text{DOD}, \th
     \phi_{n} := R_\rho(\Phi_n(\theta_{\text{DF}_3})): \R^{p+q+1} \to \R^n,
 \end{gather*}
 from the Subsection (\ref{subsec: dod-dl-rom}) and the DOD Definition (\ref{def: DOD}).
+In analogy to the previous Section (\ref{section: error decomposition}), we visualize this with
+Figure (\ref{fig:dimensional-workflow-pod-dlrom-dod-dlrom}). Note, that we omit the DOD+DFNN, since
+it is build in structure exactly like the DOD+DNN.
+
+
+\begin{figure}[tb]
+    \centering
+    \begin{adjustbox}{max width=\linewidth}
+    \begin{tikzpicture}[
+      >=Latex,
+      node distance=10mm and 14mm,
+      every path/.style={line width=.9pt},
+      box/.style={draw, rounded corners=2pt, align=center, inner sep=5pt},
+      head/.style={draw, rounded corners=2pt, align=center, inner sep=6pt, fill=black!5},
+      small/.style={font=\footnotesize},
+      tiny/.style={font=\scriptsize},
+      lbl/.style={font=\scriptsize, inner sep=1pt},
+      op/.style={draw, align=center, inner sep=4pt, rounded corners=2pt},
+      dashedop/.style={op, dash pattern=on 2.1pt off 1.4pt},
+      transform shape
+    ]
+    \node[head, minimum width=7.6cm] (PODHEAD) {POD-DL-ROM workflow};
+    \node[head, minimum width=8.6cm, right=22mm of PODHEAD] (DODHEAD) {DOD-DL-ROM workflow};
+    \node[box, below=8mm of PODHEAD] (INP1) {$(\mu,\nu,t)\in\Theta\times\Theta'\times[0,T]$};
+    \node[box, below=8mm of DODHEAD] (INP2) {$(\mu,\nu,t)\in\Theta\times\Theta'\times[0,T]$};
+  
+    %==================== POD-DL-ROM lane ====================
+    % DFNN then Decoder (psi_N)
+    \node[op, below=10mm of INP1] (DFNNP) {DFNN $\phi_{n}$\\\tiny $\R^{p+q+1}\!\to\!\R^{n}$};
+    \node[op, below=5mm of DFNNP] (DECP) {Decoder $\psi_{N}$\\\tiny $\R^{n}\!\to\!\R^{N}$};
+    \node[box, below=8mm of DECP] (QP) {$\hat q_{\mathrm P}(\mu,\nu,t)\in\R^{N}$};
+  
+    \node[op, below=10mm of QP] (AP) {$\A_{\mathrm P}\in\R^{N_h\times N}$\\\tiny POD basis (Alg.~\ref{algo: pod}) w.r.t.\ $\G$};
+    \node[box, below=10mm of AP, fill=black!3] (UHP) {$\hat \uht=\A_{\mathrm P}\,\hat q_{\mathrm P}\in\R^{N_h}$};
+  
+    \node[box, left=8mm of QP] (QPTrue) {$q_{\mathrm P}=\A_{\mathrm P}^{T}\G\,\uht\in\R^{N}$};
+    \node[dashedop, below=8mm of QPTrue] (APTG) {$\A_{\mathrm P}^{T}\G\in\R^{N\times N_h}$};
+    \node[box, below=8mm of APTG] (UTrueP) {$\uht\in\R^{N_h}$};
+  
+    \draw[->] (INP1) -- (DFNNP);
+    \draw[->] (DFNNP) -- (DECP);
+    \draw[->] (DECP) -- (QP);
+    \draw[->] (QP) -- (AP);
+    \draw[->] (AP) -- (UHP);
+  
+    \draw[->, dashed] (UTrueP) -- (APTG);
+    \draw[->, dashed] (APTG) -- (QPTrue);
+    \draw[->, dashed] (QPTrue.east) -- (QP.west);
+  
+    %==================== DOD-DL-ROM lane ====================
+    % Inner DOD (unchanged)
+    \node[op, right=8mm of INP2] (DODINNER) {$\tilde \V_{\mu,t}(\theta_{\mathrm{DOD}})\in\R^{N_A\times N'}$\\\tiny ORTH \& stack};
+    \node[dashedop, right=8mm of DODINNER] (ATG) {$\A^{T}\G\in\R^{N_A\times N_h}$};
+    \node[box, below=8mm of ATG] (UTrueD2) {$\uht\in\R^{N_h}$};
+  
+    \node[op, below=6mm of DODINNER] (AUP) {$\A\in\R^{N_h\times N_A}$\\\tiny POD basis (Alg.~\ref{algo: pod}) w.r.t.\ $\G$};
+    \node[box, below=6mm of AUP] (VMT) {$\V_{\mu,t}=\A\,\tilde \V_{\mu,t}\in\R^{N_h\times N'}$};
+  
+    % DFNN then Decoder (psi_{N'})
+    \node[op, below=10mm of INP2] (DFNND) {DFNN $\phi_{n}$\\\tiny $\R^{p+q+1}\!\to\!\R^{n}$};
+    \node[op, below=5mm of DFNND] (DECD) {Decoder $\psi_{N'}$\\\tiny $\R^{n}\!\to\!\R^{N'}$};
+    \node[box, below=8mm of DECD] (QD) {$\hat q_{\mathrm D}(\mu,\nu,t)\in\R^{N'}$};
+  
+    \node[box, below=20mm of QD, fill=black!3] (UHD) {$\hat u_h(\mu,\nu,t)=\V_{\mu,t}\,\hat q_{\mathrm D}\in\R^{N_h}$};
+  
+    \node[box, left=8mm of QD] (QDTrue) {$q_{\mathrm D}=\V_{\mu,t}^{T}\G\,\uht\in\R^{N'}$};
+    \node[dashedop, below=8mm of QDTrue] (VTTG) {$\A^{T}\G\in\R^{N_A\times N_h}$};
+    \node[box, below=8mm of VTTG] (UTrueD) {$\uht\in\R^{N_h}$};
+  
+    \draw[->] (INP2) -- (DODINNER);
+    \draw[->] (DODINNER) -- (AUP);
+    \draw[->] (AUP) -- (VMT);
+    \draw[->] (INP2) -- (DFNND);
+    \draw[->] (DFNND) -- (DECD);
+    \draw[->] (DECD) -- (QD);
+    \draw[->] (VMT) -- (UHD);
+    \draw[->] (QD) -- (UHD);
+  
+    \draw[->, dashed] (UTrueD) -- (VTTG);
+    \draw[->, dashed] (VTTG) -- (QDTrue);
+    \draw[->, dashed] (QDTrue.east) -- (QD.west);
+    \draw[->, dashed] (ATG) -- (DODINNER);
+    \draw[->, dashed] (UTrueD2) -- (ATG);
+  
+    %==================== dotted soft-gray fit-box around both DFNN→Decoder stacks ====================
+    \begin{pgfonlayer}{background}
+      \node[draw, rounded corners=3pt, dotted, line width=.9pt, fill=black!4, inner sep=8pt,
+            fit=(DFNNP)(DECP)(DFNND)(DECD)] (SWBOX) {};
+    \end{pgfonlayer}
+    \node[tiny, fill=white, inner sep=1pt] at ([yshift=1.6mm]SWBOX.north) {switchable};
+  
+    \end{tikzpicture}
+    \end{adjustbox}
+    \caption{Dimensional workflow for POD-DL-ROM (left) and DOD-DL-ROM (right). 
+    Solid arrows show the forward calls; dashed arrows show pre-reduction of training data flow.}
+    \label{fig:dimensional-workflow-pod-dlrom-dod-dlrom}
+  \end{figure}
+  
+
 
 Furthermore, let $\chi_* \in C^s(\R^n; \R^{N'})$ and $\chi_*' \in C^{s'}(\R^{N'}; \R^n)$ respectively be the maps attaining
 the perfect embedding Assumption (\ref{assumption perfect embedding}), with $s \gg s' \geq 2$. Since $N' < N$ in
@@ -1673,7 +1772,7 @@ it without changing the discussion in the following manner:
     and the optimal DOD map $s \in W^{m, \infty}(\Theta \times [0,T])$ has $m \in \N$,
     such that
     \begin{equation*}
-        m \geq \frac{p+1}{\frac{n}{s-1} - \log_\varepsilon\left(\frac{N - N'}{N_h N'}\right)}
+        m \gtrsim \frac{p+1}{\frac{n}{s-1} - \log_\varepsilon\left(\frac{N - N'}{N_h N'}\right)}
     \end{equation*}
     is true, then it is guaranteed that either
     \begin{equation*}
@@ -1751,16 +1850,16 @@ it without changing the discussion in the following manner:
 
 \begin{remark}[Discussion]
     One can quickly deduce some of the implication of Proposition 
-    (\ref{prop: regularity discussion for POD vs DOD}) for applicational purposes, namely, we 
-    expect the number of degrees of freedom $N_h$ of the basis to be $\approx 10^6 - 10^{18}$, and
-    the precision level $\varepsilon$ to be very small maybe $\approx 10^{-6} - 10^{-3}$. 
+    (\ref{prop: regularity discussion for POD vs DOD}) for large scale applicational purposes, namely, we 
+    expect the number of degrees of freedom $N_h$ of the basis to be $\approx 10^6$--$10^{18}$, and
+    the precision level $\varepsilon$ to be very small maybe $\approx 10^{-6}$--$10^{-3}$. 
 
-    From the heuristic for $s \gg s' \geq 2$, and usually $p, q \approx 10^0 - 10^1$ suggesting
-    $n/(s-1) \leq 2(p+q+1)/(s-1)+3 \approx 10^0 - 10^1$, 
+    From the heuristic for $s \gg s' \geq 2$, and usually $p, q \approx 10^0$--$10^1$ suggesting
+    $n/(s-1) \leq 2(p+q+1)/(s-1)+3 \approx 10^0$--$10^1$, 
     we might infer, that the contribution of $n/(s-1) - \log(N_h)/\log(\varepsilon^{-1})$
-    could be of order $\approx 10^0 - 10^1$, 
-    thus offering $m$ to be of order $\approx 10^0 - 10^1$, depending on the difference $\beta - \alpha$,
-    where we may specifically point out, that a higher difference constitutes a smaller regularity imposition
+    could be of order $\approx 10^0$--$10^1$, 
+    thus offering $m$ to be of order $\approx 10^0$--$10^1$, depending on the difference $\beta - \alpha$.
+    We may specifically point out, that a higher difference constitutes a smaller regularity imposition
     on the optimal DOD map. This estimate is nothing but very crude, but it does point to the fact, that
     the levels of regularity, which need to be assumed, are not completely unrealistic, and might be met by some 
     problems.

@@ -378,64 +378,8 @@ We base this subsection on \cite{quarteroni2015rb}, but import the generalizatio
 \end{algorithm}
 
 
-In addition, we can further explore the relation between the discrete correlation matrix and
-its singular values attained as a by-product from Algorithm (\ref{algo: pod}) and the continuous 
-correlation matrix defined above. A fact used in the proof, but not named in the following proposition
-is the qualitative assessment, that the limit singular values are, in general, smaller for each tail sum,
-which is interesting to note in the context of Kolmogorov $N$-width with the result following it.
-
-\begin{proposition} \label{prop: existence and convergence to sigma infty}
-    Let $K$ and $K_\infty$ and their respective eigenvalues be defined as in Definition (\ref{def: POD}), 
-    then letting $N_s, N_t \to \infty$, we get 
-    \begin{equation*}
-        \sum_{k > N} \sigma_k^2 \longrightarrow \sum_{k > N} \sigma_{k, \infty}^2, \quad \mbox{ a.s.}
-    \end{equation*}
-\end{proposition}
-\begin{proof}
-    Let $N_s, N_t < \infty$, conforming to the sampling assumption, and 
-    \begin{equation*}
-        M := 
-        \underset{(\mu, t) \in \Theta \times \mathcal{T}}{\operatorname{ess}\, \sup}
-        \norm{u(\mu, t)} < \infty
-    \end{equation*} 
-    as before (see introduction in this Section 
-    (\ref{subsec: reduced basis framework})).
-    Taking a variational approach on this finite dimensional space, we know, that 
-    there exists a $\G$-orthognormal matrix $V_\infty \in \R^{N_h \times N}$ such that 
-    \begin{align*}
-        \sum_{k > N} \sigma^2_{k, \infty} &= \int_{\Theta \times [0, T]} \norm{u(\mu, t) - V_\infty V^T_\infty \G u(\mu, t)}^2 d(\mu, t) \\
-        &= \underset{W \in \R^{N_h \times N}: W^T \G W = I}{\min} \, \int_{\mu \times \mathcal{T}} \norm{u(\mu, t) - W W^T \G u(\mu, t) }^2 d(\mu, t).
-    \end{align*}
-    Thus, since this is the optimal choice of an approximation matrix for the continuous case and 
-    $\A \in \R^{N_h \times N}$ given by Definition (\ref{def: POD}) is only optimal in the discrete setting and 
-    not necessarily the continuous case, we have
-    \begin{equation*}
-        \sum_{k > N} \sigma^2_{k, \infty} \leq \int_{\Theta \times [0, T]} 
-        \norm{u(\mu, t) - \A \A^T \G u(\mu, t)}^2 d(\mu, t) = \sum_{k > N} \sigma^2_k.
-    \end{equation*} 
-    We then write entry-wise for $m, l = 1, \dots N_h$
-    \begin{align*}
-        [K_\infty - K]_{ml} :=& \int_{\Theta \times [0, T]} [\G^{1/2}u(\mu, t)]_m [\G^{1/2}u(\mu, t)]_l d(\mu, t) \\
-        &- \frac{\vert \Theta \times [0, T] \vert}{N_{data}} \sum_{j=1}^{N_s} 
-        \sum_{k=1}^{N_t} [\G^{1/2}u(\mu_j, t_k)]_m [\G^{1/2}u(\mu_j, t_k)]_l.
-    \end{align*}
-    By the uniform iid sampling assumed and the general bound on $\norm{u(\mu, t)} \leq M$ before, 
-    we know that with the entry-wise boundedness of the PDE solutions, 
-    the resulting matrix is subject to the strong law of large numbers, 
-    and thus converges to zero, given the entry-wise matrix norm $\opnorm{\cdot}$ as 
-    $N_t, N_s \to \infty$ almost surely.
-    
-    Now using Bauer-Fike's Theorem (\ref{theo: bauer fike}) with the $\opnorm{\cdot}$-norm, we have upon ordering, 
-    that for each $\sigma^2_{k, \infty}$ there is a $\sigma^2_{k}$ in the spectrum of $K$, such that
-    \begin{equation*}
-        \vert \sigma_k^2  - \sigma_{k, \infty}^2 \vert \leq \kappa(\A_\infty) \opnorm{K - K_\infty},
-    \end{equation*}
-    where $\kappa(\A_\infty)$ denotes the condition number of the stacked eigenvector matrix of 
-    $K_\infty$, i.e. $A_\infty = (\xi_{1, \infty}, \dots, \xi_{N_h, \infty})$. This number is independent of $N_s$ and $N_t$.
-    Now by convergence of $\opnorm{K - K_\infty} \to 0$ almost surely for $N_s, N_t \to \infty$, we conclude the proof. 
-\end{proof}
-
-Following this, is a known legacy result, which may be the most used statement in the later part of this thesis.
+Following this definition, is a known legacy result, which will be among
+the most used statement in the later part of this thesis.
 It relates the projection error of the Proper Orthogonal Decomposition with its eigen values. 
 These values are attained quite easily, which is important to keep in mind. 
 
@@ -458,7 +402,73 @@ These values are attained quite easily, which is important to keep in mind.
     See \cite[p.125--126]{quarteroni2015rb}.
 \end{proof}
 
-As already hinted, this result can be understood as an optimality statement under a sample $i \in I, k = 1, \dots, N_t$.
+\begin{remark} \label{remark: continuous correlation existence}
+    The equivalent statement can be made for a POD matrix $V^\infty \in \R^{N_h \times N}$ coming from 
+    the continuous correlation matrix $K_\infty \in \R^{N_h \times N_h}$. See \cite{kunischvolkwein2001}.
+\end{remark}
+
+
+In addition, we can further explore the relation between the discrete correlation matrix and
+its singular values attained as a by-product from Algorithm (\ref{algo: pod}) and the continuous 
+correlation matrix defined above. A fact used in the proof, but not named in the following proposition
+is the qualitative assessment, that the limit singular values are, in general, smaller for each tail sum,
+which is interesting to note in the context of Kolmogorov $N$-width with the result following it.
+
+\begin{proposition} \label{prop: existence and convergence to sigma infty}
+    Let $K$ and $K_\infty$ and their respective eigenvalues be defined as in Definition (\ref{def: POD}), 
+    then letting $N_s, N_t \to \infty$, we get 
+    \begin{equation*}
+        \sum_{k > N} \sigma_k^2 \longrightarrow \sum_{k > N} \sigma_{k, \infty}^2, \quad \mbox{ a.s.}
+    \end{equation*}
+\end{proposition}
+\begin{proof}
+    Let $N_s, N_t < \infty$, conforming to the sampling assumption, and 
+    \begin{equation*}
+        M := 
+        \underset{(\mu, t) \in \Theta \times \mathcal{T}}{\operatorname{ess}\, \sup}
+        \norm{u(\mu, t)} < \infty
+    \end{equation*} 
+    as before (see introduction in this Section 
+    (\ref{subsec: reduced basis framework})).
+    Following Remark (\ref{remark: continuous correlation existence}), we know, that 
+    there exists a $\G$-orthognormal matrix $V_\infty \in \R^{N_h \times N}$ such that 
+    \begin{align*}
+        \sum_{k > N} \sigma^2_{k, \infty} &= \int_{\Theta \times [0, T]} \norm{u(\mu, t) - V_\infty V^T_\infty \G u(\mu, t)}^2 d(\mu, t) \\
+        &= \underset{W \in \R^{N_h \times N}: W^T \G W = I}{\min} \, \int_{\mu \times \mathcal{T}} \norm{u(\mu, t) - W W^T \G u(\mu, t) }^2 d(\mu, t).
+    \end{align*}
+    Thus, since this is the optimal choice of an approximation matrix for the continuous case and 
+    $\A \in \R^{N_h \times N}$ given by Definition (\ref{def: POD}) is only optimal in the discrete setting and 
+    not necessarily the continuous case, we have
+    \begin{equation*}
+        \sum_{k > N} \sigma^2_{k, \infty} \leq \int_{\Theta \times [0, T]} 
+        \norm{u(\mu, t) - \A \A^T \G u(\mu, t)}^2 d(\mu, t) = \sum_{k > N} \sigma^2_k.
+    \end{equation*} 
+    Note, that we can uniquely identify $\G^{1/2}$ as the matrix solving $\G^{1/2} \G^{1/2} = \G$, since
+    it is symmetric and positive definit by definition. 
+    We then write entry-wise for $m, l = 1, \dots N_h$
+    \begin{align*}
+        [K_\infty - K]_{ml} :=& \int_{\Theta \times [0, T]} [\G^{1/2}u(\mu, t)]_m [\G^{1/2}u(\mu, t)]_l d(\mu, t) \\
+        &- \frac{\vert \Theta \times [0, T] \vert}{N_{data}} \sum_{j=1}^{N_s} 
+        \sum_{k=1}^{N_t} [\G^{1/2}u(\mu_j, t_k)]_m [\G^{1/2}u(\mu_j, t_k)]_l.
+    \end{align*}
+    By the uniform iid sampling assumed and the general bound on $\norm{u(\mu, t)} \leq M$ before, 
+    we know that with the entry-wise boundedness of the PDE solutions, 
+    the resulting matrix is subject to the strong law of large numbers, 
+    and thus converges to zero, given the entry-wise matrix norm $\opnorm{\cdot}$ as 
+    $N_t, N_s \to \infty$ almost surely.
+    
+    Now using Bauer-Fike's Theorem (\ref{theo: bauer fike}) with the $\opnorm{\cdot}$-norm, we have upon ordering, 
+    that for each $\sigma^2_{k, \infty}$ there is a $\sigma^2_{k}$ in the spectrum of $K$, such that
+    \begin{equation*}
+        \vert \sigma_k^2  - \sigma_{k, \infty}^2 \vert \leq \kappa(\A_\infty) \opnorm{K - K_\infty},
+    \end{equation*}
+    where $\kappa(\A_\infty)$ denotes the condition number of the stacked eigenvector matrix of 
+    $K_\infty$, i.e. $A_\infty = (\xi_{1, \infty}, \dots, \xi_{N_h, \infty})$. This number is independent of $N_s$ and $N_t$.
+    Now by convergence of $\opnorm{K - K_\infty} \to 0$ almost surely for $N_s, N_t \to \infty$, we conclude the proof. 
+\end{proof}
+
+As already hinted, Proposition (\ref{prop: eigenvalues and optimal projection under sampling}) 
+can be understood as an optimality statement under a sample $i \in I, k = 1, \dots, N_t$ or even the whole space.
 Consequently, this, in combination with Proposition (\ref{prop: existence and convergence to sigma infty}), 
 enables us with a possibility to classify parametric partial differential equations regarding their "projectability
 onto a linear space" and the minimal dimension, where a significant error can be held. 
@@ -715,11 +725,7 @@ two functions, i.e. $R_\rho(P(\Phi^1, \Phi^2))(x) = (R_\rho(\Phi^1)(x), R_\rho(\
     \end{equation*}
 \end{lemma}
 \begin{proof}
-    If $L_1 = L_2 = 1$, then the parallelization follows directly. After this the proof can be done inductively,
-    starting with an evolution in $L_2$ and expanding to arbitrary $L_1$, 
-    which can be done using the separation approach. We omit the proof, here
-    because of the cumbersome notational nature. Remark, that the non-zero weights can simply be counted to
-    get the postulated equality. See \cite{gühring2019nn}.
+    This can be again shown by direct computation. See \cite{gühring2019nn}.
 \end{proof}
 
 \subsection{Standard Neural Networks}

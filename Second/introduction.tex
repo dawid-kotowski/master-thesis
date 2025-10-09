@@ -18,7 +18,7 @@ $A^T \in \R^{d_2 \times d_1}$. The identity matrix will be denoted with
 $\I_d := \text{diag}(1, \dots, 1) \in \R^{d \times d}$
 for any $d \in \N$. Sometimes we abbreviate $\I = \I_d$, when the dimensionality is clear.
 
-Let $(a_n)_{n \in \N} \in \R$ be some sequence, then we say $(a_n)_n$ has \emph{(convergence of) order} $n$,
+Let $(a_n)_{n \in \N}, (b_n)_{n \in \N} \in \R$ be some sequences, then we say $(a_n)_n$ has \emph{(convergence of) order} $n$,
 if there is $c \in \R$ independent of $n$, s.t. $a_n = c \cdot n$ for all $n \geq N$ and some $N \in \N$. 
 We then denote $a_n = \Ocal(n)$.
 In a similar vein, we use $a_n \lesssim b_n$, to describe the situation of $a_n \leq C b_n$ 
@@ -58,15 +58,21 @@ $L \geq 0$ such that
     \vert f(x) - f(y) \vert \leq L \vert x - y \vert.
 \end{equation*}
 
-We further denote with 
+For $\Omega \in \R^d$ being a non-zero set, we further denote with 
 \begin{equation*}
     L^p(\Omega) := \left\{f: \Omega \to \R \, \vert \, f \text{ is measurable, and } 
-    \int_\Omega \vert f(x) \vert^p d \mu(x) < \infty \right\}
+    \norm{f}_{L^p(\Omega)} < \infty \right\} \bigg/ {\sim_\text{a.e.}}
 \end{equation*}
-the Lebesgue space and $L^p_\text{loc}$ as the space of $L^p(\Omega)$ functions with local support.
-If not specified otherwise we write $\norm{\cdot}_p := 
-\norm{\cdot}_{L^p(\Omega)}$ for all $1 \leq p \leq \infty$. Note that in critical situations we tend to
-be explicit about the norms.
+the Lebesgue space and $L^p_\text{loc}$ as the space of $L^p(\Omega)$ functions with local support. 
+The measure here is always Lebesgue, if not specified otherwise.
+Moreover, the norm is defined by
+\begin{equation*}
+    \norm{f}_{L^p(\Omega)} = 
+    \begin{cases}
+        \left(\int_\Omega \euknorm{f(x)}^p d(x) \right)^{1/p} \quad &\text{for } 1 \leq p < \infty, \\
+        \underset{x \in \Omega}{\operatorname{ess \, sup}} \euknorm{f(x)} \quad &\text{for } p = \infty.
+    \end{cases}
+\end{equation*}
 
 \paragraph{Neural Networks}
 
