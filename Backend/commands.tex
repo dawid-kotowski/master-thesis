@@ -60,10 +60,11 @@
 \newcommand{\layers}[1]{$\texttt{[#1]}$}
 
 % Drawing
-\usepackage{tikz}
+\usepackage{tikz,pgfplots}
 \usepackage{graphicx}
 \usepackage{adjustbox}
 \usetikzlibrary{arrows.meta,calc,patterns,positioning,fit,backgrounds,decorations.pathmorphing}
+\pgfplotsset{compat=1.18}
 
 % Math environments
 \usepackage{mathtools,amssymb,amsthm}
@@ -157,6 +158,8 @@
 \newcommand{\uhthat}{\hat{u}_h^{\mu, \nu, t}}
 \newcommand{\uhhat}{\hat{u}_h^{\mu, \nu}}
 \newcommand{\uhtprered}{u_\text{pre-red}^{\mu, \nu, t}}
+\newcommand{\statuh}{u_{h, 0}^{\mu, \nu}}
+\newcommand{\statuhhat}{\hat{u}_{h, 0}^{\mu, \nu}}
 \newcommand{\Vmut}{\V_{\mu, t}}
 \newcommand{\Vmutsample}{\V_{\mu_i, k \Delta t}}
 

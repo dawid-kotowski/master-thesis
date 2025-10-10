@@ -385,7 +385,7 @@ This observation can be reformulated into the following theorem.
     We can simply start from the definition and argue, that under Proposition (\ref{prop: eigenvalues and optimal projection under sampling})
     the projection coefficients are chosen at best sub-optimal, i.e.
     \begin{equation*}
-        \Ecal_\text{R} = \int_{\Theta \times \Theta' \times [0, T]} 
+        \Ecal_\text{R}^2 = \int_{\Theta \times \Theta' \times [0, T]} 
         \frac{\norm{\uht - \A_\text{P} \hat{q}_N(\mu, \nu, t)}^2}{\norm{\uht}^2} d(\mu, \nu, t)
         \geq
         \int_{\Theta \times \Theta' \times [0, T]} 
@@ -625,13 +625,15 @@ result.
         d(\mu, t)
         \leq \epsilon,
     \end{equation*}
-    by the $1$-Lipschitz propert of $R_\rho(\zeta(\theta^*_\text{DOD}))$ and the same argument as was used in the proof
-    of Proposition (\ref{prop: switch to euklidian norm}).
-    Finally, with this assertion, the fact
-    that this, as a matrix, is indeed in the pre-image of $J$ and
+    by the $1$-Lipschitz propert of $R_\rho(\zeta(\theta^*_\text{DOD}))$ and the argument of $\norm{\A x} = \euknorm{x}$
+    for any $x \in \R^{N_h}$.
+    Hence, as a matrix, the DOD is indeed in the pre-image of $J$. We further with
     the Proposition (\ref{prop: switch to euklidian norm}) for the switch to the euklidian norm
-    with $c_\A' := \euknorm{\Theta \times \Theta' \times [0, T]} c_\A$, 
-    we can write with $\uhtprered := \A^T \G \uht$,
+    with 
+    \begin{equation*}
+        c_\A' := \int_{\Theta \times [0, T]} \bigg( \sup\limits_{\nu \in \Theta'} \underbrace{\norm{\uht - \A \A^T \G \uht}^2}_{= c_\A} \bigg) d(\mu,t).
+    \end{equation*} 
+    Then we can write with $\uhtprered := \A^T \G \uht$,
     \begin{multline} \label{eq: last step for optimal DOD}
         \int_{\Theta \times \Theta' \times [0, T]} 
         \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2 d(\mu, \nu, t) \\ 
@@ -1147,7 +1149,7 @@ it is build in structure exactly like the DOD+DNN.
       \node[draw, rounded corners=3pt, dotted, line width=.9pt, fill=black!4, inner sep=8pt,
             fit=(ENCP)(ENCD)(DFNNP)(DECP)(DFNND)(DECD)] (SWBOX) {};
     \end{pgfonlayer}
-    \node[tiny, fill=white, inner sep=1pt] at ([yshift=1.6mm]SWBOX.north) {switchable};
+    \node[tiny, fill=white, inner sep=1pt] at ([yshift=1.6mm]SWBOX.north) {DL-ROM};
   
     \end{tikzpicture}
     \end{adjustbox}
@@ -1202,7 +1204,7 @@ and $C_1, C_2$ analogously for $\psi_*$ and $\psi_*'$.
     We can directly bound $\Ecal_\text{S} = \Ecal_\text{S}(N_{s_1}, N_{s_2}, N_t)$ defined in the proof
     of Theorem (\ref{theo: relative error POD+DNN}) independently of $N$, under the 
     Assumption (\ref{assumption sample})
-    by the Weak Law of Large Numbers, i.e. for all $1 > \delta > 0$ and $\varepsilon > 0$ there are 
+    by the strong law of large numbers, i.e. for all $1 > \delta > 0$ and $\varepsilon > 0$ there are 
     $N_{s_1}, N_{s_2}, N_t$, such that
     \begin{equation} \label{eq: bound on S error pod-dl-rom}
         \prob[\Ecal_\text{S}((N_{s_1}, N_{s_2}, N_t)) < \varepsilon / 3] > 1 - \delta.

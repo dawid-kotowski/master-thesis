@@ -29,7 +29,7 @@ optimal projection
 derived from the paper \cite{franco2024} in a context of approximation theory lifted, in notation and
 content, from \cite{gühring2019nn}. Furthermore, we could provide a distinct error decomposition upper and
 lower bound for any such Deep Orthogonal Decomposition based model, which we went on to visualize
-in the last of three examples, where the other two served the purpose of showing one instance of the
+in the last of three examples, where the other two served the purpose of showing one instance of potential
 superiority of the method over the legacy Proper Orthogonal data-driven model, and another of its limitations.
 
 
@@ -38,7 +38,7 @@ superiority of the method over the legacy Proper Orthogonal data-driven model, a
 
 In the following, a few different hot spots of potential sources of interest will be highlighted, even though
 the exact nature of their respective potential has not been investigated.
-For this, we will list a few of these talking points regarding the proposed DOD-DL-ROM and any other
+For this, we will list a few talking points regarding the proposed DOD-DL-ROM and any other
 adaptations of the newly time-dependent DOD Definition (\ref{def: DOD}).
 \begin{enumerate}
     \item[-] In Assumption (\ref{assumption additional lipschitz}), another imposition on the optimal DOD map
@@ -55,7 +55,12 @@ adaptations of the newly time-dependent DOD Definition (\ref{def: DOD}).
     the KnW in a less strictly "parametric" way, leading to an adaptation of function space influence. 
     In such a way, the approach could be a candidate to overcome the \emph{curse of dimensionality}, if the
     features could be sampled in a dimension-independent way.
-    \item[-] As it stands, the DOD uses $t \in [0, T]$ as a simple parameter and thus introduces this as by
-    injection as a factor of slow KnW decay, which in some cases it might not be. Hence, an alternative
+    \item[-] As it stands, the DOD uses $t \in [0, T]$ as a simple parameter and thus introduces time by
+    injection as a factor of slow KnW decay. This might be not necessary in some cases. Hence, an alternative
     formulation might be of interest.
 \end{enumerate}
+
+
+\section*{Acknowledgement}
+
+We hereby acknowledge and thank Björn Balkow and Felix Tümpner for review and help with notation.

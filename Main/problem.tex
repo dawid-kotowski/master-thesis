@@ -697,7 +697,7 @@ The following technically depicts a RB method.
     $\Phi_{\tilde{\V}}$ with input dimension $p + 1$ and output dimension $N_A \times N'$
     such that
     \begin{equation*}
-        \Phi_{\tilde{\V}} = \text{ORTH} \circ \text{STACK} \circ (P((R_1 \odot s), \dots, (R_N \odot s)))(\mu, t),
+        \Phi_{\tilde{\V}} = \text{ORTH} \circ \text{STACK} \circ (P((R_1 \odot s), \dots, (R_N \odot s))),
     \end{equation*}
     where $P$ is denoting the network parallelization operator as given in Definition (\ref{def: network parallelization})
     \begin{enumerate}
@@ -854,7 +854,7 @@ needs to be found first. Secondly, the $\G$-orthonormality of the DOD can be lev
 \end{equation*}
 to further reduce the training data and finally define the loss function for the DOD+DFNN architecture
 \begin{multline} \label{eq: loss dod+dnn}
-    \Lcal_\text{DOD+DNN}\left(R_\rho(\Phi_{N'}(\theta_\text{DF})) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,k}, 
+    \Lcal_\text{DOD+DNN}\left(R_\rho(\Phi_{N'}(\theta_\text{DF})) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
     \{u_{\text{red}^2}^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) \\
     = \frac{1}{N_\text{data}}\sum_{i=1}^{N_{s_1}} \sum_{j=1}^{N_{s_2}} 
     \sum_{k = 1}^{N_t} \, \euknorm{u_{\text{red}^2}^{\mu_i, \nu_j, k \Delta t} - 
@@ -907,3 +907,115 @@ and then used to define the DOD-DL-ROM loss function utilizing the $\G$-orthonor
 Notice, that this reduction allows us to elect an algorithm, which uses only the $n$- and $N'$-dimensional euklidian norm,
 therefore enabling even less computational complexity for each training epoch, under the assumption of an already 
 optimized DOD.
+
+
+
+\subsection{A CoLoRA inspired approach}
+
+
+
+
+In this subsection, we will introduce a novel 
+architecture based on the Continuous Low Rank Adaptation (CoLoRA) \cite{berman2024}.
+It will use the stationary version of the Deep Orthogonal Decomposition and a sublementing
+Dense Forward Neural Network, defined in \cite{franco2024}, to achieve a solution approximation of the 
+stationary limit case of the problem. This "first guess" is then continuously adapted during the online phase using CoLoRA layers.
+Notice, that such a procedure only makes sense in a case, where the problem has a meaningful stationary limit case.
+
+For this, let for all $\mu \in \Theta$ and $\nu \in \Theta'$
+\begin{equation} \label{eq: full discrete stationary ppde}
+    \begin{cases}
+    \displaystyle
+    A(\mu, \nu) \statuh + 
+    N(\statuh, \mu, \nu)= 0\\[0.8em]
+    \displaystyle
+    \statuh = u_{D}^{\mu, \nu} \quad \text{on some boundary}
+    \end{cases}
+\end{equation}
+define a fully discretized stationary problem. Note, that the boundary term could also be of some other type like
+Neumann or Robin. We assume, that this problem is 
+closely related to the time-dependent version, in a sense that
+\begin{equation*}
+    \lim\limits_{t \to T} \uht = \statuh.
+\end{equation*}
+Then we want to define the stationary model using the DOD Definition (\ref{def: DOD}) with $[0, T] = \{T\}$.
+The pre-reduction here is taken as a POD $\A_0 \in \R^{N_h \times N_A}$ of the stationary snapshot matrix
+\begin{equation*}
+    U_0 = \left[u_{h, 0}^{\mu_1, \nu_1} \big\vert \cdots \big\vert u_{h, 0}^{\mu_{N_{s_1}}, \nu_1} \big\vert \cdots \big\vert 
+    u_{h, 0}^{\mu_{N_{s_1}}, \nu_{N_{s_2}}}\right]^T \in \R^{N_h \times N_s}.
+\end{equation*}
+We can then produce some stationary reduced data $u_{\text{pre-red}, 0}^{\mu, \nu} := \A_0^T \G \statuh \in \R^{N_A}$ for $\mu \in \Pcal_1$
+and $\nu \in \Pcal_2$, where $\statuh \in \R^{N_h}$ are the solutions of Equation (\ref{eq: full discrete stationary ppde}).
+This data is used to find neural network weights $\theta^*_\text{DOD} \in \Theta(\Phi^\text{stat}_{\tilde{\V}})$ 
+for the stationary DOD. From this point on,
+we then denote with $\tilde{\V}_{\mu}(\theta^*_\text{DOD}) \in \R^{N_A \times N'}$ a realization of the inner
+stationary DOD module as given in \cite{franco2024}.
+As a next step, we define a DFNN $\Phi^\text{stat}_{N'}$ in an analogous way to the DOD+DFNN subsection above, 
+to attain for any $\theta_{sDFNN} \in \Theta(\Phi^\text{stat}_{N'})$ and
+input choice $(\mu, \nu) \in \Theta \times \Theta'$ the total approximation for a stationary solution of the form
+\begin{equation*}
+    \statuhhat =  \A_0 \cdot \underbrace{\tilde{\V}_{\mu}(\theta^*_\text{sDOD}) \cdot 
+    R_\rho(\Phi^\text{stat}_{N'}(\theta_\text{sDFNN}))(\mu, \nu)}_{=: \hat{u}_{\text{pre-red}, 0}^{\mu, \nu}}.
+\end{equation*}
+Following this, we now implement a CoLoRA neural network architecture, which defines
+neural networks in terms of CoLoRA layers.
+\begin{definition}[CoLoRA network]
+    Let $N_A, L, R \in \N$ with $R \ll N_A$, then a \emph{CoLoRA-layered neural network $\Phi_\alpha$ 
+    with input dimensional $N_A$ and $L$ layers} is
+    defined via 
+    \begin{equation*}
+        \Phi_\alpha = ((W_1, A_1, B_1, b_1), \dots, (W_L, A_L, B_L, b_L)),
+    \end{equation*}
+    such that $N_0 = N_A$ and $N_1, \dots, N_L \in \N$, where $W_l$ is a $(N_l \times \sum_{k=0}^{l-1} N_k)$-, 
+    $A_l$ a $(N_l \times R)$-, $B_l$ a $(R \times \sum_{k=0}^{l-1} N_k)$-dimensional matrix, and $b_l \in \R^{N_l}$ for
+    each $l = 1, \dots, L$.
+    We then denote with
+    \begin{equation*}
+        R_\rho(\Phi_\alpha): \Theta' \times [0, T] \times \R^{N_A} \to \R^{N_L}
+    \end{equation*}
+    be a \emph{realization of $\Phi_\alpha$ with activation
+    function $\rho$ and latent state $\alpha$} for some $\rho: \R \to \R$ and $\alpha = [\alpha_l]_{l=1}^L$,
+    with $\alpha_l: \Theta' \times [0, T] \to \R$ some continuous map for all $l=1, \dots, L$,
+    as the result of the following scheme for $\nu \in \Theta', t \in [0, T]$ and $x \in \R^{N_A}$
+    \begin{align*}
+        x_0 &:= x, \\
+        x_l &:= \rho \left( W_l x_{l-1} + \alpha_l(\nu, t)\, A_l B_l x_{l-1} + b_l \right), \quad \mbox{for } l = 1, \dots, L-1, \\
+        x_L &:= W_L x_{L-1} + \alpha_L(\nu, t)\, A_L B_L x_{L-1} + b_L.
+    \end{align*}
+\end{definition}
+Finally, with this definition, we can set up the actual workflow of the proposed method.
+For the latent state $\alpha$, we use a simple realization of an underlying neural network, a DFNN, 
+where we set up a fixed layer size for each of them. This strategy is simply lifted from \cite{berman2024},
+but as the authors have mentioned there too, this can be replaced by some other continuous mapping.
+
+Let now $\theta = (\theta_\text{sDOD}, \theta_\text{sDFNN}, \theta_\alpha) \in \Theta(\Phi^\text{stat}_{\tilde{\V}})
+\times \Theta(\Phi^\text{stat}_{N'}) \times \Theta(\Phi_\alpha)$ be some choice of weights, then the 
+approximate solution to the time-dependent problem in Equation (\ref{eq: full discrete ppde}) is given by
+the realization of a CoLoRA network $\Phi_\alpha$ with weights $\theta_\alpha \in \Theta(\Phi_\alpha)$, and a lift
+using the time-trajectory sensitive POD, i.e.
+\begin{equation*}
+    \hat u_{h}^{\mu, \nu, t} = \A \cdot R_\rho(\Phi_\alpha(\theta_\alpha))(\nu, t, \hat{u}_{\text{pre-red}, 0}^{\mu, \nu}).
+\end{equation*}
+
+Since, the trainable network of this method is defined again on the span of the $N_A$-dimensional POD
+matrix, we can set up the reduced training data as
+\begin{equation*}
+    \uhtprered := \A^T \G \uht \in \R^{N_A} \quad \text{for all }(\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal.
+\end{equation*}
+Then the third and last training in series of the CoLoRA inspired method can be achieved, using 
+\begin{multline} \label{eq: loss colora}
+    \Lcal_\text{CoLoRA}\left(R_\rho(\Phi_\alpha(\theta_\alpha)) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
+    \{u_{\text{pre-red}}^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) \\
+    = \frac{1}{N_\text{data}}\sum_{i=1}^{N_{s_1}} \sum_{j=1}^{N_{s_2}} 
+    \sum_{k = 1}^{N_t} \, \euknorm{u_{\text{pre-red}}^{\mu_i, \nu_j, k \Delta t} - 
+    R_\rho(\Phi_\alpha(\theta_\alpha))(\nu_j, k \Delta t, \hat{u}_{\text{pre-red}, 0}^{\mu, \nu})}^2.
+\end{multline}
+
+
+\begin{remark}[Heuristic Discussion]
+    The idea of this adapted approach is that many partial differential equations, such as parabolic ones, 
+    often have an intrinsically linked stationary limit. Further, specifically parabolic equations tend to gain smoothness
+    in growing time. Hence the continuous adaptation of an intitial approximate solution might make sense.
+    Additionally, to counter the KnW barrier, we employ the DOD method for a cheap reduction in case of a hybrid parameter
+    problem.
+\end{remark}
