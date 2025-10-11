@@ -6,7 +6,7 @@
 \section{Linear Algebra}
 
 
-For this section, we will specifically set up the euklidian (Hilbert) space $(\R^{N_h}, \langle \cdot, \cdot \rangle_\G)$,
+For this section, we will specifically set up the euclidean (Hilbert) space $(\R^{N_h}, \langle \cdot, \cdot \rangle_\G)$,
 with the inner product
 \begin{equation*}
     \langle u, v \rangle_\G := u^T \G v,
@@ -17,22 +17,21 @@ As preparation for the upcoming Bauer Fike Theorem, we further want to define th
 matrix space $\R^{N_h \times N}$,
 where $N \leq N_h$, as follows
 \begin{equation*}
-    \opnorm{A} := \sqrt{\lambda_\text{max}(A^T \G A)},
+    \opnorm{A} := \sqrt{\lambda_\text{max}(A^T \G A)}.
 \end{equation*}
-for $\lambda_\text{max}(A^T \G A)$ being the maximal spectral radius of $A^T \G A$, 
+Here, $\lambda_\text{max}(A^T \G A)$ is the maximal spectral radius of $A^T \G A$, 
 which exists because $A^T \G A$ is symmetric and positive semi definite
 and hence subject to the spectral theorem.
-This norm satifies the wanted property mentioned in the original paper \cite[p. 137-141]{bauer1960la}; any operator norm
-such that
+This norm satisfies the wanted property mentioned in the original paper \cite[p. 137-141]{bauer1960la}. Namely, 
+for all $x \in \R^{N}$, we have
 \begin{equation*}
-    \norm{Ax}^2 = x^T A^T \G A x \leq \lambda_\text{max}(A^T \G A) x^T x \leq \opnorm{A}^2 \euknorm{x}^2
-\end{equation*}
-for all $x \in \R^{N}$. 
+    \norm{Ax}^2 = x^T A^T \G A x \leq \lambda_\text{max}(A^T \G A) x^T x \leq \opnorm{A}^2 \euknorm{x}^2.
+\end{equation*} 
 
 \begin{theorem}[Bauer-Fike Theorem] \label{theo: bauer fike}
     Let $K \in \R^{N_h \times N_h}$ be some diagonalizable matrices with $\sigma_k$ eigenvalues and 
-    $V = (\xi_1, \dots, \xi_N) \in \R^{N_h \times N_h}$ be the stacked eigenvectors matrix of $K$ 
-    and $\delta K \in \R^{N_h \times N_h}$ some symmetric matrix. Then if $\lambda_{k}$ are the eigenvalues of 
+    $V = (\xi_1, \dots, \xi_N) \in \R^{N_h \times N_h}$ be the stacked eigenvectors matrix of $K$. Let 
+    $\delta K \in \R^{N_h \times N_h}$ be some symmetric matrix. Then if $\lambda_{k}$ are the eigenvalues of 
     $K + \delta K$, we have 
     \begin{equation*}
         \min\limits_{k} \vert \lambda_k - \sigma_k \vert \leq \kappa(V) \opnorm{(K + \delta K) - K},
@@ -47,7 +46,7 @@ Furthermore, we will often discuss the notion of orthonormality with regard to a
 can be understood with the following definition:
 
 \begin{definition}[Matrix Orthonormality] \label{def: matrix orthonormality}
-    Let $\G \in \R^{N_h \times N_h}$ be a symmetric positive definit matrix for some $N_h \in \N$. We then say that
+    Let $\G \in \R^{N_h \times N_h}$ be a symmetric positive definite matrix for some $N_h \in \N$. We then say that
     any matrix $\A \in \R^{N_h \times N}$ is $\G$-orthonormal for some $N \leq N_h$, if
     \begin{equation*}
         \I = \A^T \G \A.
@@ -56,8 +55,8 @@ can be understood with the following definition:
 
 \begin{remark}
     If some matrix $\V \in \R^{N_h \times N}$ can be written as $\V = \A \tilde{\V}$, where
-    $\tilde{\V} \in \R^{N_A \times N}$ and $\A \in \R^{N_h \times N_A}$ being a $\G$-orthonormal matrix, 
-    then $\V$ is $\G$-orthonormal if and only if $\tilde{\V}$ is orthonormal in the euklidian sense. 
+    $\tilde{\V} \in \R^{N_A \times N}$ is any matrix and $\A \in \R^{N_h \times N_A}$ is a $\G$-orthonormal matrix, 
+    then $\V$ is $\G$-orthonormal if and only if $\tilde{\V}$ is orthonormal in the euclidean sense. 
     In fact,
     \begin{equation*}
         \V^T \G \V = \tilde{\V}^T \A^T \G \A \tilde{\V} = \tilde{\V}^T \tilde{\V}.
@@ -65,7 +64,8 @@ can be understood with the following definition:
 \end{remark}
 
 \begin{definition}[Orthogonal Projector] \label{def: orthogonal projector}
-    A operator $P: V \to V$, where $V$ is a Hilbert space with inner product $\langle \cdot, \cdot \rangle_V$,
+    Let $P: V \to V$ be an operator, where $V$ is a Hilbert space with inner product $\langle \cdot, \cdot \rangle_V$.
+    Then it 
     is called an \emph{orthogonal projector} onto $W \subset V$, if
     \begin{enumerate}
         \item $P^2 = P$,
@@ -75,7 +75,7 @@ can be understood with the following definition:
 \end{definition}
 
 \begin{lemma} \label{lemma: orthogonal projector on span of A}
-    Let $(\R^{N_h}, \langle \cdot, \cdot \rangle_\G)$ be the Hilbert space from above. If now
+    Let $(\R^{N_h}, \langle \cdot, \cdot \rangle_\G)$ be the Hilbert space from above. If
     $\A \in \R^{N_h \times N_A}$ is a $\G$-orthonormal matrix, then
     \begin{equation*}
         P := \A \A^T \G
@@ -84,17 +84,17 @@ can be understood with the following definition:
     We refer to this as $P$ being the \emph{$\G$-orthonormal projector} on $\text{span}(\A)$.
 \end{lemma}
 \begin{proof}
-    It suffices to simply check the items of Definition (\ref{def: orthogonal projector}); the image
-    statement is instantaneously clear, since $\A \A^T \G = \A (\A^T \G)$. The idempotency can be
-    checked via
+    It suffices to simply check the properties of Definition (\ref{def: orthogonal projector}); the image
+    statement holds, since $\A \A^T \G = \A (\A^T \G)$. Next, the idempotency can be
+    shown via
     \begin{equation*}
         P^2 = (\A \A^T \G)(\A \A^T \G) = \A (\A^T \G \A) \A^T \G = \A \A^T \G = P.
     \end{equation*}
-    Finally set $u, v \in \R^{N_h}$ arbitrarily, then 
+    Finally for $u, v \in \R^{N_h}$ arbitrary, we have 
     \begin{align*}
         \langle P u, v \rangle_\G &= (P u)^T \G v \\
         &= u^T P^T \G v \\
-        &= u^T (\A \A^T \G)^T v \\
+        &= u^T (\A \A^T \G)^T \G v \\
         &= u^T \G \A \A^T \G v \\
         &= u^T \G P v = \langle u, Pv \rangle_\G.
     \end{align*}
@@ -115,16 +115,16 @@ can be understood with the following definition:
 
 
 These preliminaries will play an important role, since we will use such a 
-gramian $\G$ of an a priori chosen basis under a discretization of a PDE to set up a (linear) projector
-attaining any projection onto the solution manifold under the span of a $\G$-orthonormal matrix.
+gramian $\G$ of an a priori chosen basis under a discretization of a PDE to set up a linear projector.
+This projector will
+attain any coefficient representation onto the solution manifold in consideration of that gramian $\G$.
 In fact, any projector 
 \begin{equation*}
     \V \V^T \G : \R^{N_h} \to \R^N
 \end{equation*}
 for a $\G$-orthonormal matrix $\V \in \R^{N_h \times N}$ and some $N \leq N_h$ can be seen as a special
 case for the differential geometric framework 
-of (nonlinear) projectors on manifolds concerning Reduced Order Modelling introduced
-and discussed in \textcite{buchfink2023}.
+of (nonlinear) projectors on manifolds. This is discussed in more detail in \cite{buchfink2023}.
 
 
 
@@ -133,8 +133,9 @@ and discussed in \textcite{buchfink2023}.
 \section{Parametric Partial Differential Equations}
 
 
-In this section, we will prepare the reader for any upcoming result in direct context of 
-parametric partial differential equation. However, we will refrain from introducing any discretization
+In this section, we will prepare for the upcoming results by discussing statements in direct relation with 
+parametric partial differential equation solutions and their linear embedding. 
+However, we will refrain from introducing any discretization
 methods or mathematical formulation beyond the needed space definition, since this will not be the focus 
 of this work. 
 
@@ -145,12 +146,12 @@ of this work.
 
 
 
-For our work with Partial Differential Equation, and subsequent error approximations, we want to introduce
-Sobolev spaces. These are generalized differentiable spaces, where a weak derivative is given, as an analogon to the
+For our work with partial differential equations, and subsequent error approximations, we introduce
+Sobolev spaces. These are generalized differentiable spaces, where a weak derivative is given, as an analog to the
 classic derivative in the $C^n(\Omega)$ 
-space. They are employed in order to exploit their compact embedding in the Hölder spaces, which are generalizations
-of $C^n(\Omega)$. We will not go in much detail about the theory of Sobolev spaces, since we mostly concern ourselves
-with finite dimensional subspaces, but some ground truth must be discussed. 
+space. They are employed in order to exploit their compact embedding in the Hölder spaces, which broadly are generalizations
+of $C^n(\Omega)$. We will not go in much detail about the theory of Sobolev spaces, since we will focus on
+finite dimensional subspaces, but some ground truth must be discussed. 
 
 For this subsection we primary use \cite{alt2016}, and for the first upcoming definition \cite{dacorogna2004}.
 
@@ -160,9 +161,9 @@ For this subsection we primary use \cite{alt2016}, and for the first upcoming de
     map $H: Q \to B_{r, \vert \cdot \vert}(x)$ with $Q := \{ x \in \R^d \, \vert \, \norm{x}_{\ell^1} < d \}$ such that
     \begin{equation*}
         H \in C^k(\bar{Q}), \quad H^{-1} \in C^k(\bar{U}), \quad 
-        H(Q_+) = U \cap \Omega, \quad H(Q_0) = U \cap \partial \Omega
+        H(Q_+) = U \cap \Omega, \quad H(Q_0) = U \cap \partial \Omega.
     \end{equation*}
-    where $Q_+ := \{x \in Q \, \vert \, x_d > 0\}$ and similarily $Q_0 := \{x \in Q \, \vert \, x_d = 0 \}$,
+    Here, $Q_+ := \{x \in Q \, \vert \, x_d > 0\}$ and similarly $Q_0 := \{x \in Q \, \vert \, x_d = 0 \}$,
     and $H$ is only in $C^{0, 1}$.
 \end{definition}
 
@@ -196,19 +197,19 @@ From now on, let $d \in \N$ and, if not given otherwise, $\Omega \subset \R^d$ b
     for any $f \in W^{n, p}(\Omega)$.
 \end{definition}
 
-It is possible to extend this definition for $0 < n < 1$ to that of the \emph{Sobolev-Slobodeckij spaces}. In the 
+It is possible to extend this definition for $0 < n < 1$, namely the \emph{Sobolev-Slobodeckij spaces}. In the 
 analysis of partial differential equations these are used to characterize the regularity of Sobolev functions,
-which are restricted to the boundary $\partial \Omega$. This restriction itself is called a trace operator.
-One of the statements of relevance for such fractal Sobolev spaces is the following:
+which are restricted to the boundary $\partial \Omega$. This restricted function is then called a trace operator.
+One of the statements of relevance for such fractal Sobolev spaces is the following.
 
-If $\Omega \subset \R^d$ is a regular open set (for example, if $\Omega$ is a Lipschitz domain), and if 
-$u \in W^{1, p}(\Omega)$, then in fact $u \mapsto u \vert_{\partial \Omega}$ as a trace operator is surjective
+Let $\Omega \subset \R^d$ be a regular open set (for example, if $\Omega$ is a Lipschitz domain), and
+$u \in W^{1, p}(\Omega)$. Then the trace operator $u \mapsto u \vert_{\partial \Omega}$ is surjective
 from $W^{1, p}(\Omega)$ onto $W^{1-(1/p), p}(\partial \Omega)$ and
 \begin{equation*}
     \norm{u \vert_{\partial \Omega}}_{W^{1-(1/p), p}(\partial \Omega)} \leq C \norm{u}_{W^{1, p}(\Omega)},
 \end{equation*}
 for some $C > 0$ independent of $p$ and $u$, see \cite[p. 315]{brezis2011}.
-This of course only makes sense in light of the next definition.
+We make sense of this space via the next definition.
 
 \begin{definition}[Sobolev-Slobodeckij Space]
     Let $0 < s < 1$ and $1 \leq p \leq \infty$. Then we define the \emph{Sobolev-Slobodeckij space} as
@@ -230,8 +231,8 @@ This of course only makes sense in light of the next definition.
     for any $f \in W^{s, p}(\Omega)$.
 \end{definition}
 
-Furthermore, a very important theorem result will be the following theorem, translating Lipschitz continuity into
-Sobolev-regularity. This will allow us to employ the later introduced approximation theory for neural networks
+Furthermore, a very important result is the following theorem, translating Lipschitz continuity into
+Sobolev-regularity. It will allow us to employ the later introduced approximation theory for neural networks
 from the sole position of Lipschitz continuity.
 
 \begin{theorem} \label{theo: lipschitz implies sobolev}
@@ -252,85 +253,89 @@ from the sole position of Lipschitz continuity.
 
 
 For this subsection we define $u(\mu_j, t_k) \in \R^{N_h}$ for $(\mu_j)_{j = 1}^{N_s} =: \Pcal \subset \Theta$ and 
-$(t_k)_{k = 1}^{N_t} =: \Tcal \subset [0, T]$ to be some vectors, later representing the solutions to a 
+$(t_k)_{k = 1}^{N_t} =: \Tcal \subset [0, T]$ to be some vectors. They will later represent the solutions to a 
 parametric PDE for a 
-given parameter and time point in a given discrete subspace of the coefficient solution manifold. 
+determined parameter set and time point in a given discrete subspace of the coefficient solution manifold. 
 Here $\Theta$ represents and arbitrary parameter space, 
-$T > 0$ some arbitrary time point, and $N_s, N_t \in \N$ be the parameter and time sample size respectively. 
-Let the inner product on $\R^{N_h}$ be defined here, 
+$T > 0$ some arbitrary time point, and $N_s, N_t \in \N$ are the parameter and time sample size, respectively. 
+In context of the aforementioned coefficient solution manifold,
+the inner product on $\R^{N_h}$ is defined by 
 using a symmetric positive definite matrix $\G \in \R^{N_h \times N_h}$ via 
 \begin{equation*}
     \langle u, v \rangle_\G := u^T \G v, \qquad \text{for all } u, v \in \R^{N_h},
 \end{equation*}
 and the corresponding norm $\norm{\cdot} := \langle \cdot, \cdot \rangle_\G$.
-This is meant to result from a choice of an inner product stemming from the coefficient vectors $u(\mu, t)$ 
-representing that space, in other words, given by the choice of a basis
-on the corresponding Hilbert space, when viewing $u(\mu, t) \in \R^{N_h}$ as the coefficients 
-identifying an element in
-that space. 
+
 It is assumed,
-that we sample the parameters and time points uniformly and iid from their respective spaces and that 
-$\norm{u(\mu, t)} < \infty$ for all $\mu \in \Theta$ and $t \in [0, T]$ in an essential
+that we sample the parameters independently and identically distributed and the time points equidistantly determined
+from their respective spaces, and that 
+\begin{equation*}
+    \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \norm{u(\mu, t)} \leq M < \infty, \quad \inf\limits_{(\mu, t) \in \Theta \times [0, T]}\norm{u(\mu, t)} \geq m > 0,
+\end{equation*}
+for all $\mu \in \Theta$ and $t \in [0, T]$ in an essential
 sense. Let also 
 \begin{equation*}
     N_\text{data} := N_s \cdot N_t,
 \end{equation*}
 be the total sample size.
 
-Note, that, with the discussion surrounding the Definition (\ref{def: matrix orthonormality}) of the
-$\G$-orthonormality, taking the error of any such gram-sensitive projector will result in the 
-possibility of switching to a low dimensional euklidian norm, if the matrix $\V \in \R^{N_h \times N}$ 
+Notice, that it is possible to switch to a lower dimensional euclidean norm, if the projector in consideration
+is an orthogonal projector on the span of a $\G$-orthonormal matrix with specific identity. Namely, this is true,
+if the matrix $\V \in \R^{N_h \times N}$ 
 for some $N \leq N_h$ is
 $\G$-orthonormal and can be expressed as $\V = \A \tilde{\V}$, where $\A \in \R^{N_A \times N}$
-for $N \leq N_A \leq N_h$ is also $\G$-orthonormal. This is quantified by the following result:
+for $N \leq N_A \leq N_h$ is also $\G$-orthonormal. This is quantified by the following result.
 
-\begin{proposition} \label{prop: switch to euklidian norm}
+\begin{proposition} \label{prop: switch to euclidean norm}
     Let $\V \in \R^{N_h \times N}$ 
     for some $N \leq N_h$ be
-    $\G$-orthonormal and be written as 
+    $\G$-orthonormal such that
     \begin{equation*}
         \V = \A \tilde{\V},
     \end{equation*}
     where $\A \in \R^{N_h \times N_A}$
     is also $\G$-orthonormal and $\tilde{\V} \in \R^{N_A \times N}$ for $N \leq N_A \leq N_h$. 
-    Then we have, for any 
-    $u \in \R^{N_h}$, that
+    Then we have
     \begin{equation*}
         \norm{u - \V \V^T \G u}^2 = c_\A + \euknorm{u_\text{pre-red} - \tilde{\V} \tilde{\V}^T u_\text{pre-red}}^2,
     \end{equation*}
-    with $c_\A > 0$ being a constant only depending on $\A$ and $u_\text{pre-red} = \A^T \G u$.
+    for any 
+    $u \in \R^{N_h}$ with $c_\A > 0$ being a constant only depending on $\A$ and defining $u_\text{pre-red} = \A^T \G u$.
 \end{proposition}
 \begin{proof}
     By Lemma (\ref{lemma: orthogonal projector on span of A}), we know that $\A \A^T \G$ is a $\G$-orthonormal 
-    projector into the span of $\A$, and thus its residual $u - \A \A^T \G u$ must be 
+    projector into the span of $\A$. Thus its residual $u - \A \A^T \G u$ must be 
     $\G$-orthogonal to all columns of $\A$, since we can decompose 
     $u = u_\perp + u_\parallel$, where $u_\parallel \in \text{span}(\A)$ and 
-    $u_\perp \in \R^{N_h} - \text{span}(\A)$. This gives us the possibility to use the Pythagoras decomposition:
+    $u_\perp \in \R^{N_h} - \text{span}(\A)$. Then the Pythagoras decomposition gives
     \begin{align*}
         \norm{u - \V \V^T \G u}^2 &= \norm{u - \A \tilde{\V} \tilde{\V}^T \A^T \G u}^2 \\
         &= \norm{u - \A \A^T \G u}^2 + \norm{\A \A^T \G u - \A \tilde{\V} \tilde{\V}^T \A^T \G u}^2 \\
-        &= \norm{u - \A \A^T \G u}^2 + \euknorm{\A^T \G u - \tilde{\V} \tilde{\V}^T \A^T \G u}^2,
+        &= \norm{u - \A \A^T \G u}^2 + \euknorm{\A^T \G u - \tilde{\V} \tilde{\V}^T \A^T \G u}^2.
     \end{align*}
-    where the last step is justified by showing that for any $u \in \R^{N_A}$
+    The last step is justified by showing that for any $u \in \R^{N_A}$
     \begin{equation*}
         \norm{\A u} = \langle \A u, \A u \rangle_\G = (\A u)^T \G \A u = u^T \A^T \G \A u = u^T u = \euknorm{u}.
     \end{equation*}
     Now setting $u_\text{pre-red} := \A^T \G u$ gives us the wanted statement.
 \end{proof}
 
-This proposition might seem quite unimportant, but this will be the core idea giving us a possibility to
-assert closeness with regard to the representations of the solution rather than the, potentially uninformative,
-solution coefficient vectors in $\R^{N_h}$ under a computationally feasible norm (the euklidian $N_A$-dimensional
-norm).
+This proposition will be the core idea to
+assert closeness with regard to the representations of the solution and
+simultaneous provide a computationally
+feasible option with the euclidean $N_A$-dimensional
+norm. The term $c_\A$ is the quantity describing the energy loss by considering an a priori
+\emph{ambient} reduction. \emph{Ambient} is an heuristic word, describing some determined space in which solutions
+are embedded in a non-trainable fashion. Its construction can, for example, be done by a \emph{Proper Orthogonal Decomposition.}
 
-Next, we will discuss prerequisites to the Proper Orthogonal Decomposition and related concepts, such as the 
-Kolmogorov $n$-width, which lets us derive many key concepts and is an important quantity in the field of ROM methods. 
+Next, we will discuss this Proper Orthogonal Decomposition and related concepts. For instance the 
+Kolmogorov $N$-width, which lets us derive many key concepts and is an important quantity in the field of ROM methods. 
 We base this subsection on \cite{quarteroni2015rb}, but import the generalizations to arbitrary inner products from
 \cite{franco2024}. 
 \begin{definition}[Generalized Proper Orthogonal Decomposition] \label{def: POD}
-    Assuming $N_\text{data} < \infty$ and let $\G \in \R^{N_h \times N_h}$ be a mass matrix, 
-    we define by $U_j = [u(\mu_j, t_k)]_{k = 1}^{N_t} \in \R^{N_h \times N_t}$ 
-    the snapshot matrix for a given $\mu_j \in \Pcal$ and consequently $U = [U_j]_{j=1}^{N_s}
+    Assume $N_\text{data} < \infty$ and let $\G \in \R^{N_h \times N_h}$ be a mass matrix.
+    We define the time trajectory $U_j = [u(\mu_j, t_k)]_{k = 1}^{N_t} \in \R^{N_h \times N_t}$ 
+    for a given $\mu_j \in \Pcal$ and consequently $U = [U_j]_{j=1}^{N_s}
     \in \R^{N_h \times N_\text{data}}$ 
     the collective snapshot matrix. Then the \emph{(discrete) correlation matrix} is given by
     \begin{equation} \label{eq: discrete correlation matrix}
@@ -338,12 +343,12 @@ We base this subsection on \cite{quarteroni2015rb}, but import the generalizatio
     \end{equation}
     $K$ is symmetric and semi-positive definite and thus has real and 
     positive eigenvalues $\sigma^2 \geq \dots \geq \sigma_r^2$. 
-    We further call $\psi^\mu_k$ the eigenvectors of the correlation matrix $K$. 
-    With these, the corresponding POD basis of dimension $N < N_h$ is given via
+    Let $\psi^\mu_k$ be the corresponding eigenvectors of the correlation matrix $K$. 
+    Then the POD basis of dimension $N < N_h$ is given via
     \begin{equation*}
         \xi_k = \frac{1}{\sigma_k} U \psi_k, \quad 1 \leq k \leq N,
     \end{equation*}
-    for the $N$ largest eigenvalues and their corresponding eigenvectors. Then stacking these eigenvectors gives us
+    for the $N$ largest eigenvalues and their corresponding eigenvectors. Finally, stacking these eigenvectors gives us
     the \emph{POD matrix}
     \begin{equation*}
         \A := \left[\xi_k\right]_{k=1}^N \in \R^{N_h \times N}.
@@ -379,8 +384,9 @@ We base this subsection on \cite{quarteroni2015rb}, but import the generalizatio
 
 
 Following this definition, is a known legacy result, which will be among
-the most used statement in the later part of this thesis.
-It relates the projection error of the Proper Orthogonal Decomposition with its eigen values. 
+the most used statements in Chapter (\ref{chapter: results}) of this thesis.
+It shows optimality of the POD 
+and relates the projection error of the Proper Orthogonal Decomposition with its eigenvalues. 
 These values are attained quite easily, which is important to keep in mind. 
 
 
@@ -410,9 +416,7 @@ These values are attained quite easily, which is important to keep in mind.
 
 In addition, we can further explore the relation between the discrete correlation matrix and
 its singular values attained as a by-product from Algorithm (\ref{algo: pod}) and the continuous 
-correlation matrix defined above. A fact used in the proof, but not named in the following proposition
-is the qualitative assessment, that the limit singular values are, in general, smaller for each tail sum,
-which is interesting to note in the context of Kolmogorov $N$-width with the result following it.
+correlation matrix defined above. For this we pose the following.
 
 \begin{proposition} \label{prop: existence and convergence to sigma infty}
     Let $K$ and $K_\infty$ and their respective eigenvalues be defined as in Definition (\ref{def: POD}), 
@@ -428,50 +432,50 @@ which is interesting to note in the context of Kolmogorov $N$-width with the res
         \underset{(\mu, t) \in \Theta \times \mathcal{T}}{\operatorname{ess}\, \sup}
         \norm{u(\mu, t)} < \infty
     \end{equation*} 
-    as before (see introduction in this Section 
+    (see introduction in this Section 
     (\ref{subsec: reduced basis framework})).
     Following Remark (\ref{remark: continuous correlation existence}), we know, that 
-    there exists a $\G$-orthognormal matrix $\A_\infty \in \R^{N_h \times N}$ such that 
+    there exists a $\G$-orthonormal matrix $\A_\infty \in \R^{N_h \times N}$ such that 
     \begin{align*}
         \sum_{k > N} \sigma^2_{k, \infty} &= \int_{\Theta \times [0, T]} \norm{u(\mu, t) - \A_\infty \A^T_\infty \G u(\mu, t)}^2 d(\mu, t) \\
         &= \underset{W \in \R^{N_h \times N}: W^T \G W = I}{\min} \, \int_{\mu \times \mathcal{T}} \norm{u(\mu, t) - W W^T \G u(\mu, t) }^2 d(\mu, t).
     \end{align*}
-    Thus, since this is the optimal choice of an approximation matrix for the continuous case and 
+    This is the optimal choice of an approximation matrix for the continuous case. However,
     $\A \in \R^{N_h \times N}$ given by Definition (\ref{def: POD}) is only optimal in the discrete setting and 
-    not necessarily the continuous case, we have
+    not necessarily the continuous case. Thus, we have
     \begin{equation*}
         \sum_{k > N} \sigma^2_{k, \infty} \leq \int_{\Theta \times [0, T]} 
         \norm{u(\mu, t) - \A \A^T \G u(\mu, t)}^2 d(\mu, t) = \sum_{k > N} \sigma^2_k.
     \end{equation*} 
     Note, that we can uniquely identify $\G^{1/2}$ as the matrix solving $\G^{1/2} \G^{1/2} = \G$, since
-    it is symmetric and positive definit by definition. 
+    it is symmetric and positive definite by definition. 
     We then write entry-wise for $m, l = 1, \dots N_h$
     \begin{align*}
         [K_\infty - K]_{ml} :=& \int_{\Theta \times [0, T]} [\G^{1/2}u(\mu, t)]_m [\G^{1/2}u(\mu, t)]_l d(\mu, t) \\
         &- \frac{\vert \Theta \times [0, T] \vert}{N_{data}} \sum_{j=1}^{N_s} 
         \sum_{k=1}^{N_t} [\G^{1/2}u(\mu_j, t_k)]_m [\G^{1/2}u(\mu_j, t_k)]_l.
     \end{align*}
-    By the uniform iid sampling assumed and the general bound on $\sup_{(\mu, t)} \norm{u(\mu, t)} \leq M$ before, 
-    we know that with the entry-wise boundedness of the PDE solutions, 
-    the resulting matrix is subject to the strong law of large numbers, 
-    and thus converges to zero, given the entry-wise matrix norm $\opnorm{\cdot}$ as 
-    $N_t, N_s \to \infty$ almost surely.
+    The resulting matrix is subject to the strong law of large numbers.
+    This is straight forward
+    by the uniform iid sampling assumed, and the general bound on $\sup_{(\mu, t)} \norm{u(\mu, t)} \leq M$ before.
+    Hence, this matrix converges almost surely entry-wise to zero as 
+    $N_t, N_s \to \infty$.
     
     Now using Bauer-Fike's Theorem (\ref{theo: bauer fike}) with the $\opnorm{\cdot}$-norm, we have upon ordering, 
     that for each $\sigma^2_{k, \infty}$ there is a $\sigma^2_{k}$ in the spectrum of $K$, such that
     \begin{equation*}
-        \vert \sigma_k^2  - \sigma_{k, \infty}^2 \vert \leq \kappa(\A_\infty) \opnorm{K - K_\infty},
+        \vert \sigma_k^2  - \sigma_{k, \infty}^2 \vert \leq \kappa(\A_\infty) \opnorm{K - K_\infty}.
     \end{equation*}
-    where $\kappa(\A_\infty)$ denotes the condition number of the stacked eigenvector matrix of 
+    Here $\kappa(\A_\infty)$ denotes the condition number of the stacked eigenvector matrix of 
     $K_\infty$, i.e. $A_\infty = (\xi_{1, \infty}, \dots, \xi_{N_h, \infty})$. This number is independent of $N_s$ and $N_t$.
     Now by convergence of $\opnorm{K - K_\infty} \to 0$ almost surely for $N_s, N_t \to \infty$, we conclude the proof. 
 \end{proof}
 
 As already hinted, Proposition (\ref{prop: eigenvalues and optimal projection under sampling}) 
 can be understood as an optimality statement under a sample $i \in I, k = 1, \dots, N_t$ or even the whole space.
-Consequently, this, in combination with Proposition (\ref{prop: existence and convergence to sigma infty}), 
-enables us with a possibility to classify parametric partial differential equations regarding their "projectability
-onto a linear space" and the minimal dimension, where a significant error can be held. 
+In combination with Proposition (\ref{prop: existence and convergence to sigma infty}), this
+enables us to classify parametric partial differential equations regarding their projectability
+onto a linear space. This is done using the \emph{linear Kolmogorov $N$-width} (KnW).
 
 \begin{definition}[Linear Kolmogorov $N$-width] \label{def: linear kolmogorov}
     Let $N \in \N$, $N \leq N_h$ and $\Scal = \{ u(\mu, t) \in \R^{N_h} \, 
@@ -483,14 +487,15 @@ onto a linear space" and the minimal dimension, where a significant error can be
     \end{equation*}
 \end{definition}
 
-The Kolmogorov $N$-width can then be generally approximated quite well using a large sample via the tail sums of
-the eigen values of the discrete correlation matrix. This quantity then allows us to already be able to assert a priori,
-how well any POD-based reduction method will work on the specific PPDE; if the tail sum for a choice of reduction 
+The Kolmogorov $N$-width can generally be approximated quite well via the tail sums of
+the eigenvalues of the discrete correlation matrix for large samples. 
+This quantity then allows us to assert a priori,
+how well any POD-based reduction method will work on the specific PPDE. Namely, if the tail sum for a choice of reduction 
 dimension $N \leq N_h$ is small, then the POD retains most of the energy and a linear reduction can yield high efficiency.
 
-However, problem with effective non-linear terms, and specifically hyperbolic and transport dominated PPDEs have
-the tendency to have slowly decaying Kolmogorov $N$-width, meaning they retain energy only for large choices of $N$.
-The reduction must then potentially commit a non-linear mapping, motivating the following definition:
+On the other hand, non-linear problems, and specifically hyperbolic and transport dominated PPDEs, have
+the tendency to have slowly decaying Kolmogorov $N$-width. This means they retain energy only for large choices of $N$.
+Thus the reduction must then potentially commit a non-linear mapping, motivating the following definition:
 
 \begin{definition}[Nonlinear Kolmogorov $N$-width] \label{def: nonlinear kolmogorov}
     Let $N \in \N$, $N \leq N_h$ and $\Scal= \{ u(\mu, t) \in \R^{N_h} \, 
@@ -508,12 +513,13 @@ The reduction must then potentially commit a non-linear mapping, motivating the 
 
 \section{Neural Networks} \label{section: background for nn}
 
-In this section, we will introduce the general notion of neural networks. Specifically important for us will be 
+In this section, we will introduce the general notion of neural networks using the notation
+and most arguments of \cite{gühring2019nn}, if not given otherwise. Specifically important for us will be 
 concatenations of dense linear layers, which are a specific subclass of networks, the so called 
-\emph{Deep Feedforward Neural Network} (DFNN), and the \emph{Convolutional Autoencoder}.
+\emph{Deep Feedforward Neural Network} (DFNN).
 
 \begin{definition}[Neural Network] \label{def: neural network}
-    Let $d, L \in \N$, then a \emph{neural network $\Phi$ with input dimension $d$ and $L$ layers} is defined via 
+    Let $d, L \in \N$. A \emph{neural network $\Phi$ with input dimension $d$ and $L$ layers} is defined via 
     \begin{equation*}
         \Phi = ((A_1, b_1), (A_2, b_2), \dots, (A_L, b_L)),
     \end{equation*} 
@@ -521,32 +527,95 @@ concatenations of dense linear layers, which are a specific subclass of networks
     matrix, and $b_l \in \R^{N_l}$.
     
     We further define $R_\rho(\Phi): \R^d \to \R^{N_L}$ as a \emph{realizations of $\Phi$ with activation function $\rho$} for some
-    arbitrary map $\rho : \R \to \R$ as the result of the following scheme for some input $x \in R^d$:
+    arbitrary map $\rho : \R \to \R$ as the result of the following scheme for some input $x \in R^d$.
     \begin{align*}
         x_0 &:= x, \\
         x_l &:= \rho \left( A_l \begin{bmatrix}[c|c|c]x_0^T & \cdots & x_{l-1}^T\end{bmatrix}^T + b_l \right), \quad \mbox{for } l = 1, \dots, L-1, \\
         x_L &:= A_L \begin{bmatrix}[c|c|c]x_0^T & \cdots & x_{l-1}^T\end{bmatrix}^T + b_L,
     \end{align*}
-    where $\rho$ acts componentwise, i.e. $\rho(y) := [\rho(y_1), \dots, \rho(y_m)]^T \in \R^m$ for each 
+    where $\rho$ acts entry-wise, i.e. $\rho(y) := [\rho(y_1), \dots, \rho(y_m)]^T \in \R^m$ for each 
     $y = [y_1, \dots, y_m] \in \R^m$. Note that we can write
     \begin{equation*}
         A_l = \begin{bmatrix}[c|c|c]A_{l, x_0} & \cdots & A_{l, x_{l-1}}\end{bmatrix},
     \end{equation*}
     with $A_{l, x_k}$ being a $N_l \times N_k$ dimensional matrix for $k = 0, \dots, l-1$ and $l = 1, \dots, L$.
-    This comes in handy to portray the scheme via
+    This simplifies the scheme via
     \begin{align*}
         x_l &:= \rho \left( A_{l, x_0} x_0 + \dots + A_{l, x_{l-1}} x_{l-1} + b_l \right), \quad \mbox{for } l = 1, \dots, L-1, \\
         x_L &:= A_{L, x_{L-1}} x_{L-1} + b_L.
     \end{align*}
-    Moreover call $N_{\Phi} := d + \sum_{l=1}^L N_l$ the \emph{number of neurons} of the network, $L_{\Phi} := L$
-    the \emph{number of layers}, and finally $\omega_\Phi := \sum_{l=1}^L (\lzeronorm{A_l} + \lzeronorm{b_l})$ the \emph{number 
+    We call $N_{\Phi} := d + \sum_{l=1}^L N_l$ the \emph{number of neurons} of the network, $L_{\Phi} := L$
+    the \emph{number of layers}, and $\omega_\Phi := \sum_{l=1}^L (\lzeronorm{A_l} + \lzeronorm{b_l})$ the \emph{number 
     of active weights}.
 \end{definition}
 
 \begin{remark}
-    As a note, we can rewrite known neural network architectures, such as a convolutional autoencoder, 
+    Note that, we can rewrite known neural network architectures, such as a Convolutional Autoencoder, 
     as a neural network according to Definition (\ref{def: neural network}), see also \cite[p. 22]{gühring2020nn}.
 \end{remark}
+
+\begin{figure}[tb]
+    \centering
+    \begin{tikzpicture}[
+      >=Latex,
+      node distance=8mm and 18mm,
+      every path/.style={line width=.9pt},
+      neuron/.style={circle, draw, minimum size=6mm, inner sep=0pt},
+      lbl/.style={font=\scriptsize, inner sep=1pt}
+    ]
+  
+    \coordinate (L0) at (0,0);
+    \coordinate (L1) at ($(L0)+(3.5,0)$);
+    \coordinate (L2) at ($(L1)+(3.5,0)$);
+    \coordinate (L3) at ($(L2)+(3.5,0)$);
+  
+    \foreach \r/\y in {1/8mm,2/0mm,3/-8mm}{
+      \node[neuron] (I\r) at ($(L0)+(0,\y)$) {};
+    }
+    \node[lbl, below=9mm of I2] {$x_0$};
+  
+    \foreach \r/\y in {1/12mm,2/4mm,3/-4mm,4/-12mm}{
+      \node[neuron, fill=mplblue!8] (HOne\r) at ($(L1)+(0,\y)$) {};
+    }
+    \node[lbl, below=11mm of HOne3] {$x_1=\rho(A_{1,x_0}x_0+b_1)$};
+  
+    \foreach \r/\y in {1/8mm,2/0mm,3/-8mm}{
+      \node[neuron, fill=mplblue!8] (HTwo\r) at ($(L2)+(0,\y)$) {};
+    }
+    \node[lbl, below=15mm of HTwo2] {$x_2=\rho(A_{2,x_1}x_1+b_2)$};
+  
+    \foreach \r/\y in {1/4mm,2/-4mm}{
+      \node[neuron, fill=mplorange!12] (O\r) at ($(L3)+(0,\y)$) {};
+    }
+    \node[lbl, below=5mm of O2] {$x_L=A_{L,x_{L-1}}x_{L-1}+b_L$};
+  
+    \foreach \i in {1,2,3}{
+      \foreach \j in {1,2,3,4}{
+        \draw[->] (I\i) -- (HOne\j);
+      }
+    }
+    \foreach \i in {1,2,3,4}{
+      \foreach \j in {1,2,3}{
+        \draw[->] (HOne\i) -- (HTwo\j);
+      }
+    }
+    \foreach \i in {1,2,3}{
+      \foreach \j in {1,2}{
+        \draw[->] (HTwo\i) -- (O\j);
+      }
+    }
+  
+    \begin{pgfonlayer}{background}
+      \node[draw, rounded corners=3pt, dotted, line width=.6pt, fill=black!3, inner sep=6pt,
+            fit=(HOne1)(HOne4)(HTwo1)(HTwo3)] {};
+    \end{pgfonlayer}
+  
+  
+    \end{tikzpicture}
+    \caption{Standard Neural Network.}
+    \label{fig:standard-nn}
+  \end{figure}
+  
 
 From this we can infer a simpler definition, describing a network which omits any connection of non-neighboring
 layers.
@@ -558,11 +627,11 @@ layers.
     \end{equation*}
     then we call $\Phi$ a \emph{standard neural network}.
 \end{definition}
-
-When considering the similarities and differences between two distinct neural networks $\Phi_1 = ((A_1, b_1), \dots, (A_L, b_L))$
-and $\Phi_2 = ((\hat{A}_1, \hat{b}_1), \dots, (\hat{A}_L, \hat{b}_L))$, one can
-easily see, that if $[A_1]_{ij}= 0$, while $[\hat{A}_1]_{ij} \neq 0$ for some $i, j$, then these networks are
-severely different, whereas if they only differ in the specific non-zero weight, they could be recovered from each
+A visualization of a standard neural network can be found in Figure (\ref{fig:standard-nn}).
+If we compare two distinct neural networks, with the same dimensional in- and output, $\Phi_1 = ((A_1, b_1), \dots, (A_L, b_L))$
+and $\Phi_2 = ((\hat{A}_1, \hat{b}_1), \dots, (\hat{A}_L, \hat{b}_L))$, it is implied, 
+that if $[A_1]_{ij}= 0$, while $[\hat{A}_1]_{ij} \neq 0$ for some $i, j$, these networks are
+severely different. But if they only differ in the value of a specific non-zero weight, they could be recovered from each
 other through training. This inspires the definition of \emph{an architecture of a network}.
 
 \begin{definition}[Neural Network Architecture] \label{def: neural network architecture}
@@ -577,8 +646,9 @@ other through training. This inspires the definition of \emph{an architecture of
     \end{enumerate} 
 \end{definition}
 
-Since the associated realization of a neural network $R_\rho(\Phi)$ requires the definition of $\rho$, the activation function, we will
-define the most commonly used one in literature. It will help a lot with some of the constructions, since it has a simple nature, 
+The associated realization of a neural network $R_\rho(\Phi)$ requires the definition of $\rho$, the activation function.
+Therefore, we will
+define the most commonly used one in literature. It will help with some of the constructions, since it has a simple nature, 
 but also provides the network with the necessary non-linearity.
 
 \begin{definition}[ReLU] \label{def: relu activation function}
@@ -589,12 +659,12 @@ but also provides the network with the necessary non-linearity.
     is called \emph{ReLU} (Rectified Linear Unit) \emph{activation function.}
 \end{definition}
 
-Given such an activation function, Kurt Hornik provided in 1990 the first contribution to a field, which
-would emerge centuries later: Approximation theory. He proved for any $L^p(\mu)$ function, for $\mu$ some finite measure, the existence 
-of an arbitrarily close ReLU valued neural network \cite{hornik1991nn}.
+Given such an activation function, Kurt Hornik provided in 1990 a significant contribution to the field of approximation
+theory. He proved, that for any $L^p(\mu)$ function, with $\mu$ some finite measure, there is
+an arbitrarily close ReLU valued neural network realization \cite{hornik1991nn}.
 
 \begin{theorem}[Hornik's Theorem] \label{theo: hornik theorem}
-    Define for some continuous, unbounded and non-constant actiation function $\rho$ the set of all feedforward neural networks, 
+    Define for some continuous, unbounded and non-constant activation function $\rho$ the set of all feedforward neural networks, 
     as
     \begin{equation*}
         \mathcal{N}_d(\rho) := \bigcup_{L=1}^\infty \bigg\{ R_\rho(\Phi): \R^d \to \R \, \big\vert \, \Phi \mbox{ is neural network with } L\mbox{ layers} \bigg\}.
@@ -602,16 +672,15 @@ of an arbitrarily close ReLU valued neural network \cite{hornik1991nn}.
     Then $\mathcal{N}_d(\rho)$ lies dense in $L^p(\mu)$ for every finite measure $\mu$, $p \in (0, \infty)$.
 \end{theorem}
 
-The proof of this statement leverages on Hahn Banach, but thus does not provide the specific architecture of
-the required neural network, which would be used for such an approximation. We aim significantly higher, namely at 
-a bound on the necessary non-zero weights and layers for such an approximation, and will thus
+The proof of this statement leverages on Hahn Banach. Thus it does not provide the specific architecture of
+the required neural network, which would be used for such an approximation. In our case, we will however focus
+on an explicit construction to attain bounds for the complexity of the network used. We will hence
 not mention the proof beyond this outline. 
 
 \subsection{Network concatenations}
 
-In this subsection we will discuss the concatenations of multiple neural networks and the effects on the characteristic
-numbers of it. The complexity of a concatenated network can be given nicely, when the used activation function is the
-ReLU.
+In this subsection we will discuss the concatenations of multiple neural networks and the effects on its characteristic
+numbers. The complexity of a concatenated network can be simplified, by using the ReLU as the activation function.
 
 \begin{definition}[Network Concatenation] \label{def: network concatenation}
     Let $L_1, L_2 \in \N$ and 
@@ -619,7 +688,7 @@ ReLU.
         \Phi^1 = ((A_1, b_1), \dots, (A_{L_1}, b_{L_1})), \quad \Phi^2 = ((B_1, c_1), \dots, (B_{L_2}, c_{L_2})),
     \end{equation*}
     be two neural networks such that the input layer of $\Phi^1$ has the same dimension as the output layer of $\Phi^2$.
-    Then, $\Phi^1 \bullet \Phi^2$ denotes the following $L_1 + L_2 - 1$ layered network:
+    Then, $\Phi^1 \bullet \Phi^2$ denotes the following $L_1 + L_2 - 1$ layered network.
     \begin{equation*}
         \Phi^1 \bullet \Phi^2 := \left( ((B_1, c_1), \dots, (B_{L_2 - 1}, c_{L_2 - 1})), ((\tilde{A}_1, \tilde{b}_1), \dots, (\tilde{A}_{L_1}, \tilde{b}_{L_1})) \right),
     \end{equation*}
@@ -641,7 +710,8 @@ ReLU.
 \end{lemma}
 
 \begin{lemma} \label{lemma: network concatenation}
-    For any two neural networks $\Phi^1$ and $\Phi^1$ according to Definition (\ref{def: network concatenation}), 
+    Let two neural networks $\Phi^1$ and $\Phi^1$ be according to Definition (\ref{def: network concatenation}).
+    Then
     $\Phi^1 \odot \Phi^2 := \Phi^1 \bullet \Phi^{\text{id}} \bullet \Phi^2$ is a neural network with $d$-dimensional input, $L_1 + L_2$ layers
     with $\omega_{\Phi^1 \odot \Phi^2} \leq 2\omega_{\Phi^1}
     + 2\omega_{\Phi^2}$ active weights, $N_{\Phi^1 \odot \Phi^2} \leq 2N_{\Phi^1} + 2N_{\Phi^2}$ neurons. Additionally
@@ -651,16 +721,16 @@ ReLU.
     \end{equation*}
 \end{lemma}
 \begin{proof}
-    This can be proven by direct computiation, see \cite{gühring2019nn}.
+    This can be proven by direct computation, see \cite{gühring2019nn}.
 \end{proof}
 
 \subsection{Network parallelization}
 
-We have shown, that there is a possiblity to simply combine networks such that they show the same behavior as
-functions do. To 
-further build upon that idea, we will now introduce stacking in the context of defining a network $P(\Phi^1, \Phi^2)$
-from two networks $\Phi^1$ and $\Phi^2$ such that it
-emulates the parallel execution of 
+We have shown, that it is possible to concatenate networks, such that they show the same behavior as
+composed functions do. To 
+further build upon that idea, we will now introduce parallelization. For this, define a network $P(\Phi^1, \Phi^2)$
+from two networks $\Phi^1$ and $\Phi^2$, such that it
+emulates the stacked evaluation of 
 two functions, i.e. $R_\rho(P(\Phi^1, \Phi^2))(x) = (R_\rho(\Phi^1)(x), R_\rho(\Phi^2)(x))$ for all $x \in \R^d$.
 
 \begin{definition}[Network Parallelization] \label{def: network parallelization}
@@ -716,7 +786,7 @@ two functions, i.e. $R_\rho(P(\Phi^1, \Phi^2))(x) = (R_\rho(\Phi^1)(x), R_\rho(\
 \end{definition}
 
 \begin{lemma} \label{lemma: network parallelization}
-    In the setting of Definition (\ref{def: network parallelization}), we have that 
+    Let $\Phi^1$ and $\Phi^2$ be as in Definition (\ref{def: network parallelization}). Then 
     $P(\Phi^1, \Phi^2)$ is a neural network with $d$-dimensional input, $\max\{L_1, L_2\}$ layers, 
     $\omega_{P(\Phi^1, \Phi^2)} = \omega_{\Phi^1} + \omega_{\Phi^2}$ active weights and $N_{P(\Phi^1, \Phi^2)} = N_{\Phi^1} + N_{\Phi^2} - d$ neurons.
     Additionally, for all $x \in \R^d$, we have that
@@ -731,17 +801,18 @@ two functions, i.e. $R_\rho(P(\Phi^1, \Phi^2))(x) = (R_\rho(\Phi^1)(x), R_\rho(\
 \subsection{Standard Neural Networks}
 
 Here, we only want to briefly state an interesting fact, following from the definition of the standard networks, that
-motivates the treatment of any neural network architechture as a standard one, omiting the cumbersome nature of complete connectivity.
+motivates the treatment of any neural network architecture as a standard one. This generally allows us to omit the 
+cumbersome nature of complete connectivity.
 
 \begin{corollary} \label{cor: eqivalence nn and standard nn}
-    Let $\rho$ be the ReLU activation function. Then there are constants $C_1, C_2 > 0$
-    such that for any neural network $\Phi$ with $d$-dimensional input and $L = L(\Phi)$ layers, $N = N(\Phi)$
-    neurons and $M = M(\Phi)$ nonzero weights, there is a standard neural network $\Phi_{\text{st}}$ with
-    $d$-dimensional input, $L$ layers, at most $C_1 L N$ neurons and $C_2 \cdot (L N + M)$ nonzero weights such that
+    Let $\rho$ be the ReLU activation function, and
+    $\Phi$ a neural network with $d$-dimensional input and $L = L(\Phi)$ layers, $N = N(\Phi)$
+    neurons and $M = M(\Phi)$ nonzero weights. Then there is a standard neural network $\Phi_{\text{st}}$ with
+    $d$-dimensional input, $L$ layers, at most $C_1 L N$ neurons and $C_2 \cdot (L N + M)$ nonzero weights, such that
     \begin{equation*}
         R_\rho(\Phi)(x) = R_\rho(\Phi_{\text{st}})(x)
     \end{equation*}
-    for all $x \in \R^d$.
+    for all $x \in \R^d$ with $C_1, C_2 > 0$ being constants.
 \end{corollary}
 \begin{proof}
     See \cite[p.9]{gühring2019nn}.
@@ -749,61 +820,63 @@ motivates the treatment of any neural network architechture as a standard one, o
 
 \subsection{Approximation Theory}
 
-For all further theoretical results we will assume that $\rho$, the activation function, is the ReLU as given
-in Definition (\ref{def: relu activation function}) and furthermore define the set of functions bounded in Sobolev norm as
+For all following theoretical results we will assume that the activation function $\rho$ is the ReLU as given
+in Definition (\ref{def: relu activation function}). Furthermore, define the set of functions bounded in Sobolev norm as
 \begin{equation*}
     \Fcal_{n,d,p,B} := \big\{ f \in W^{n,p}((0,1)^d) \, \big\vert \, \snorm{f}[n][p][d] \leq B \big\}.
 \end{equation*}
 
-To create a decent outline for this subsection, we will shortly discuss the goal and the steps to be taken;
-in order to show a bound on the weights and layers needed for an approximating neural network, we need to
-take into account the interpolation error, we may overcome with sufficient regularity. Say we would have a 
-function $f$ in the Sobolev space $W^{2, 2}((0,1)^d)$, then it is apparent, that at least $2$ derivatives of $f$ must exists,
-in a piecewise, embedded sense, which can be leveraged to get a Taylor expansion around selected points.
+In this subsection, we will briefly discuss the needed steps to 
+find a bound for the active weights and layers used for a neural network, approximating an arbitrary
+function $f$ of some regularity. We first construct a network, that realizes an interpolated multiplication
+operation. This quasi-multiplication will be able to relate a partition of unity using polynomial functions
+with a neural network. For this, we need to
+take the interpolation error into account, which is closely linked to the regularity of the function, we want
+to approximate. For instance, if we have a
+function $f$ in the Sobolev space $W^{2, 2}((0,1)^d)$, then it is apparent, that at least two weak derivatives of $f$ must exists.
+Therefore, this can be leveraged to get a Taylor expansion around some selected points.
 
-This procedure will deduce a quantifiable error for the network approximating the initial
-arbitrary Sobolev function $f$ in Sobolev norm, as long as we can bound the error, which the
-polynomial approximation produces with regard to the network itself.
+This procedure will deduce a quantifiable error of the network approximation for any $W^{1, \infty}(\Omega)$ function.
 
-This leaves us with two main objectives:
+This leaves us with two main objectives.
 \begin{enumerate}
     \item Bound the Sobolev function at critical equidistant points, using its Taylor expansion.
-    \item Relate a fixed error rate of the approximation polynomial and some neural network, to the networks complexity.
+    \item Relate a fixed error rate of the approximation polynomial and some neural network to the networks complexity.
 \end{enumerate}
 
-These two objectives are pursued by both Yarotsky \cite{yarotsky2017nn} and Gühring et al \cite{gühring2019nn}, 
-even though it is worth noting, that Yarotsky
+These two objectives are pursued by both Yarotsky \cite{yarotsky2017nn} and Gühring et al \cite{gühring2019nn}.
+Note, that Yarotsky
 only provides the special case $s=0, B=1$, since the proof only shows an estimation with a Taylor expansion
-regarding the $L^\infty$ norm, missing the crucial step of the interpolation bound to change the norm to the
-Sobolev expanded counterpart and additionally
-uses the $L^\infty$ norm to approximate multiplication by a neural network. 
+regarding the $L^\infty$ norm. This misses the crucial consideration of the weak derivative bound for Lipschitz functions.
 
 
-Tho we will use the statement of
+Even Though we will use the statement of
 Gühring later on, which is the extension of Yarotsky to any choice of $s, p$ and $B$, 
 we will only give the idea of 
-the proof, since it follows the same pattern as Yarotsky's proof, but does include a lot of further 
-theoretical setting, which will not be of much use in the actual results presented in this paper.
+the proof for Gühring. It is similar to the proof of Yarotsky, but does include a lot of further 
+theoretical setting, which will not be important for the actual results presented in this paper.
 
 \begin{proposition} \label{prop: approximation by square}
-    There are constants $c_1, c_2, c_3 > 0$, such that for all $\varepsilon \in (0, 1)$ there is a
-    neural network $\Phi^{\text{sq}}_\varepsilon$ with at most $c_1 \cdot \ln(1/\varepsilon)$ nonzero weights, at most
-    $c_2 \cdot \ln(1/\varepsilon)$ layers, at most $c_3 \cdot \ln(1/\varepsilon)$ neurons, and with a $1$-dimensional
-    input and output such that for $f(x) := x^2$
+    Let $\varepsilon \in (0, 1)$ and $f: [0, 1] \to [0, 1]; \,  x \mapsto x^2$. Then
+    there are constants $c_1, c_2, c_3 > 0$, such that there is a
+    neural network $\Phi^{\text{sq}}_\varepsilon$ with $1$-dimensional
+    input and output, realizing
     \begin{equation*}
-        \snorm{R_\rho(\Phi^{\text{sq}}_\varepsilon) - f}[0][\infty][1] \leq \varepsilon,
+        \norm{R_\rho(\Phi^{\text{sq}}_\varepsilon) - f}_{L^\infty((0, 1))}\leq \varepsilon,
     \end{equation*}
-    and $R_\rho(\Phi^{\text{sq}}_\varepsilon(0)) = 0$.
+    and $R_\rho(\Phi^{\text{sq}}_\varepsilon)(0) = 0$. This network has at most 
+    $c_1 \cdot \ln(1/\varepsilon)$ nonzero weights, at most
+    $c_2 \cdot \ln(1/\varepsilon)$ layers, at most $c_3 \cdot \ln(1/\varepsilon)$ neurons.
 \end{proposition}
 \begin{proof}
-    Define the "tooth" function $g: [0,1] \to [0,1]$ with
+    Define the \emph{tooth function} $g: [0,1] \to [0,1]$ by
     \begin{equation*}
         g(x) = \begin{cases}
             2x, \quad &\text{for } x < 1/2, \\
             2(1-x), \quad &\text{for } x \geq 1/2,
         \end{cases}
     \end{equation*}
-    and its composition 
+    and its composition, the \emph{sabertooth function}, 
     \begin{equation*}
         g_s(x) := \underbrace{g \circ g \circ \dots \circ g(x)}_{s \text{-times}}. 
     \end{equation*}
@@ -817,8 +890,8 @@ theoretical setting, which will not be of much use in the actual results present
             k = 1, \dots 2^{s-1}. \\
         \end{cases}
     \end{equation*}
-    Furthermore, from the definition of the ReLU function (refer to (\ref{def: relu activation function})),
-    we can also set $g(x) = 2 \rho(x) - 4 \rho(x - 1/2) + 2 \rho(x - 1)$, which is the same as defining
+    Furthermore, from the definition of the ReLU function (refer to Definition (\ref{def: relu activation function})),
+    we can also set $g(x) = 2 \rho(x) - 4 \rho(x - 1/2) + 2 \rho(x - 1)$. This is the same as defining
     a neural network with $1$-dimensional input and output via $\Phi = ((A_1, b_1), (A_2, b_2))$ with
     \begin{equation*}
         A_1 = \begin{bmatrix}
@@ -833,15 +906,15 @@ theoretical setting, which will not be of much use in the actual results present
         b_2 = 0.
     \end{equation*}
     Then it is evident, using Lemma (\ref{lemma: network concatenation}), that $g_m(x) = R_\rho(\overbrace{\Phi \odot \dots \odot \Phi}^{m \text{-times}})(x)$ 
-    for all $x \in \R$ represents a network with $\Ocal(m)$ layers, active weights and neurons. 
-    Now, we set up a linear combination of these "sabertooth" function as 
+    for all $x \in [0, 1]$ represents a network with $\Ocal(m)$ layers, active weights and neurons. 
+    Now, we set up a linear combination of these sabertooth functions as 
     \begin{align*}
         f_m(x) &:= x - \sum_{s=1}^m \frac{g_s(x)}{2^{2s}} \\
         &= \frac{2k+1}{2^m} x - \frac{k(k+1)}{2^{2m}}, \quad \text{for } x \in \left[\frac{k}{2^m}, \frac{k+1}{2^m}\right], 
         k = 0, 1, \dots, 2^m - 1,
     \end{align*}
     and any $m \in \N$. In fact, if we define the dyadic intervals $I_k := [\frac{k}{2^m}, \frac{k+1}{2^m}]$ like above, 
-    then we can argue with the slope and the value seperately. Let $m \in \N$ be fixed and $k = 0, 1, \dots, 2^m - 1$. If 
+    then we can argue with the slope and the value separately. Let $m \in \N$ be fixed and $k = 0, 1, \dots, 2^m - 1$. If 
     \begin{equation*}
         x = \frac{k + \alpha}{2^m}, \quad \text{with } \alpha \in [0, 1),
     \end{equation*}
@@ -851,7 +924,7 @@ theoretical setting, which will not be of much use in the actual results present
     \begin{equation*}
         \frac{d}{dx} f_m(x) = 1 - \sum_{s=1}^m \frac{g_s'(x)}{2^{2s}} = 1 - \sum_{s=1}^m \sigma_s(x) 2^{-s},
     \end{equation*}
-    for any $x \in \mathring{I_k}$. Here, for $q_s = \lfloor k/2^m \rfloor$, we define
+    for any $x \in \mathring{I_k}$. Here, for $q_s = \lfloor k/2^m \rfloor$, the lower interval boundary, we define
     \begin{equation*}
         \sigma_s(x) = \begin{cases}
             +1, \quad &\text{if }q_s \text{ is even,}\\
@@ -863,7 +936,7 @@ theoretical setting, which will not be of much use in the actual results present
         k = \sum_{r=0}^{m-1} b_r 2^{r}, \quad \text{with } b_r \in \{0, 1\}.
     \end{equation*}
     This is useful, because we know with boolean arithmetics, that if the first digit is zero, the natural number
-    it represent, must be even. Thus write
+    it represent must be even. Thus write
     \begin{equation*}
         q_s = \sum_{r = m-s}^{m-1} b_r 2^{r-(m-s)},
     \end{equation*}
@@ -875,7 +948,7 @@ theoretical setting, which will not be of much use in the actual results present
         &= 1 - (1 - 2^{-m}) + 2 \sum_{s=1}^m b_{m-s} 2^{-s} \\
         &= 2^{-m}+ 2 \sum_{r=0}^{m-1} b_r 2^{-m+r} = 2^{-m} + 2 \cdot 2^{-m} k.
     \end{align*}
-    Further, for the shifts, because we know this function is peacewise affine, 
+    Further, for the shifts, because we know this function is piecewise affine, 
     we can simply solve for $c_k \in \R$ on each $I_k$
     \begin{equation*}
         f_m\left(\frac{k}{2^m}\right) = \frac{2k+1}{2^m} \cdot \frac{k}{2^m} + \alpha_k = \left(\frac{k}{2^m}\right)^2.
@@ -978,15 +1051,15 @@ theoretical setting, which will not be of much use in the actual results present
     layers, neurons and active weights.
 \end{proof}
 
-This statement enables us to express multiplication using a neural network. This is straight forward, when 
-viewing the polarization identity:
+This statement enables us to express multiplication using a neural network. This can be shown
+by considering the polarization identity
 \begin{equation} \label{eq: polarization identify}
     xy = \frac{1}{2}((x + y)^2 - x^2 - y^2), \quad \text{for } x,y \in \R, 
 \end{equation}
 as given by the first binomial formula.
 
 \begin{proposition} \label{prop: quasi multiplication}
-    Let $M > 0$ and $\varepsilon \in (0, 1)$, then there is a ReLU neural network $\tilde{\times}$ with $2$-dimensional input and
+    Let $M > 0$ and $\varepsilon \in (0, 1)$. Then there is a ReLU neural network $\tilde{\times}$ with $2$-dimensional input and
     $1$-dimensional output, and constants $c_1 > 0$ and $c_2 = c_2(M) > 0$, such that for $\times: \R \times \R \to \R; (x, y) \mapsto xy$
     \begin{enumerate}
         \item $\norm{R_\rho(\tilde{\times})- \times}_{W^{0, \infty}((-M, M)^2)} \leq \varepsilon$,
@@ -997,40 +1070,43 @@ as given by the first binomial formula.
 \begin{proof}
     Let $\delta := \varepsilon/(6M^2)$. Then we construct
     an approximation of the square function $f(x) = x^2$ for $x \in (0, 1)$ 
-    using Proposition (\ref{prop: approximation by square}) for the chosen $\delta$, i.e. we define $\Phi^{\text{sq}}_\delta$,
+    using Proposition (\ref{prop: approximation by square}) for the chosen $\delta$. Indeed, we define $\Phi^{\text{sq}}_\delta$,
     such that
     \begin{equation*}
         \snorm{R_\rho(\Phi^{\text{sq}}_\delta) - f}[0][\infty][1] \leq \frac{\varepsilon}{6M^2},
     \end{equation*}
-    which now of course has $\Ocal(\ln(1/\delta))$ many layers, active weights and neurons. Since the statement
-    necessarily needs to implement negative numbers as well, we show with $\vert x \vert = \rho(x) + \rho(-x)$
+    which now of course has $\Ocal(\ln(1/\delta))$ many layers, active weights and neurons. To achieve 
+    this we have to implement negative numbers as well. With $\vert x \vert = \rho(x) + \rho(-x)$, it can be shown,
     that it is indeed possible to expand any neural network with a positive domain to a negative domain using a neural network (by simply concatenating).
-    Thus we construct $\tilde{\times}$ via adding an 
-    addition layers on top of parallel square networks with scaled input, achieving
+    Thus we construct $\tilde{\times}$ via appending an 
+    addition layer on top of parallel square networks with scaled input, achieving
     \begin{equation*}
         R_\rho(\tilde{\times})(x, y) = 2 M^2 \left( R_\rho(\Phi^\text{sq}_\delta) 
         \left( \frac{\vert x + y \vert}{2M} \right) - 
         R_\rho(\Phi^\text{sq}_\delta) \left( \frac{\vert x \vert}{2M} \right)
         - R_\rho(\Phi^\text{sq}_\delta) \left( \frac{\vert  y \vert}{2M} \right) \right).
     \end{equation*}
-    To appreciate the third statement of our Proposition, 
-    we may now put together the necessary complexity of this network using the constants in Proposition (\ref{prop: approximation by square});
+    We need the third statement of our Proposition, 
+    when putting together the necessary complexity of this network.
+    This uses the constants in Proposition (\ref{prop: approximation by square}) as follows.
     \begin{enumerate}
         \item We have $2$ layers for the implementation of the absolute value, $1$ for the addition in the end, 
-        and $c_0 \ln(1 / \delta)$ for the square function, thus $L_{\tilde{\times}} \leq c_0\ln(1/\varepsilon) + c_0 \ln(6M^2) + 3$.
+        and $c_0 \ln(1 / \delta)$ for the square function. Thus 
+        $L_{\tilde{\times}} \leq c_0\ln(1/\varepsilon) + c_0 \ln(6M^2) + 3$ in total.
         \item We need $4 + 2 + 2$ active weights for the first matrix to distribute each $(x,y)$ onto the parallel networks 
-        together with $6$ active weights for the superposing of the input into the $\vert \cdot \vert$-function. Another $3$ are required for the
-        last layer adding all outputs. Of course each
-        of the different computiations for the artificial scaled square function must be in parallel, thus 
-        $\omega_{\tilde{\times}} \leq 3c_0\ln(1/\varepsilon) + 3c_0\ln(6M^2) + 17$.
-        \item A similar consideration gives us $9 = (2 + 1) \cdot 3$ neurons for the first two and the last layer, thus giving us
-        $N_{\tilde{\times}} \leq 3c_0\ln(1/\varepsilon) + 3c_0\ln(6M^2) + 9$.
+        together with $6$ active weights for the superposing of the input into the $\vert \cdot \vert$-function. 
+        Another $3$ are required for the
+        last layer adding all outputs. Each
+        of the different computations for the artificial scaled square function must be in parallel. Hence, we have
+        $\omega_{\tilde{\times}} \leq 3c_0\ln(1/\varepsilon) + 3c_0\ln(6M^2) + 17$ in total.
+        \item Similar to (2.), we get $9 = (2 + 1) \cdot 3$ neurons for the first two and the last layer, thus giving us
+        $N_{\tilde{\times}} \leq 3c_0\ln(1/\varepsilon) + 3c_0\ln(6M^2) + 9$ in total.
     \end{enumerate}
-    Finally taking the adequate maximum, and remarking, that $c_0$ does not depend on $M$, we get the wanted bound in (2). 
+    Note, that $c_0$ does not depend on $M$. By taking the adequate maximum, we get the desired bound on the 
+    complexity in (3.).
 
-
-    To make the true multiplication match the form of our implemented network, using (\ref{eq: polarization identify}),
-    we may rewrite for $x, y \in (-M, M)$
+    To make the true multiplication match the form of the implemented network, using (\ref{eq: polarization identify}),
+    we may write for $x, y \in (-M, M)$
     \begin{align*}
         xy &= 4M^2 \left(\frac{x}{2M} \cdot \frac{y}{2M} \right) \\
         &= 4M^2 \frac{1}{2} \left( \left( \frac{x}{2M} + \frac{y}{2M} \right)^2 - \left( \frac{x^2}{2M} \right)^2
@@ -1038,93 +1114,133 @@ as given by the first binomial formula.
         &= 2M^2 \left( \left(\frac{\vert x + y \vert}{2M} \right)^2 - \left( \frac{\vert x \vert}{2M} \right)^2
         - \left( \frac{\vert y \vert}{2M} \right)^2 \right).
     \end{align*}
-    Now with the deviation from each of the square approximation we get,
+    Now with the deviation from each of the square approximation we obtain,
     \begin{align*}
-        \norm{R_\rho(\tilde{\times}) - \times}_{L^\infty((0,1)^2)} 
+        \norm{R_\rho(\tilde{\times}) - \times}_{L^\infty((-M, M)^2)} 
         &\leq 2M^2 \left( 3 \cdot \sup\limits_{\frac{\vert x \vert}{2M}\, : \, x \in (-M, M)}\vert \, R_\rho(\Phi^\text{sq}_\delta) 
         (\tilde{x}) - \tilde{x}^2 \, \vert \right) \\
         &\leq 6M^2 \delta = \varepsilon.
     \end{align*}
-    We note a few things happening here for clarity; it is possible to simply use the reverse triangle equality
-    to get all three term errors added, and then put them together. This can be done, since the $L^\infty((0,1)^2)$ norm 
-    appreciates only the maximal value of the error across all possible elements of the $(0,1)^2$ domain, but because
-    the inner function is bijective, these are just the same. Additionally we use the, trivial by definition, statement
+    We discuss a few things happening here for clarity. It is possible to simply use the reverse triangle equality
+    to get all three error terms added, and then put them together. This can be done, since the $L^\infty((0,1)^2)$ norm 
+    detects only the maximal value of the error across all possible elements of the $(0,1)^2$ domain. Here
+    the inner function is bijective, so these are just the same. Additionally, we use the, trivial by definition, statement
     \begin{equation*}
         \norm{g \circ f}_{L^\infty((0,1))} \leq \norm{g}_{L^\infty((0,1))}.
     \end{equation*}
-    This has shown the statement (3).
+    This proves the statement (1.).
 
-    Statement (1) 
+    Statement (2.) 
     on the other hand, is a direct consequence of the subliminally result in Proposition (\ref{prop: approximation by square}).
 \end{proof}
 
-As a last step, before stating and proving the Yarotsky Theorem, we want to discuss the construction and complexity
+As a last step, before stating and proving the Yarotsky Theorem, we will discuss the construction and complexity
 of a network approximating any collection of equidistantly spaced function with local support in a higher dimensional
-domain $(0,1)^d$ for $1 \leq d < \infty$. If we take into account, that we may also want these functions
-to form a partition of unity on the high dimensional domain, this will be ground to tackle the complexity
-of the approximation of polynomials with neural networks.
+domain $(0,1)^d$ for $1 \leq d < \infty$. Remark, that we set up these networks, such that their realizations 
+form a partition of unity on the $d$-dimensional domain. Then this construction 
+will be enough to get an approximation under a corresponding complexity discussion.
 
 \begin{lemma} \label{lemma: partition of unity}
     For any $d, N \in \N$ there is a collection of functions
     \begin{equation*}
-        \Psi = \left\{ \phi_m \, \vert \, m \in \{ 0, \dots, N \}^d \right\},
+        \Psi = \left\{ \phi_{\vec{m}} \, \vert \, \vec{m} \in \{ 0, \dots, N \}^d \right\},
     \end{equation*}
-    with $\phi: \R^d \to \R$ for all $m = (m_1, \dots, m_d) \in \{ 0, \dots, N \}^d$ with the following properties:
+    with $\phi_{\vec{m}}: \R^d \to \R$ for all $\vec{m} = (m_1, \dots, m_d) \in \{ 0, \dots, N \}^d$ with the following properties.
     \begin{enumerate}
-        \item $0 \leq \phi_m(x) \leq 1$ for all $\phi_m \in \Psi$ and every $x \in \R^d$,
-        \item $\sum_{\phi_m \in \Psi} \phi_m(x) = 1$ for every $x \in [0,1]^d$,
-        \item $\text{supp}(\phi_m) \subset B_{1/N, \norm{\cdot}_{\ell^\infty}}(m / N)$ for all $\phi_m \in \Psi$,
-        \item there are constants $C, c \geq 1$ such that for each $\phi_m \in \Psi$ there is a neural network
-        $\Phi_m$ with $d$-dimensional input and output, at most $3$ layers, $C \cdot d$ active weights and neurons,
+        \item $0 \leq \phi_{\vec{m}}(x) \leq 1$ for all $\phi_{\vec{m}} \in \Psi$ and every $x \in \R^d$,
+        \item $\sum_{\phi_{\vec{m}} \in \Psi} \phi_{\vec{m}}(x) = 1$ for every $x \in [0,1]^d$,
+        \item $\text{supp}(\phi_{\vec{m}}) \subset B_{1/N, \norm{\cdot}_{\ell^\infty}}(\vec{m} / N)$ for all $\phi_{\vec{m}} \in \Psi$,
+        \item There are constants $C, c \geq 1$ such that for each $\phi_{\vec{m}} \in \Psi$ there is a neural network
+        $\Phi_{\vec{m}}$ with $d$-dimensional input and output, at most $3$ layers, $C \cdot d$ active weights and neurons,
         such that
         \begin{equation*}
-            \prod_{l=1}^d [R_\rho(\Phi_m)]_l = \phi_m
+            \prod_{l=1}^d [R_\rho(\Phi_{\vec{m}})]_l = \phi_{\vec{m}}
         \end{equation*}
-        and $\norm{[R_\rho(\Phi_m)]_l}_{L^\infty((0,1)^d)} \leq 1$ for all $l = 1, \dots, d$.
+        and $\norm{[R_\rho(\Phi_{\vec{m}})]_l}_{L^\infty((0,1)^d)} \leq 1$ for all $l = 1, \dots, d$.
     \end{enumerate}
 \end{lemma}
 \begin{proof}
-    The idea of the proof, will be one of construction, where we will find adequate functions, which are
-    easily transferable into ReLU neural networks. For this, define the functions
+    In this proof, we will construct adequate functions, which are
+    easily transferable into ReLU neural networks. For this, define
     \begin{equation*}
-        \psi: \R \to \R, \quad \psi(x) = \begin{cases}
+        \psi: \R \to [0, 1], \quad \psi(x) = \begin{cases}
             1, \quad &\vert x \vert < 1, \\
             0, \quad &2 < \vert x \vert, \\
             2 - \vert x \vert \quad &1 \leq \vert x \vert \leq 2,
         \end{cases}
     \end{equation*}
-    and $\phi_m: \R^d \to \R$ as the prodoct of shifted and scaled versions of $\psi$, which inherit its local
+    and $\phi_{\vec{m}}: \R^d \to \R$ as the product of shifted and scaled versions of $\psi$, which inherit its local
     support, i.e.
     \begin{equation*}
-        \phi_m(x) := \prod_{l=1}^d \psi \left( 3N \left( x_l - \frac{m_l}{N} \right) \right),
+        \phi_{\vec{m}}(x) := \prod_{l=1}^d \psi \left( 3N \left( x_l - \frac{m_l}{N} \right) \right),
     \end{equation*}
-    for $m = (m_1, \dots, m_d) \in \{0, \dots, N\}^d$. 
-    This function satisfies our first three parts of the Lemma directly: Take one $x_i$ for some $i = 1, \dots, d$.
+    for $\vec{m} = (m_1, \dots, m_d) \in \{0, \dots, N\}^d$ and $x = (x_1, \dots, x_d) \in \R^d$. 
+    This function satisfies the properties (1.), (2.) and (3.) directly. In fact, let $x_i \in \R$ arbitrary 
+    for some $i = 1, \dots, d$.
     Now we get that $\psi(3N(x_i - (m_i/N))) \in [-2, 2]$, since $\psi$ has support of $[-2, 2]$. This gives us
     \begin{equation*}
-        x \in \left[\frac{m}{N} - \frac{2}{3N}, \frac{m}{N} + \frac{2}{3N}\right],
+        x_i \in \left[\frac{m_i}{N} - \frac{2}{3N}, \frac{m_i}{N} + \frac{2}{3N}\right],
     \end{equation*}
-    yielding the third property, as we took $i$ arbitrarily. Simultaneously we use the zero product property,
-    and the fact, that the range of $\psi$ is $[0, 1]$ to get the first property. Defining $z_i := 3Nx_i$, we
+    yielding the property (3.), as we took $i$ arbitrarily. Simultaneously, we use the zero product law,
+    and the fact, that the range of $\psi$ is $[0, 1]$ to get property (1.). To prove property (2.) let $z_i := 3Nx_i$. Then we
     can rewrite for any $N$ the one-dimensional function 
     \begin{equation*}
-        S(x_i) := \sum_{m_i = 0}^N \psi\left( 3N \left( x_i - \frac{m_i}{N} \right) \right)\quad \text{into the function} \quad
-        \tilde{S}(z_i) := \sum_{m_i=0}^N \psi(z_i - 3m_i), 
+        S_i(x_i) := \sum_{m_i = 0}^N \psi\left( 3N \left( x_i - \frac{m_i}{N} \right) \right)\quad \text{into the function} \quad
+        \tilde{S}_i(z_i) := \sum_{m_i=0}^N \psi(z_i - 3m_i).
     \end{equation*}
-    that intern gives us the wanted result of $\tilde{S}(z_i) = 1$ for any $z_i \in [0, 3N]$, because the
-    least distance between points is $3$, which means going forwards or backwards either lands one outside the support
-    of the function, if $z_i \in [-1, 1]$, or it adds both third case values, i.e. setting $z_i \in [1, 2]$ w.l.o.g
+    In turn, this gives us the desired result of $\tilde{S}_i(z_i) = 1$ for any $z_i \in [0, 3N]$. This is due to the
+    distance between shifts to the input being $3$. This means 
+    going forwards or backwards by more than that lands one in the same situation. 
+    Hence, we only consider two cases without loss of generality. If $z_i \in [-1, 1]$, we directly get $1$.
+    For $z_i \in [1, 2]$, we get
     \begin{equation*}
         \psi(z_i) + \psi(z_i - 3) = (2 - z_1) + (2 + (z_i - 3)) = 1.
     \end{equation*}
-    Now we can extrapolate this result to $S$ by a simple scaling argument and then use Fubini
-    and the factorization of the sum over products to get
+    We visualize this part of the proof in Figure (\ref{fig:psi-shifts}).
+    Now we can extrapolate this result to $S_i$ by a simple scaling argument. Afterwards, we rearrange
+    and use the factorization of the sum over products to get
     \begin{equation*}
-        \sum_{m \in \{0, \dots, N\}^d} \phi_m(x) = \sum_{m_1 = 0}^N \cdots \sum_{m_d = 0}^N \prod_{l=1}^d
+        \sum_{\vec{m} \in \{0, \dots, N\}^d} \phi_{\vec{m}}(x) = \sum_{m_1 = 0}^N \cdots \sum_{m_d = 0}^N \prod_{l=1}^d
         \psi\left( 3N \left( x_l - \frac{m_l}{N} \right) \right) = \prod_{l=1}^d \left( \sum_{m_l = 0}^N
         \psi\left( 3N \left( x_l - \frac{m_l}{N} \right) \right) \right) = 1.
     \end{equation*}
-    Finally we are only left with proving the forth property. For this, we need to construct a neural network 
+
+    \begin{figure}[tb]
+        \centering
+        \begin{tikzpicture}
+          \begin{axis}[
+            width=0.47\textwidth,
+            height=0.4\textwidth,
+            xmin=-4, xmax=4, ymin=0, ymax=1.05,
+            axis x line=bottom, axis y line=left,
+            xtick={-3,-2,-1,0,1,2,3}, ytick={0,0.5,1},
+            xlabel={$z$}, ylabel={},
+            legend style={
+              at={(1.02,1)}, anchor=north west,
+              draw=none, fill=none, font=\footnotesize
+            },
+            legend cell align=left,
+            clip=false,
+            domain=-4:4, samples=400,
+            declare function={
+              psi(\x)= (abs(\x)>2) ? 0 : (abs(\x)<1 ? 1 : 2-abs(\x));
+            }
+          ]
+            \addplot[thick, mplblue]   {psi(x)};   
+            \addlegendentry{$\psi(z)$}
+            \addplot[thick, mplgreen]  {psi(x+3)}; 
+            \addlegendentry{$\psi(z+3)$}
+            \addplot[thick, mplorange] {psi(x-3)}; 
+            \addlegendentry{$\psi(z-3)$}
+      
+            \addplot [fill=mplblue, fill opacity=0.06, draw=none] coordinates {(-1,0) (-1,1) (1,1) (1,0)};
+          \end{axis}
+        \end{tikzpicture}
+        \caption{Shifted copies at step size $3$.}
+        \label{fig:psi-shifts}
+      \end{figure}
+
+    Finally, it only remains to prove property (4.). For this we need to construct a neural network 
     $\Phi_\psi$, that realizes $\psi$. Let
     \begin{equation*}
         A_1 := \begin{bmatrix}
@@ -1138,8 +1254,8 @@ of the approximation of polynomials with neural networks.
         \end{bmatrix}, \quad
         b_2 := 0,
     \end{equation*}
-    define the neural network $\Phi_\psi = ((A_1, b_1), (A_2, b_2))$. With distinction by cases one can easily
-    see, that for all $x \in \R$
+    define the neural network $\Phi_\psi = ((A_1, b_1), (A_2, b_2))$. Then, by using the identity $\euknorm{x} = \rho(x)+\rho(-x)$, 
+    it can be shown, that for all $x \in \R$
     \begin{align*}
         R_\rho(\Phi_\psi)(x) &= A_2(\rho(A_1x + b_1)) + b_2 \\
         &= A_2\left(\begin{bmatrix}
@@ -1148,28 +1264,28 @@ of the approximation of polynomials with neural networks.
         &= \rho(x + 2) + \rho(x - 2) - (\rho(x + 1) + \rho(x - 1)) \\
         &= \psi(x).
     \end{align*}
-    Furthermore the complexity of this network is $2$ layers, $12$ active weights and $6$ neurons.
-    Let $\Phi_{m, l}$ be a neural network with $d$-dimensional input and one-dimensional output, such that
+    The complexity of this network is $2$ layers, $12$ active weights and $6$ neurons.
+    Let $\Phi_{\vec{m}, l}$ be a neural network with $d$-dimensional input and one-dimensional output, such that
     \begin{equation*}
-        R_\rho(\Phi_{m, l})(x) = 3N \left( x_l - \frac{m_l}{N} \right), 
-        \quad \text{for all } x \in \R^d \text{ and } m \in \{0, \dots, N\}^d.
+        R_\rho(\Phi_{\vec{m}, l})(x) = 3N \left( x_l - \frac{m_l}{N} \right), 
+        \quad \text{for all } x \in \R^d \text{ and } \vec{m} \in \{0, \dots, N\}^d.
     \end{equation*}
     Then the complexity of this network is $1$ layer, $2$ active weights and $d+1$ neurons. Finally realizing
     that the composition of both these functions, i.e. the realization of the concatenation of networks, would yield
-    each factor for the wanted function. If we now parallelize this concatenation, we get the forth property
-    by definition, i.e. let 
+    each factor for the desired function. If we now parallelize this concatenation, we get property (4.)
+    by definition. In fact, let 
     \begin{equation*}
-        \Phi_m := P(\Phi_\psi \odot \Phi_{m, l} \, \vert \, l = 1, \dots, d),
+        \Phi_{\vec{m}} := P(\Phi_\psi \odot \Phi_{\vec{m}, l} \, \vert \, l = 1, \dots, d),
     \end{equation*}
     since then
     \begin{equation*}
-        \prod_{l=1}^d [R_\rho(\Phi_m)]_l(x) = \phi_m(x), \quad \text{for all }x \in \R^d.
+        \prod_{l=1}^d [R_\rho(\Phi_{\vec{m}})]_l(x) = \phi_{\vec{m}}(x), \quad \text{for all }x \in \R^d.
     \end{equation*}
-    This network now has $d$-dimensional input and output and the complexity, using both Lemma (\ref{lemma: network concatenation}) and Lemma (\ref{lemma: network parallelization}),
-    of $3$ layers, at most $(12 + 2) \cdot 2 \cdot d = 28 d$ active weights, and at most $9d$ neurons.
+    This network now has $d$-dimensional input and output and by Lemma (\ref{lemma: network concatenation}) and Lemma (\ref{lemma: network parallelization}),
+    has $3$ layers, at most $(12 + 2) \cdot 2 \cdot d = 28 d$ active weights, and at most $9d$ neurons.
 \end{proof}
 
-With these auxiliary results, we may finally start with the statement and proof of the Yarotsky Theorem.
+With these auxiliary results, we may finally state and proof the Yarotsky Theorem.
 
 \begin{theorem}[Yarotsky Theorem] \label{theo: yarotsky}
     Let $d \in \N, n \in \N, B = 1$ and $f \in \Fcal_{n ,d , \infty, B}$ some arbitrary function.
@@ -1189,47 +1305,47 @@ With these auxiliary results, we may finally start with the statement and proof 
     \end{enumerate}
 \end{theorem}
 \begin{proof}
-    Given the definition of the functions $\phi_m \in \Psi$ as constructed in the 
-    proof of Lemma (\ref{lemma: partition of unity}), we want to structure the proof of this Theorem in
-    two sub-goals:
-    
-    The formulation of an approximate function $f_1$ for $f$ using the partition of unity and
-    an adequate Taylor expansion, 
-    and the subsequent approximation of that function $f_1$ with a neural network $\Phi_{f_1}$ 
+    Let $\phi_{\vec{m}} \in \Psi$ be as constructed in the 
+    proof of Lemma (\ref{lemma: partition of unity}). We will divide the proof of this theorem into
+    two parts.
+    First, we will formulate an approximate function $f_1$ for $f$ using the partition of unity and
+    an adequate Taylor expansion. Secondly, we will find
+    the subsequent approximation of that function $f_1$ by a neural network $\Phi_{f_1}$
     using the $\tilde{\times}$-multiplication of Proposition (\ref{prop: quasi multiplication}).
 
     \vspace{0.5cm}
     \noindent\textit{Step 1: Taylor Expansion}
     
-    For any $m \in \{0, \dots, N\}^d$, consider the $(n-1)$-Taylor polynomial for the function $f$ at
-    $x_0 = m/N$:
+    For any $\vec{m} \in \{0, \dots, N\}^d$, consider the $(n-1)$-Taylor polynomial for the function $f$ at
+    $x_0 = \vec{m}/N$:
     \begin{equation*}
-        P_m(x) = \sum_{n: \, \vert n \vert < n} \frac{D^n f(x)}{n!} \bigg\vert_{x = \frac{m}{N}} \left( x - \frac{m}{N} \right)^n,
+        P_{\vec{m}}(x) = \sum_{\vec{n}: \, \vert \vec{n} \vert < n} \frac{D^{\vec{n}} f(x)}{\vec{n}!} 
+        \bigg\vert_{x = \frac{\vec{m}}{N}} \left( x - \frac{\vec{m}}{N} \right)^{\vec{n}},
         \quad \text{for } x \in \R^d,
     \end{equation*}
-    with the conventions $n! = \prod_{l=1}^d n_l!$ and $(x - m/N)^n = \prod_{l=1}^d(x_l - \frac{m_l}{N})^{n_l}$.
-    With the partition of unity of Lemma (\ref{lemma: partition of unity}), we can then set any function,
-    as a linear combination of its point-values and the partition function. Especially this allows us
+    with the conventions $\vec{n}! = \prod_{l=1}^d n_l!$ and $(x - \vec{m}/N)^{\vec{n}} = \prod_{l=1}^d(x_l - \frac{m_l}{N})^{n_l}$.
+    With the partition of unity of Lemma (\ref{lemma: partition of unity}), we can then define any function,
+    as a linear combination of its point-values and the partition function. In particular, this allows us
     to define
     \begin{equation*}
-        f = \sum_{m \in \{0, \dots, N\}^d} \phi_m f, \quad \text{and} \quad f_1 = \sum_{m \in \{0, \dots, N\}^d} \phi_m P_m.
+        f = \sum_{\vec{m} \in \{0, \dots, N\}^d} \phi_{\vec{m}} f, \quad \text{and} \quad f_1 = \sum_{\vec{m} \in \{0, \dots, N\}^d} \phi_{\vec{m}} P_{\vec{m}}.
     \end{equation*}
-    Now we can exploit the properties given by Lemma (\ref{lemma: partition of unity}), as follows;
-    firstly use the $\inftynorm{\phi_m} = 1$ property in Line (\ref{align: f-f1 eq 1}), then one can estimate the 
-    maximal number of partitions with $2^d$ in Line (\ref{align: f-f1 eq 2}). After this we take the
-    simple Lagrange remainder \notdone{argue this} in Line (\ref{align: f-f1 eq 3}).
-    Lastly one can simply argue with $f \in \Fcal_{n, d, \infty, B=1}$ in Line (\ref{align: f-f1 eq 4}).
+    Now we can utilize the properties given by Lemma (\ref{lemma: partition of unity}), as follows;
+    firstly use the $\inftynorm{\phi_{\vec{m}}} = 1$ property in Step (\ref{align: f-f1 eq 1}). Then one can estimate the 
+    maximal number of partitions with $2^d$ in Step (\ref{align: f-f1 eq 2}). Afterwards, we take the
+    simple Lagrange remainder in Step (\ref{align: f-f1 eq 3}).
+    Lastly we argue with $f \in \Fcal_{n, d, \infty, B=1}$ in Step (\ref{align: f-f1 eq 4}).
     \begin{align}
-        \inftynorm{f - f_1} &\leq \sum_{m \in \{0, \dots, N\}^d} 
-        \inftynorm{\phi_m \left( f - P_m \right)} \\
-        &\leq \sum_{m: \left\vert x_l - \frac{m_l}{N} \right\vert < \frac{1}{N}, \, \forall l = 1, \dots, d} 
-        \inftynorm{f - P_m} \label{align: f-f1 eq 1}\\
-        &\leq 2^d \max\limits_{m: \left\vert x_l - \frac{m_l}{N} \right\vert < \frac{1}{N}, \, \forall l = 1, \dots, d}
-        \inftynorm{f - P_m} \label{align: f-f1 eq 2}\\
+        \inftynorm{f - f_1} &\leq \sum_{\vec{m} \in \{0, \dots, N\}^d} 
+        \inftynorm{\phi_{\vec{m}} \left( f - P_{\vec{m}} \right)} \\
+        &\leq \sum_{\vec{m}: \left\vert x_l - \frac{m_l}{N} \right\vert < \frac{1}{N}, \, \forall l = 1, \dots, d} 
+        \inftynorm{f - P_{\vec{m}}} \label{align: f-f1 eq 1}\\
+        &\leq 2^d \max\limits_{\vec{m}: \left\vert x_l - \frac{m_l}{N} \right\vert < \frac{1}{N}, \, \forall l = 1, \dots, d}
+        \inftynorm{f - P_{\vec{m}}} \label{align: f-f1 eq 2}\\
         &\leq \frac{2^d d^n}{n!} \left( \frac{1}{N} \right)^n \, 
-        \max\limits_{n: \, \vert n \vert = n} \inftynorm{D^n f} 
+        \max\limits_{\vec{n}: \, \vert \vec{n} \vert = n} \inftynorm{D^{\vec{n}} f} 
         \label{align: f-f1 eq 3}\\
-        &\leq \frac{2^d d^n}{n!} \left( \frac{1}{N} \right)^n \label{align: f-f1 eq 4}
+        &\leq \frac{2^d d^n}{n!} \left( \frac{1}{N} \right)^{\vec{n}} \label{align: f-f1 eq 4}
     \end{align}
     Now taking
     \begin{equation*}
@@ -1243,21 +1359,21 @@ With these auxiliary results, we may finally start with the statement and proof 
     \vspace{0.5cm}
     \noindent\textit{Step 2: Approximation by a Neural Network}
 
-    The polynomial function $f_1$ may be further expressed in a different form, which allows us to
-    seperately compare it to a potential network approximation using the definition of $\phi_m$, i.e. for
-    $x \in \R^d$ 
+    The polynomial function $f_1$ can be written out to underline its construction, which only utilized 
+    the functions $\phi_{\vec{m}}$ and multiplications. In fact, 
     \begin{equation} \label{eq: yarotsky f_1 def}
-        f_1(x) = \sum_{m \in \{0, \dots, N\}^d} \sum_{n: \, \vert n \vert < n} a_{m, n} 
-        \underbrace{\left( \phi_m(x) \left(x - \frac{m}{N}\right)^n \right)}_{=: f_{m, n}(x)}.
+        f_1(x) = \sum_{\vec{m} \in \{0, \dots, N\}^d} \sum_{\vec{n}: \, \vert \vec{n} \vert < n} a_{\vec{m}, \vec{n}} 
+        \underbrace{\left( \phi_{\vec{m}}(x) \left(x - \frac{\vec{m}}{N}\right)^{\vec{n}} \right)}_{=: f_{\vec{m}, \vec{n}}(x)},
     \end{equation}
-    This expansion now has at most $d^n (N + 1)^d$ terms containing $f_{m, n}$, since 
+    for all $x \in \R^d$.
+    This expansion has at most $d^n (N + 1)^d$ terms containing $f_{\vec{m}, \vec{n}}$, since 
     \begin{equation*}
-        \left\vert\left\{ n \in \{0, \dots, n - 1\}^d \, : \, \vert n \vert < n\right\}\right\vert \\
-        \leq \left\vert\left\{ n \in \{0, \dots, n - 1\}^d \right\}\right\vert = d^n,
+        \left\vert\left\{ \vec{n} \in \{0, \dots, n - 1\}^d \, : \, \vert \vec{n} \vert < n\right\}\right\vert \\
+        \leq \left\vert\left\{ \vec{n} \in \{0, \dots, n - 1\}^d \right\}\right\vert = d^n,
     \end{equation*}
-    and obviously $\vert\{m = \{0, \dots, N\}^d \}\vert = (N + 1)^d$. We note, that we take $M = d + n$ for the
-    definition of the network multplication, i.e. $\tilde{\times}: (-M, M)^2 \to \R$. This is done, because
-    we have as an obvious consequence from the fact, that if $x, y \in (-1, 1)$, that
+    and obviously $\vert\{\vec{m} = \{0, \dots, N\}^d \}\vert = (N + 1)^d$. Note, that we take $M = d + n$ to define 
+    the network multiplication, i.e. $\tilde{\times}: (-M, M)^2 \to \R$. This is done, because 
+    if $x, y \in (-1, 1)$, then
     \begin{equation*}
         \vert \, R_\rho(\tilde{\times})(x, y) - x y \, \vert \leq \delta \quad
         \implies \quad
@@ -1267,96 +1383,97 @@ With these auxiliary results, we may finally start with the statement and proof 
     $\tilde{\times}$ for $(d + n - 1)$-times can then propagate the error to at most $M = (d + n)$ 
     upon the last realization of $\tilde{\times}$.
     
-    As aforementioned, we can now compare each
-    function $f_{m,n}$ pointwise to a realization of a network approximating at most $n - 1$ of the multiplications
-    needed for $\prod_{l=1}^d (x_l - (m_l / N))^{n_l}$, as we know that $\sum_{l=1}^d n_l < n$, 
-    $d$ additional multiplications for the realization
-    of the function $\phi_m$ and one multiplication for putting it together. Hence we define a neural
-    network $\Phi^{m, n}_{f_1}$ with $d$-dimensional input and one dimensional output via
+    As aforementioned, we can now infer a neural network, that has a comparable realization to the
+    function $f_{\vec{m},\vec{n}}$. This network will be a concatenation of the quasi-multiplication networks $\tilde{\times}$.
+    It uses $(n - 1)$ multiplications for the estimated realization of $\prod_{l=1}^d (x_l - (m_l / N))^{n_l}$, since 
+    we know that $\sum_{l=1}^d n_l < n$. Additionally,
+    $d$ multiplications for the estimated realization
+    of the function $\phi_{\vec{m}}$ and one multiplication to put both together. Hence, we define a neural
+    network $\Phi^{\vec{m}, \vec{n}}_{f_1}$ with $d$-dimensional input and one dimensional output via
     \begin{multline*}
-        R_\rho(\Phi^{m, n}_{f_1})(x) = R_\rho(\tilde{\times})\bigg( [R_\rho(\Phi_m)]_1(x_1), 
-        R_\rho(\tilde{\times})\bigg([R_\rho(\Phi_m)]_2(x_2), \dots \\
-        R_\rho(\tilde{\times}) \bigg([R_\rho(\Phi_m)]_d(x_d), R_\rho(\tilde{\times})
+        R_\rho(\Phi^{\vec{m}, \vec{n}}_{f_1})(x) = R_\rho(\tilde{\times})\bigg( [R_\rho(\Phi_{\vec{m}})]_1(x_1), 
+        R_\rho(\tilde{\times})\bigg([R_\rho(\Phi_{\vec{m}})]_2(x_2), \dots \\
+        R_\rho(\tilde{\times}) \bigg([R_\rho(\Phi_{\vec{m}})]_d(x_d), R_\rho(\tilde{\times})
         \bigg(x_1 - \frac{m_1}{N}, \dots \\
         R_\rho(\tilde{\times}) \bigg( x_{d-1} - \frac{m_{d-1}}{N}, R_\rho(\tilde{\times})\bigg(
         x_d - \frac{m_d}{N}, \dots \\
         R_\rho(\tilde{\times}) \bigg(x_d - \frac{m_d}{N},  x_d - \frac{m_d}{N}\bigg)
-        \bigg)\bigg)\bigg)\bigg) \bigg)\bigg).
+        \bigg)\bigg)\bigg)\bigg) \bigg)\bigg),
     \end{multline*}
-    for $x = (x_1, \dots, x_d) \in \R^d$ where we used $\Phi_m$ as in the proof Lemma (\ref{lemma: partition of unity}).
-    This network contains at most $(d + n)$ concatenations of $\tilde{\times}$, 
-    and thus by Lemma (\ref{lemma: partition of unity}) and its constant $C > 0$, Lemma (\ref{lemma: network concatenation}),
-    and Proposition (\ref{prop: quasi multiplication}) and its constants $c_0, c_1(d, n) > 0$,
+    for $x = (x_1, \dots, x_d) \in \R^d$. Here we used $\Phi_{\vec{m}}$ as in the proof of Lemma (\ref{lemma: partition of unity}).
+    This network contains at most $(d + n)$ concatenations of $\tilde{\times}$.
+    Thus, by Lemma (\ref{lemma: partition of unity}), Lemma (\ref{lemma: network concatenation}),
+    Proposition (\ref{prop: quasi multiplication}) and the constants $C, c_0, c_1(d, n) > 0$ as mentioned, we obtain
     \begin{equation} \label{eq: yarotsky complexity with delta}
-        L_{\Phi^{m, n}_{f_1}} \leq 3 c_0 (d + n) \left(\ln\left(\frac{1}{\delta}\right) + (d + n) c_1 \right), \quad
-        \omega_{\Phi^{m, n}_{f_1}} \leq C 2(d + n) d \left(\ln\left(\frac{1}{\delta}\right) + 2(d + n) C \right).
+        L_{\Phi^{\vec{m}, \vec{n}}_{f_1}} \leq 3 c_0 (d + n) \left(\ln\left(\frac{1}{\delta}\right) + (d + n) c_1 \right), \quad
+        \omega_{\Phi^{\vec{m}, \vec{n}}_{f_1}} \leq C 2(d + n) d \left(\ln\left(\frac{1}{\delta}\right) + 2(d + n) C \right),
     \end{equation}
-    for a given precision level $\delta \in (0, 1)$, where the number of neurons are of the same order as 
+    for an a priori fixed precision level $\delta \in (0, 1)$. Note, that the number of neurons are of the same order as 
     the number of active weights.
 
-    The error comparison of $R_\rho(\Phi^{m, n}_{f_1})$ and $f_{m, n}$ can then be done by counting the maximal depth of 
-    usages of the network $\tilde{\times}$,
+    The error comparison of $R_\rho(\Phi^{\vec{m}, \vec{n}}_{f_1})$ and $f_{\vec{m}, \vec{n}}$ can then be done by counting the maximal depth of 
+    usage of the network $\tilde{\times}$,
     which is $(d + n)$ as shown above, and the estimate of 
     \begin{equation*}
-        \bigg\vert \, \left(x - \frac{m}{N}\right) \, \bigg\vert \leq 1, \quad 
+        \bigg\vert \, \left(x - \frac{\vec{m}}{N}\right) \, \bigg\vert \leq 1, \quad 
         \vert \, \psi(x) \, \vert \leq 1, 
     \end{equation*} 
-    for all $x \in (0, 1)^d$. Then directly
+    for all $x \in (0, 1)^d$. Then it follows directly, that
     \begin{equation*}
-        \inftynorm{R_\rho(\Phi_{f_1}^{m, n}) - f_{m,n}} \leq (d + n) \delta.
+        \inftynorm{R_\rho(\Phi_{f_1}^{\vec{m}, \vec{n}}) - f_{\vec{m},\vec{n}}} \leq (d + n) \delta.
     \end{equation*}
-    Now since, as mentioned below Equation (\ref{eq: yarotsky f_1 def}), $f_1$ has at most $d^n (N + 1)^d$
-    terms, but since any $x \in \R^d$ can be only in the support of at most $2^d$ functions $\phi_m$ by the
+    As mentioned below Equation (\ref{eq: yarotsky f_1 def}), $f_1$ has at most $d^n (N + 1)^d$
+    terms. But since any $x \in \R^d$ can be only in the support of at most $2^d$ functions $\phi_{\vec{m}}$ by the
     second statement in Proposition (\ref{prop: quasi multiplication}), the
-    sum going over all $m$ can be reduced to only those, which are non-zero, which we employ in 
-    Line (\ref{align: yarotsky r-f1 1}). This brings
-    $(N+1)^d \to 2^d$, supporting the equation in Line (\ref{align: yarotsky r-f1 2}). Setting
+    sum going over all $\vec{m}$ can be reduced to only those, which are non-zero. We employ this argument in the 
+    upcoming Step (\ref{align: yarotsky r-f1 1}). This improves the amount of summands from
+    $(N+1)^d$ to $2^d$, which we will use in Step (\ref{align: yarotsky r-f1 2}). Setting
     \begin{equation*}
         \delta = \frac{\varepsilon}{2 \cdot 2^{d} d^n(d + n)}
     \end{equation*}
     allows us to finally assert, using the bound of Equation (\ref{eq: yarotsky complexity with delta})
-    for Line (\ref{align: yarotsky r-f1 3}),
+    in Step (\ref{align: yarotsky r-f1 3}), that
     \begin{align}
         \inftynorm{R_\rho(\Phi_{f_1}) - f_1}
-        &\leq \sum_{m \in \{0, \dots, N\}^d} 
-        \sum_{n: \, \vert n \vert < n} \vert a_{m, n}  \vert \,
-        \inftynorm{R_\rho(\Phi_{f_1}^{m, n}) - f_{m, n}} \\
-        &= \sum_{m: \, x \in \operatorname{supp}(\phi_m)} 
-        \sum_{n: \, \vert n \vert < n} \vert a_{m, n} \vert \,
-        \inftynorm{R_\rho(\Phi_{f_1}^{m, n}) - f_{m, n}} \label{align: yarotsky r-f1 1}\\
-        &\leq 2^d d^n \max\limits_{m: \, x \in \operatorname{supp}(\phi_m)} \max\limits_{n: \, \vert n \vert < n}
-        \inftynorm{R_\rho(\Phi_{f_1}^{m, n}) - f_{m, n}} \label{align: yarotsky r-f1 2}\\
+        &\leq \sum_{\vec{m} \in \{0, \dots, N\}^d} 
+        \sum_{\vec{n}: \, \vert \vec{n} \vert < n} \vert a_{\vec{m}, \vec{n}}  \vert \,
+        \inftynorm{R_\rho(\Phi_{f_1}^{\vec{m}, \vec{n}}) - f_{\vec{m}, \vec{n}}} \\
+        &= \sum_{\vec{m}: \, x \in \operatorname{supp}(\phi_{\vec{m}})} 
+        \sum_{\vec{n}: \, \vert \vec{n} \vert < n} \vert a_{\vec{m}, \vec{n}} \vert \,
+        \inftynorm{R_\rho(\Phi_{f_1}^{\vec{m}, \vec{n}}) - f_{\vec{m}, \vec{n}}} \label{align: yarotsky r-f1 1}\\
+        &\leq 2^d d^n \max\limits_{\vec{m}: \, x \in \operatorname{supp}(\phi_{\vec{m}})} \max\limits_{\vec{n}: \, \vert \vec{n} \vert < n}
+        \inftynorm{R_\rho(\Phi_{f_1}^{\vec{m}, \vec{n}}) - f_{\vec{m}, \vec{n}}} \label{align: yarotsky r-f1 2}\\
         &\leq 2^d d^n (d + n) \delta \label{align: yarotsky r-f1 3} \\
         &= \frac{\varepsilon}{2}. \label{align: yarotsky r-f1 4}
     \end{align}
-    Our knowledge of $\delta$ together with at most $d^n (N + 1)^d = \Ocal(\varepsilon^{-d/n})$ parallel networks 
-    with one additive layer and the fact that
+    Given this $\delta$, there are at most $d^n (N + 1)^d = \Ocal(\varepsilon^{-d/n})$ parallel networks 
+    with one additive layer. Moreover, the fact that
     generally we have $c'\ln(1 / \delta + c'') \leq c''' \ln(1 / \delta)$ 
-    for $c', c'' > 0$ and $c''' \geq c' \ln(1 / c'')$, gets us the final complexity of $\Phi_{f_1}$ 
-    from the starting point of
-    Equation (\ref{eq: yarotsky complexity with delta}), i.e.
+    for $c', c'' > 0$ and $c''' \geq c' \ln(1 / c'')$, gets us the final complexity of $\Phi_{f_1}$ by
+    Equation (\ref{eq: yarotsky complexity with delta}). In fact,
     \begin{equation*}
         L_{\Phi_{f_1}} \leq c \ln(1 / \varepsilon), \quad \omega_{\Phi_{f_1}} \leq c \varepsilon^{-d/n} \ln(1/\varepsilon),
-        \quad N_{\Phi_{f_1}} \leq c \varepsilon^{-d/n} \ln(1/\varepsilon).
+        \quad N_{\Phi_{f_1}} \leq c \varepsilon^{-d/n} \ln(1/\varepsilon),
     \end{equation*}
     with some constant $c = c(d, n) > 0$.
 
     Using the triangle inequality, we can show that this network indeed satisfies the wanted precision bound with
-    both errors stemming from Equation () and Equation () respectively:
+    both errors as in the last Step (\ref{align: f-f1 eq 4}) and the last Step (\ref{align: yarotsky r-f1 4}), respectively:
     \begin{equation*}
         \inftynorm{f - R_\rho(\Phi_{f_1})} \leq \inftynorm{f - f_1} + \inftynorm{f_1 - R_\rho(\Phi_{f_1})}
         \leq \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.
     \end{equation*}
 \end{proof}
 
-We may even expand Yarotsky to cover a more general case, where $f \in \Fcal_{n, d, p, B}$ for arbitrarily
-$1 \leq p \leq \infty$ and $B > 0$ and the norm, to which we assert the precision, an arbitray Sobolev norm.
-As a matter of fact, we will denote, that we use Yarotsky, even if $B \neq 0$, to clearly seperate the
+We may extend Yarotsky to cover a more general case, where $f \in \Fcal_{n, d, p, B}$ for arbitrarily
+$1 \leq p \leq \infty$ and $B > 0$ and the norm, to which we assert the precision, is an arbitrary Sobolev norm.
+As a matter of fact, we will denote, that we use Yarotsky, even if $B \neq 0$, to clearly separate the
 extension to the more general Sobolev-Slobodeckij norm, as long as the other prerequisites are met.
 This extension is presented by Gühring et al. \cite{gühring2019nn}.
 
 \begin{theorem}[Gühring Theorem] \label{theo: gühring}
-    Let $d \in \N, n \in \N_{\geq 2}, B > 0$ and $0 \leq s \leq 1$ and $f \in \Fcal_{n ,d , p, B}$ some arbitrary function.
+    Let $d \in \N, n \in \N_{\geq 2}, B > 0, 1 \leq p \leq \infty$ 
+    and $0 \leq s \leq 1$ and $f \in \Fcal_{n ,d , p, B}$ some arbitrary function.
     Then there is a constant $c = c(d, n, p, B, s) > 0$ with the following properties:
     
     For any $\varepsilon \in (0, 1)$, there is a neural network architecture 
@@ -1373,27 +1490,22 @@ This extension is presented by Gühring et al. \cite{gühring2019nn}.
     \end{enumerate}
 \end{theorem}
 \begin{proof}[Proof Sketch]
-    Considering that all of the tools used for this proof will neither be of any use to the main results in
-    this paper nor to the general structure, we will only sketch the general steps necessary to achieve
-    it for the interested reader:
-
+    We will only sketch the general steps of the proof.
     \begin{enumerate}
         \item The first step is to expand the Proposition (\ref{prop: approximation by square}) to the 
-        $W^{1, \infty}(0,1)$-norm. This is done by simple calculation, since an explicit construction is being made.
+        $W^{1, \infty}(0,1)$-norm. This is done by straight forward calculation.
         \item This can be applied to Proposition (\ref{prop: quasi multiplication}) in the same way. Additionally
-        we need to bound $\vert\,R_\rho(\tilde{\times})\, \vert_{W^{1, \infty}}((0,1)^2)$, since this is required in
-        for the bound on the collective error under the Taylor expanded function in the end.
-        \item The most import additional step is to bound the switch of norms from $W^{1, p}((0,1)^d)$ to 
-        $W^{s, p}((0,1)^d)$ of a function being approximated by the partition of unity, that we discussed
-        in Lemma (\ref{lemma: partition of unity}). This gives
+        we need to bound $\euknorm{R_\rho(\tilde{\times})}_{W^{1, \infty}((0,1)^2)}$, in order to
+        estimate the collective error under the Taylor expanded function.
+        \item The crucial next step is to prepare the switch of norms using
         \begin{equation*}
             \snorm{f - f_N}[s][p][d] \leq C \left( \frac{1}{N} \right)^{n-s} \snorm{f}[n][p][d],
         \end{equation*}
-        for a partition of unity of size $N$. It is worth noting, that this factor in front is responsible for the
-        different approximation in regard to weights and neurons, since it influences the necessary choice of $\delta$.
-        \item The last step, which differs greatly from the proof of Yarotsky Theorem (\ref{theo: yarotsky}), is
-        the approximation of a sum of localized polynomials with a neural network. Here the challenge lies again in
-        the control of the derivatives.
+        for a partition of unity of size $N$. It is worth to note, that the factor in front influences
+        the choice of $\delta$ and thus is responsible for the
+        different approximation in regard to weights and neurons.
+        \item The last step, is
+        the approximation of a sum of localized polynomials with a neural network. This requires control of the derivatives.
     \end{enumerate}
 \end{proof}
 
@@ -1406,59 +1518,62 @@ This extension is presented by Gühring et al. \cite{gühring2019nn}.
 
 
 We have now introduced the framework for analytical discussion regarding complexity and potential of neural networks.
-What is clearly missing however, is the practical "achievement" of a true neural network $\Phi$ fitting the 
-function in question from some fixed
+It still remains to achieve a practical neural network $\Phi$ fitting the 
+function in question for some fixed
 architecture $\Acal_\Phi$. This crucial step in the process of 
-development is refered to as \emph{module training} or \emph{statistical learning}.
+development is referred to as \emph{module training} or \emph{statistical learning}.
 
-In order to quantify the "falseness" of a potential attribution, we need a function, that compares a true solution
-to an output of the network operating with the true parameters connected to the true solution. We remark that
-the following two definitions are based upon the paper \cite{ciampiconi2024}, where the interested reader
+In order to quantify the "falseness" of a potential classification, we need a function, that compares a true solution
+to an output of the network. The following two definitions are 
+based on \cite{ciampiconi2024}, where the interested reader
 can find extensive terminology and currently used loss functions and their optimization techniques. 
 
 \begin{definition}[Feature and Label Space] \label{def: feature and label space}
-    Let $\mathcal{X}$ be the so-called \emph{feature space} and $\mathcal{Y}$ the \emph{label space} of the underlying
-    unknown function
+    Let $\mathcal{X}$ be the so-called \emph{feature space} and $\mathcal{Y}$ the \emph{label space}. Let further
     \begin{equation*}
-        f: \mathcal{X} \to \mathcal{Y},
+        f: \mathcal{X} \to \mathcal{Y}
     \end{equation*}
-    classifying each feature with a label. 
+    be the underlying \emph{true classification function},
+    mapping each feature to a label. 
 \end{definition}
 The general goal of all machine learning problems is to closely approximate that classification function $f$.
 
 \begin{definition}[Loss Function]
-    Given $f_\theta: \mathcal{X} \to \mathcal{Y}$ arbitrarily and a feature and label space as in Definition (\ref{def: feature and label space}) and a sample
-    $\{x_i, y_i\}_{i=1}^N \subset \mathcal{X} \times \mathcal{Y}$ for some $N \in \N$, we define
-    the general loss function as a mapping of $f(x_i)$ with its corresponding $y_i$ to a non-negative real number, i.e.
+    Let $\Xcal$ be a feature space, $\mathcal{Y}$ a label space, and $f:\Xcal \to \mathcal{Y}$ the underlying true
+    classification function.
+    Given some arbitrary function $\hat f_\theta: \mathcal{X} \to \mathcal{Y}$ and a sample set
+    $\{x_i, f(x_i)\}_{i=1}^N \subset \mathcal{X} \times \mathcal{Y}$ for some $N \in \N$, we define
+    the general loss function as
     \begin{equation*}
-        \Lcal(f_\theta \vert \{x_1, \dots, x_N\}, \{y_1, \dots, y_N\}) \in \R^+,
+        \Lcal(\hat f_\theta \vert \{x_1, \dots, x_N\}, \{f(x_1), \dots, f(x_N)\}) \in \R^+,
     \end{equation*}
-    such that for $f$ being the function from Definition (\ref{def: feature and label space}) for all $N \in \N$
+    such that for $f$ being the function from Definition (\ref{def: feature and label space})
     \begin{equation*}
-        \Lcal(f \vert \{x_1, \dots, x_N\}, \{y_1, \dots, y_N\}) = 0.
+        \Lcal(f \vert \{x_1, \dots, x_N\}, \{f(x_1), \dots, f(x_N)\}) = 0.
     \end{equation*}
 \end{definition}
 
 \begin{definition}[Neural Network Weights] \label{def: neural network weights}
-    Suppose for some $d, L \in \N$ we have a neural network architecture $\Acal_\Phi$ 
-    of input dimension $d$, $L$ layers and output 
-    dimension $N_L$ according to Definition (\ref{def: neural network}) and $\Phi$ be a neural network of
-    that architecture (see Definition (\ref{def: neural network architecture})).
-    Define the \emph{masks of $\Acal_\Phi$} via
+    Let $d, L, N_L \in \N$ and 
+    \begin{equation*}
+        \Phi = \left((A_1, b_1), \dots, (A_L, b_L)\right)
+    \end{equation*}
+    be some neural network with input dimension $d$, $L$ layers and output dimension $N_L$.
+    Define the \emph{masks of $\Phi$} via
     \begin{equation*}
         I_l := \{ (i, j) \, : \, [A_l]_{ij} \neq 0 \}, \quad J_l := \{i \, : \, [b_l]_i \neq 0 \},
     \end{equation*}
     for each layer $1 \leq l \leq L$. We further set the \emph{admissible weight space} as
     \begin{equation*}
-        \Theta(\Acal_\Phi) := \prod_{l=1}^L \left( \R^{I_l} \times \R^{J_l} \right),
+        \Theta(\Phi) := \prod_{l=1}^L \left( \R^{I_l} \times \R^{J_l} \right),
     \end{equation*}
-    and its elements $\theta \in \Theta(\Acal_\Phi)$ with
+    and its elements $\theta \in \Theta(\Phi)$ with
     \begin{equation*}
         \theta = \left( (\theta_{l, ij}^A)_{(i, j) \in I_l}, (\theta_{l, i}^b)_{i \in J_l} \right)_{l=1}^L.
     \end{equation*}
-    Then in each layer of $\Phi(\theta) = 
+    Then $\Phi(\theta) = 
     ((\hat A_1(\theta), \hat b_1(\theta)), \dots, (\hat A_L(\theta), \hat b_L(\theta)))$
-    the affine transformation can be uniquely retrieved via the lifting
+    can be uniquely defined for a choice of $\theta \in \Theta(\Phi)$ via the lifting
     \begin{equation*}
         \hat A_l(\theta)_{ij} = 
         \begin{cases}
@@ -1472,26 +1587,27 @@ The general goal of all machine learning problems is to closely approximate that
             0, & \text{otherwise}.
         \end{cases}
     \end{equation*}
-    Finally, this allows us to classify realizations of a neural network uniquely as
+    This allows us to classify realizations of a neural network uniquely by
     a map, when knowing
-    its architecture $\Acal_\Phi$ and a choice of neural network weights 
-    $\theta \in \Theta(\Acal_\Phi)$, via
+    its architecture and a choice of neural network weights 
+    $\theta \in \Theta(\Phi)$, via
     \begin{equation*}
         R_\rho(\Phi(\theta)) : \R^d \to \R^{N_L}.
     \end{equation*}
+    In particular, we know that if $\Phi$ has architecture $\Acal_\Phi$, then there is $e \in \Theta(\Phi)$,
+    such that $\Phi(e) = \Acal_\Phi$.
 \end{definition}
 
+This definition will be used to address the training and associated \emph{freezing} of networks for online computation.
+Namely, it provides the liberty to separate already trained, or frozen, neural networks from ones, that are still
+being optimized.
+Furthermore, it does not hinder any results, since all approximation theoretic results are posed in an 
+"existence of architecture" context anyway.
 
-We will often come in contact with this definition, since the goal of all approximation theory is to
-state theorems in terms of "existence of an architecture, such that there is a choice of neural
-network weights, attaining a close approximation of some function $f$". This definition of neural network
-weights relates any two neural networks with the same architecture, as simply the same one at
-a different stage of training, i.e. with a different choice of weights. With this in mind, the natural
-next question is, how one could achieve a better choice of weights after the first inital guess is not
-sufficient. This simple question is one, which can not be easily answered. However, we will
+The natural next question is, how such optimization might look. To briefly address this, we
 provide the reader with a crude overview of the techniques, we will be using in our implementation.
-The main goal here, is to minimize the associated loss function for some neural network $\Phi$ with architechture
-$\Acal_\Phi$ with regard to some optimal function $f$ we want to approximate, i.e.
+The main goal here, is to minimize the associated loss function for some neural network $\Phi$ 
+with regard to some true classification function $f$, i.e.
 \begin{equation*}
     \underset{\theta \in \Theta(\Acal_\Phi)}{\operatorname{arg \, min}} \,\, 
     \Lcal\left(R_\rho(\Phi(\theta)) \, \vert \,  \{x_1, \dots, x_N\}, \{f(x_1), \dots, f(x_N)\}\right)
@@ -1502,20 +1618,17 @@ schedulars is given.
 
 \paragraph{Batching}
 
-The term \emph{batch} refers to a stack of a sample $\{x_i, y_i\}_{i=1}^N \subset \Xcal \times \mathcal{Y}$.
+The term \emph{batch} refers to a stack of a sample $\{x_i, f(x_i)\}_{i=1}^N \subset \Xcal \times \mathcal{Y}$.
 This usually means, stacking along a new dimension. Conventionally this is the first dimension and the
 batches are chosen as large as possible, but such that a clustering of features is avoided.
 
 \paragraph{Normalization}
 
-Even though the world of approximation theoretic mathematics 
-does not care about the specific order of numbers, the world
-of computer science begs to differ, since scaling can affect the problem; in fact, regions of low magnitude
-can be ignored completely by the optimizer, when high value regions sway the loss function 
-in an overwhelming way, thus making the optimizer only consider those. This can be mitigated, by 
-a priori normalizing the input data and the output data. Consider, for example, a one-dimensional sample 
-$\{x_i, y_i\}_{i=1}^N \subset \R \times \R$,
-then we define the \emph{min-max normalization} via 
+In computer science the specific order of numbers is important, 
+since scaling can affect the problem. This can be mitigated, by 
+a priori normalizing the input data and the output data. For example, consider a one-dimensional sample 
+$\{x_i, y_i\}_{i=1}^N \subset \R \times \R$.
+Then the \emph{min-max normalization} for that sample is given via 
 \begin{equation*}
     x_i \mapsto \frac{x_i - x_\text{min}}{x_\text{max} - x_\text{min}} \in [0, 1], \quad y_i \mapsto 
     \frac{y_i - y_\text{min}}{y_\text{max} - y_\text{min}} \in [0, 1],
@@ -1525,13 +1638,13 @@ where we setup the maximum and minimum via
     x_\text{max} = \max\limits_{i = 1, \dots, N} x_i, \quad x_\text{min} = \min\limits_{i = 1, \dots, N} x_i,
 \end{equation*}
 and for $y_\text{min}, y_\text{max}$ accordingly. It is important to remember to 
-denormalize the solution for evalution and comparative analysis with the deterministic inverse
+denormalize the solution for evaluation and comparative analysis with the deterministic inverse
 operation. For our later example, we will switch this into
 a multidimensional setting.
 
 \paragraph{Optimizer}
 
-The choice of optimization method is crucial for the practical performance of neural networks. 
+The choice of an optimization method is crucial for the practical performance of neural networks. 
 The original gradient descent scheme with stochastic approximation dates 
 back to Robbins and Monro \cite{robbins1951}, 
 and became widely adopted in the form of backpropagation \cite{rumelhart1986}. 

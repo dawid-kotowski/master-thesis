@@ -1,15 +1,15 @@
 
 \section{Notation}
 
-We set $\N := \{1, 2, \dots \}$, $\N_0 := \{0, 1, \dots\}$ and $\N_{\geq n} := \{n, n+1, \dots \}$ for $n \in \N$. 
-Next the set $\R^+:= \{x \in \R \, \vert \, x \geq 0 \}$ will define all real numbers, which are non-negative.
+Let $\N := \{1, 2, \dots \}$, $\N_0 := \{0, 1, \dots\}$ and $\N_{\geq n} := \{n, n+1, \dots \}$ for $n \in \N$. 
+Next the set $\R^+:= \{x \in \R \, \vert \, x \geq 0 \}$ will represent all real numbers, which are non-negative.
 Furthermore for any finite set $A$, we will
 write $\vert A \vert$ to denote its cardinality. However, if $A \subset \R^n$ measurable for some $n \in \N$, 
-we will use $\vert A \vert := \lambda(A)$, i.e. as the Lebesgue measure. 
+we will use $\vert A \vert := \lambda(A)$, i.e. the Lebesgue measure. 
 If $x \in \R$, the gaussian ceiling function is given via
 $\ceil{x} := \min\{k \in \mathbb{Z} \, : \, k \geq x\}$.
 
-Further if $d \in \N$ and $\norm{\cdot}$ is a norm, then for $x \in \R^d$ and $r>0$ we set 
+If $d \in \N$ and $\norm{\cdot}$ is a norm, then for $x \in \R^d$ and $r>0$ we set 
 $B_{r, \norm{\cdot}}(x)$ as the open ball around $x$ with radius $r$. Additionally $\vert \cdot \vert$ denotes
 the regular euclidean norm on $\R^d$. We usually do not differ between vectors and scalars in ubiquitous notation.
 
@@ -28,34 +28,34 @@ When writing $a \ll b$ for $a, b \in \R$, the reader can infer, that $a < b$, bu
 is "substancial".
 We do not provide a rigorous definition of this, even though some literature does on occasion.
 
-Moreover, we define the \emph{multiindex} notation as follows: For $\alpha = (\alpha_1, \dots, \alpha_d) 
-\in \N_0^d$, we write $\vert \alpha \vert := \alpha_1 + \dots + \alpha_d$
-and $\alpha! := \alpha_1! \cdots \alpha_d!$. If $x \in \R^d$, then we set
+Moreover, we define the \emph{multi-index} notation as follows. For ${\vec{n}} = (n_1, \dots, n_d) 
+\in \N_0^d$, we write $\vert {\vec{n}} \vert := n_1 + \dots + n_d$
+and ${\vec{n}}! := n_1! \cdots n_d!$. If $x \in \R^d$, then we set
 \begin{equation*}
-    x^\alpha := \prod_{i=1}^d x_i^{\alpha_i}.
+    x^{\vec{n}} := \prod_{i=1}^d x_i^{n_i}.
 \end{equation*}
 
 \paragraph{Partial Differential Equations}
 
-For a function $f: X \to Y$ we denote $\operatorname{supp}(f) := \{ x \in X \, \vert \, f(x) \neq 0 \}$
+For a function $f: X \to Y$ we call $\operatorname{supp}(f) := \{ x \in X \, \vert \, f(x) \neq 0 \}$
 as the \emph{support} of $f$. Let $g: Y \to Z$ be another function, then $g \circ f: X \to Z$ is their \emph{composition.}
-Setting the standard topology of $\R^d$ lets us define $\bar{A}$ for some $A \subset \R^d$ as the \emph{closure} of $A$, and
-$\partial A$ its \emph{boundary}. If $A$ is non-empty, we set $\operatorname{diam}(A) := \sup_{x, y \in A} \vert x-y \vert$
+Consider the standard topology of $\R^d$. Then we define $\bar{A}$ for some $\emptyset \neq A \subset \R^d$ as the \emph{closure} of $A$,
+$\partial A$ its \emph{boundary}, and $\mathring{A}:=\bar{A} - \partial A$ the \emph{interior}. We set $\operatorname{diam}(A) := \sup_{x, y \in A} \vert x-y \vert$
 as the diameter of $A$. 
 
 Let $\Omega \subset \R^d$ be open. For $n \in \N_0 \cup \{ \infty \}$, we denote by $C^n(\Omega)$ the set
-of $n$-times continuously differentiable functions on $\Omega$.
+of $n$-times continuously differentiable functions on $\Omega$, where $C^0(\Omega)$ is the set of continuous functions.
 
-For $f \in C^n(\Omega)$ and $\alpha \in \N_0^d$ with $\vert \alpha \vert \leq n$ we write
+For $f \in C^n(\Omega)$ and ${\vec{n}} \in \N_0^d$ with $\vert {\vec{n}} \vert \leq n$ we write
 \begin{equation*}
-    D^\alpha f := \frac{\partial^{\vert \alpha \vert f}}{\partial x_1^{\alpha_1} \partial x_2^{\alpha_2} \cdots
+    D^{\vec{n}} f := \frac{\partial^{\vert {\vec{n}} \vert}f}{\partial x_1^{\alpha_1} \partial x_2^{\alpha_2} \cdots
     \partial x_d^{\alpha_d}}.
 \end{equation*}
 
 A function $f: \Omega \to \R^m$ for $\Omega \subset \R^d$ is called \emph{Lipschitz continuous}, if there is a constant
 $L \geq 0$ such that
 \begin{equation*}
-    \vert f(x) - f(y) \vert \leq L \vert x - y \vert.
+    \vert f(x) - f(y) \vert \leq L \vert x - y \vert \quad \text{for all }x, y \in \Omega.
 \end{equation*}
 
 For $\Omega \in \R^d$ being a non-zero set, we further denote with 
@@ -63,13 +63,15 @@ For $\Omega \in \R^d$ being a non-zero set, we further denote with
     L^p(\Omega) := \left\{f: \Omega \to \R \, \vert \, f \text{ is measurable, and } 
     \norm{f}_{L^p(\Omega)} < \infty \right\} \bigg/ {\sim_\text{a.e.}}
 \end{equation*}
-the Lebesgue space and $L^p_\text{loc}$ as the space of $L^p(\Omega)$ functions with local support. 
+the Lebesgue space and with $L^p_\text{loc}$ the space of $L^p(\Omega)$ functions with local support. 
 The measure here is always Lebesgue, if not specified otherwise.
 Moreover, the norm is defined by
 \begin{equation*}
     \norm{f}_{L^p(\Omega)} = 
     \begin{cases}
+        \displaystyle
         \left(\int_\Omega \euknorm{f(x)}^p d(x) \right)^{1/p} \quad &\text{for } 1 \leq p < \infty, \\
+        \displaystyle
         \underset{x \in \Omega}{\operatorname{ess \, sup}} \euknorm{f(x)} \quad &\text{for } p = \infty.
     \end{cases}
 \end{equation*}
@@ -92,7 +94,7 @@ Let $B \in \R^{d_1 \times d_3}$ be some other matrix for $d_3 \in \N$. Then we w
     \end{bmatrix} \in \R^{d_1 \times (d_2 + d_3)},
 \end{equation*}
 for the stacking of matrices, where the latter notation is meant to symbolize a strong delineation between
-blocks. Similar applies to vertical stacking, if $A \in \R^{d_1 \times d_2}$ and $B \in \R^{d_3 \times d_2}$.
+blocks. The same applies to vertical stacking, if $A \in \R^{d_1 \times d_2}$ and $B \in \R^{d_3 \times d_2}$.
 As a special case, this applies to vectors as well. 
 
 
@@ -106,12 +108,13 @@ As a special case, this applies to vectors as well.
 
 
 
-Recent advances in artifical intelligence and specifically neural networks have sparked interest in approximation
-theory, a field now investigating the complexity of neural networks approximating functions of certain regularity.
+Recent advances in artificial intelligence and specifically neural networks have sparked interest in approximation
+theory. This field nowadays includes investigations of the complexity of neural networks, that
+approximate functions with certain regularity.
 In itself, approximation theory existed in the context of partial differential equations long before the invention and
 popularization of neural networks, and has dealt with questions arising from discretization and interpolation 
 approximations. After all, numerical analysis 
-emerged as a field of mathematics to primarily deal with those analytical problems, answering
+emerged as a field of mathematics to primarily deal with those analytical problems. It was intended to answer
 questions like "How can one find a solution to a partial differential equation?", "In which space does the 
 approximative solution from a numerical solver live?" 
 and finally "For a given finite-dimensional space, how well can \emph{a solution} be approximated?", which is an example
@@ -121,30 +124,30 @@ of asking how well \emph{one} solution could be approximated for a choice of a f
 the solution space, the question of interest for us will be how one could approximate \emph{a group} of solutions
 for such a choice.
 This \emph{grouping} of partial differential equations is called a parametric partial differential equation, if
-there are parameter(s) that directly influence the equations and hence its solutions. In such a case,
-the meta-solution for which we actually search an approximation is not $\text{PDE} \mapsto u$, but more accurately
+there are parameters that directly influence the equations and hence its solutions. In such a case,
+the meta-solution for which we actually search an approximation, is not $\text{PDE} \mapsto u$, but more accurately
 \begin{equation*}
     \Gcal_\infty: \Theta \to W; \quad \mu \mapsto u(\mu),
 \end{equation*}
 where $\Theta$ denotes some parameter set and $W$ is the (time-sensitive) solution space of the respective parametric partial
 differential equation. The infinity here denotes the general setting of "a solution in a 
-potentially infinite-dimensional solution space". Now the first direct approximation, which can be done,
-is one of using a finite-dimensional spatial solution space, since otherwise it would be generally difficult to
+potentially infinite-dimensional solution space". The first direct approximation, which can be done,
+uses a finite-dimensional spatial solution space. Otherwise it would be generally difficult to
 portray a non-analytical problem on a computer, and hence to use a numerical algorithm in order to find a solution.
-From here, such a map 
+From here, we can infer a map
 \begin{equation*}
     \Gcal_h: \Theta \times [0, T] \to \Hcal_h; \quad (\mu, t) \mapsto u_h(\mu, t), 
 \end{equation*}
 where $\Hcal_h$ is some $N_h$-dimensional subspace for $N_h \in \N$ and its 
 related map $\Gcal: \Theta \times [0, T] \to \R^{N_h}; (\mu, t) \mapsto u_h^{\mu, t}$ 
-mapping to the coefficient representation, can be infered.
+mapping to the coefficient representation.
 Note, that $N_h$ means to represent some spatial discretization and time discretization, for
 example using a piecewise constant functions. In general, we will assume, that this basis will be
 of finite size $N_t \in \N$. 
 In fact, such a map always exists in the case, that
 there is some way of "solving" the partial differential equation for every parameter in a numerical way; it is simply 
 the corresponding numerical algorithm, for example one using Finite Differences or the Finite Element Method. 
-Problematic can however be, that this solution can deviate substancially from the actually interesting strong
+Problematic can however be, that this solution can deviate substantially from the actually interesting strong
 solution mapped by $\Gcal_\infty$.
 Generally, such a \emph{parameter-to-solution map} $\Gcal$ is expensive to compute, because the associated Full Order Model (FOM)
 has a very high dimension $N_h$. To resolve this, we might finally assert the main starting point of the thesis:
@@ -179,11 +182,11 @@ Reduced Order Modeling.
 
 In this thesis, we will lay the groundwork for 
 the use of approximation theory for data-driven
-Reduced Order Modelling and propose a novel Reduced Order Model heavily inspired by the Deep Orthogonal Decomposition,
+Reduced Order Modelling. Furthermore we propose a novel Reduced Order Model heavily inspired by the Deep Orthogonal Decomposition,
 which has been proposed for the stationary case in \cite{franco2024}, and combine it with the
-Autoencoder-based latent architecture of the DL-ROM introduced in the paper \cite{fresca2020} to attain
+autoencoder-based latent architecture of the DL-ROM introduced in the paper \cite{fresca2020} to attain
 the DOD-DL-ROM. As such, this model will have a lot of similarity to the POD-DL-ROM given by
-\cite{fresca2022} to which we will seek out comparisons in terms of complexity in relation to accuracy.
+\cite{fresca2022}. Thus, we will seek out comparisons in terms of complexity in relation to accuracy.
 We will find, that the adaptive nature of the Deep Orthogonal Decomposition will allow us
 to circumvent the Kolmogorov $N$-width barrier for certain problems, where a hybrid nature of the 
 Kolmogorov $N$-width decay can be assumed. This will be shown in theory and, with some room for
@@ -196,13 +199,13 @@ However, there will not be any numerical or approximation theoretic results pres
 
 
 
-In a lot of applications, the precision of Full Order Models can reach machine precision for large enough $N_h$. 
+In a lot of applications the precision of Full Order Models can reach machine precision for large enough $N_h$. 
 However, these models uniformly suffer from the computational cost, which in grows significantly quicker,
-than linear. Indeed, if we only consider the solution to a classical linear problem arising from a discretization
+than linear. Indeed, if we consider the solution to a classical linear problem arising from a discretization
 of some parabolic problem, we get computational cost of order $\Ocal(N_t N_h^{\alpha})$ for $\alpha \in [1, 2]$
 depending on the sparsity qualities of the associated matrices. Results like this can be found in
 any classical numerics literature such as \cite{quarteroni2015rb}.
-This is a larger problem in a case, where we face \emph{many query} settings, such as research situations for
+This is a large problem in cases, where we face \emph{many query} settings, such as research situations for
 aerodynamics engineering, medical identification, weather prediction and many more. 
 Furthermore, describing latent dynamics by using lower dimensions gives a nice new view onto the true nature
 of mathematical PDE, as it allows to focus attention on regions of interest.
@@ -214,7 +217,7 @@ of mathematical PDE, as it allows to focus attention on regions of interest.
 
 
 
-Over the past decades, the field of Reduced Order Modeling has undergone a noticable evolution,
+Over the past decades the field of Reduced Order Modeling has undergone a noticeable progress,
 shifting from classical projection-based methods to modern data-driven architectures.
 The earliest intrusive ROMs originated from the \emph{Proper Orthogonal Decomposition} (POD)
 framework, introduced in turbulence analysis by \cite{lumley1967} and \cite{sirovich1987},
@@ -226,7 +229,7 @@ and its discrete counterpart \emph{DEIM}~\cite{chaturantabut2010}.
 Alternative intrusive formulations include the least-squares Petrov-Galerkin projection~\cite{carlberg2011}
 and the GNAT method~\cite{carlberg2013}, which extended ROMs to highly nonlinear and turbulent regimes.
 
-In parallel, a non-intrusive and data-driven perspective emerged, aiming to approximate
+Simultaneously, a non-intrusive and data-driven perspective emerged, aiming to approximate
 the parameter-to-solution map directly from snapshot data.
 Early methods such as \emph{Dynamic Mode Decomposition} (DMD)~\cite{schmid2010}
 and its interpretation via the Koopman operator~\cite{rowley2009}
@@ -254,26 +257,27 @@ inspiring numerous follow-ups.
 In order to briefly summarize the structure of this thesis, we want to point out the line of thought here,
 and remark the important results from each chapter. 
 
-The following two sections are meant to put the development
+The following two sections put the development
 and advances of partial differential equations and neural networks in a historical context and introduce some meaningful
 results and classification thereof. 
-Chapter (\ref{chapter: theoretical background}) is build in such a way, that even someone from the
-broad field of numerics might find interesting results and is written objective wise to firstly introduce 
-the reduced basis methods and auxilary information, which will be used to explain the Proper Orthogonal
-Decomposition and Deep Orthogonal Decomposition as linear projectors in a theoretical setting, and secondly 
-to give the needed approximation theory for the complexity bounds, we will achieve for the POD-DL-ROM and DOD-DL-ROM.
+In Chapter (\ref{chapter: theoretical background}) we introduce
+the reduced basis methods and auxiliary information, which will be used to explain the Proper Orthogonal
+Decomposition and Deep Orthogonal Decomposition as linear projectors in a theoretical setting. Then we
+discuss the needed approximation theory for the complexity bounds, we will achieve for the POD-DL-ROM and DOD-DL-ROM.
 
-In chapter (\ref{chapter: problem}), we introduce the actual problem formulations and all necessary assumpions in
-a rigorous notation, as well as some legacy Reduced Order Models, and finally define the proposed DOD-DL-ROM and
-a related, simpler model, that can be treated seperately, but also as a benchmark in testing.
+In Chapter (\ref{chapter: problem}), we introduce the actual problem formulations and all necessary assumptions in
+a rigorous notation, as well as some legacy Reduced Order Models. Finally, we will define the proposed DOD-DL-ROM and
+a related, simpler model that can be treated separately, but also acts as a benchmark in testing.
 The main results of this thesis, however, are presented in Chapter (\ref{chapter: results}), 
 where we prove an upper and lower bounds for the relative errors of any POD-based and DOD-based Reduced Order Model,
-dictated by their intrinsic projection qualities, and thus emergent mismatches. Finally, 
+dictated by their intrinsic projection qualities, and thus emergent mismatches. Afterwards, 
 we use this to set up upper bounds for the complexities of the three proposed ROMs: the POD-DL-ROM,
 sourced from \cite{brivio2023}, the DOD-DL-ROM and the DOD+DFNN.
 
-In the last relevant Chapter (\ref{chapter: numerical experiments}), we compare those three algorithms
+In Chapter (\ref{chapter: numerical experiments}), we compare those three algorithms
 in a numerical environment for one pathological, one positive and one analytic example.
+
+At last, we will conclude the results in Chapter (\ref{chapter: conclusion})
 
 
 
@@ -284,25 +288,27 @@ in a numerical environment for one pathological, one positive and one analytic e
 
 
 The study and analysis of partial differential equations (PDEs) began with the works of Euler, d'Alembert, Lagrange
-and Laplace (see \cite{brezis1998} for this introduction). As so often in mathematics it started off with a set of simple problems, such as
+and Laplace (see \cite{brezis1998} for this introduction). The foundation was a set of simple problems, such as
 the vibrating string in one dimension as modelled
 by d'Alembert (1752)
 \begin{equation*}
     \frac{\partial^2}{\partial t^2} u(x, t) = \frac{\partial^2}{\partial x^2}u(x, t), \quad \text{for }u \in C^2(\R \times \R^+), x \in \R \text{ and }
     t \in \R^+,
-\end{equation*} the extension to three dimensions by Euler (1759) and Bernoulli (1762),
+\end{equation*} 
+the extension to three dimensions by Euler (1759) and Bernoulli (1762),
 the Laplace equation for gravitational fields (1780) 
 \begin{equation*}
     \Delta u(x) = 0, \quad \text{for }u \in C^2(\R^3) \text{ and } x \in \R^3,
-\end{equation*} and finally the heat equation, as introduced
+\end{equation*} 
+and finally the heat equation, as introduced
 by Fourier (1810 - 1822)
 \begin{equation*}
     \frac{\partial}{\partial t} u(x, t) = \Delta u(x, t), \quad \text{for }u \in C^2(\R^3 \times \R^+), x \in \R^3
     \text{ and }t \in \R^+.
 \end{equation*}
 
-As any posed problem calls for a solution to it, there have been simultaneous developments with regard to the
-calculation methods; the method of seperation of variables was given by Euler and d'Alembert for the study of spherical
+There have been simultaneous developments with regard to the
+calculation methods. The method of separation of variables was given by Euler and d'Alembert for the study of spherical
 harmonics and Fourier introduced similar ideas for the heat equation. For the Laplace equation, the Green functions
 were introduced in 1835. Green also discovered an important principle for solvability of the (later so called) 
 Dirichlet problem
@@ -311,10 +317,10 @@ Dirichlet problem
     u(x) = g(x), \quad &\text{for } x \in \partial \Omega, \\
 \end{cases}
 \end{equation*}
-for some function $g \in C^0(\R^3)$, which revolved around minimizing an energy functional $E: C^2(\R^3) \to \R^+$, thus
+for some function $g \in C^0(\R^3)$. It revolved around minimizing an energy functional $E: C^2(\R^3) \to \R^+$, thus
 founding the variational principle.
 
-Though these were first attempts at solving such problems, the idea of Green in particular led to a few analytical
+Though these were first attempts at solving such problems, the idea of Green in particular led to some analytical
 problems, by the lack of mathematical rigor. Together with the contribution of Cauchy on the \emph{initial value} problem, this
 laid the groundwork for the field of \emph{Existence Theory}, which tries to establish existence results for PDEs.
 
@@ -329,18 +335,17 @@ a classification of the most common linear PDEs using its characteristic polynom
 which is given by replacing all partial derivatives
 $\partial / \partial x_j$ by the algebraic variable $\xi_j$. In that case the PDE is called
 \begin{enumerate}
-    \item \emph{elliptic}, if after a change of varibles the polynomial can be written as $\xi_1^2 + \xi_2^2 + \dots + \xi_n^2$,
-    \item \emph{parabolic}, if after a change of varibles the polynomial can be written as $\xi_1 + \xi_2^2 + \dots + \xi_n^2$,
-    \item \emph{hyperbolic}, if after a change of varibles the polynomial can be written as $\xi_1^2 -(\xi_2^2 + \dots + \xi_n^2)$.
+    \item \emph{elliptic}, if after a change of variables the polynomial can be written as $\xi_1^2 + \xi_2^2 + \dots + \xi_n^2$,
+    \item \emph{parabolic}, if after a change of variables the polynomial can be written as $\xi_1 + \xi_2^2 + \dots + \xi_n^2$,
+    \item \emph{hyperbolic}, if after a change of variables the polynomial can be written as $\xi_1^2 -(\xi_2^2 + \dots + \xi_n^2)$.
 \end{enumerate}
 
-These analytical results can be expanded a lot more, but what is most interesting in terms of this paper, are
+These analytical results can be expanded a lot more. Most interestingly, in terms of this paper, are
 the Sobolev spaces. They, and the closely connected Bochner spaces, are the relevant solution spaces
 to the limits of all, in some sense, consistent numerical schemes, since the solutions are at least embedded in them.
-This follows quite natural, as any numerical scheme is basically bounded by the necessity of being ran on a computer
-and thus having a finite dimensional
-space it defines its approximation on, and at the very least
-the Sobolev and Bochner spaces admit any piecewise smooth function.
+This follows quite natural, as any numerical scheme is basically bounded by the necessity of being run on a computer.
+Thus, it defines its approximations on a finite dimensional
+space, and these can most often be nicely embedded in Bochner or Sobolev spaces.
 
 
 
@@ -349,38 +354,39 @@ the Sobolev and Bochner spaces admit any piecewise smooth function.
 
 
 
-In its essence, the origin of the artificial neural network has been made in the paper \cite{mcculloch1943}, 
+In its essence, the origin of the artificial neural network is the paper \cite{mcculloch1943}, 
 where the authors found a consistent logical calculation description of biological neurons and proposed a 
-mathematical way of fitting it. This, in a sense, became the leading idea for much of the later theory,
+mathematical construction. This, in a sense, became the leading idea for most of the later theory,
 since it served as inspiration for the \emph{perceptron}, the term coined by Rosenblatt in
-\cite{rosenblatt1958}. Even tough not realized then, this proposed mathematical model
-of a neuron could later on be described in a nowadays recognizable way, namely as a neural layer with very limited
+\cite{rosenblatt1958}. In todays notation, this describes a neural layer with very limited
 range and a specific activation function, i.e.
 \begin{equation*}
     f: \R^n \to \{0, 1\}; \quad f(x) = h(w \cdot x + b),
 \end{equation*}
-where $h$ is the Heaviside function, returning $1$ for any positive value and $0$ otherwise and $w, b \in \R^n$ for
-$n \in \N$ being trainable constant vectors. 
+where $h$ is the Heaviside function, returning $1$ for any positive value and $0$ otherwise and $w, b \in \R^n$ 
+being trainable constant vectors for $n \in \N$. 
 This inspired the later recognized definition of a Multi-Layered Perceptron (MLP), 
-that is another name for the (Deep) Feedforward Neural Network, interpretable as an composed evaluation of
+which is another name for the (Deep) Feedforward Neural Network. It is interpreted as an 
+composed evaluation of some layers realizing
 \begin{equation*}
     f: \R^n \to \R^m; \quad f(x) = \rho(W x + b),
 \end{equation*}
-for $W \in \R^{m \times n}, b \in \R^m$ for $n, m \in \N$ being trainable features and $\rho$ some (most often the ReLU) activation
+for $W \in \R^{m \times n}, b \in \R^m$ being trainable features for $n, m \in \N$ 
+and $\rho$ some (most often the ReLU) activation
 function, with the last convolution skipping the activation function to retain full range. In the common
 nomenclature, a Neural Network is called \emph{deep}, if it has more than two layers (thus at least two hidden layers).
 
 In the following decades, the first steps towards universal approximation theory were made by
-Cybenko~\cite{cybenko1989}, who has build on the works of others to prove the fact, that any feedforward 
-neural network with one hidden layer can approximate any continuous function and following this 
+Cybenko~\cite{cybenko1989}. He has build on the works of others to prove the fact, that any feedforward 
+neural network with one hidden layer can approximate any continuous function. Following this 
 Hornik proved in \cite{hornik1991nn}, that any Neural Network with at least two hidden layers can approximate
 any $L^p$ function on a compact domain arbitrarily well. 
 
 After this, a lot of subsequent architectures have been proposed, such as Convolutional Autoencoders for
 image classification and the method of \emph{backpropagation}, marking the first major breakthrough in 
-computational regard \cite{lecun1989}. Following this, was a wide range of different architecture propositions
+computational regard \cite{lecun1989}. The following research included a wide range of different architecture propositions
 and some notable adaptations for general function fitting purposes, which finally culminated in the
 work of Yarotsky \cite{yarotsky2017nn} and Gühring \cite{gühring2019nn}. These two results not only show
 rigorous mathematical framework for Neural Networks; they also include complexity bounds for a fixed error 
-tolerance for arbitrary Sobolev funcitons on Lipschitz domains. We will not go into further detail from here, 
-since this will be done extensively in the upcomming chapter.
+tolerance for arbitrary Sobolev functions on Lipschitz domains. We will not go into further detail here, 
+since this will be done extensively in the upcoming chapter.

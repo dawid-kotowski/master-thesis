@@ -617,7 +617,7 @@ The main idea of the POD-DL-ROM is the additional employment of an outer a prior
 a POD. It can be found in \cite{fresca2022}. Note, that we
 sway a bit from the source, since we are trying to achieve 
 an estimate, which is close to the high-fidenlity solution
-in an $L^2$-sense and not a euklidian one by applying the
+in an $L^2$-sense and not a euclidean one by applying the
 mass matrix from the start of the section.
 Such a reduction yields great benefits, such as the scalability in $N_h$ 
 and reduction in computational cost for
@@ -645,11 +645,11 @@ let $\Phi_n = \Phi_n^\text{DF}$
 to be the DFNN architecture of input dimension $p + q + 1$ and output dimension $n$ same as before.
 
 The loss function has now the attribute of being fed only at most $N$-dimensional training data, and only
-evaluating at most $N$-dimensional euklidian norms, hence greatly 
-increasing performance. The justification of using the euklidian norm here
-comes directly from the Proposition (\ref{prop: switch to euklidian norm}),
+evaluating at most $N$-dimensional euclidean norms, hence greatly 
+increasing performance. The justification of using the euclidean norm here
+comes directly from the Proposition (\ref{prop: switch to euclidean norm}),
 where the averaging over all deterministic POD projection errors can be collectively ignored for training,
-without misrepresenting the solution as a bare vector in euklidian space.
+without misrepresenting the solution as a bare vector in euclidean space.
 
 Hence, we can define with $P$ being the network parallelization operator the loss function with
 \begin{multline} \label{eq: loss function pod dl rom}
@@ -746,30 +746,28 @@ The following technically depicts a RB method.
       transform shape
     ]
   
-    %==================== Title ====================
-    \node[head, minimum width=15.8cm] (TITLE) {Deep Orthogonal Decomposition (DOD) realization};
-  
     %==================== pre-reduction ====================
-    \node[box, below=8mm of TITLE, xshift=-40mm] (U) {$U=\big[u_h^{\mu_1,\nu_1}\mid\cdots\mid u_h^{\mu_{N_{s_1}},\nu_{N_{s_2}}}\big]^{\!T}\in\R^{N_h\times N_{\text{data}}}$};
+    \node[box, anchor=west, fill=orange!12] (U) 
+        {$U=\big[u_h^{\mu_1,\nu_1}\mid\cdots\mid u_h^{\mu_{N_{s_1}},\nu_{N_{s_2}}}\big]^{\!T}\in\R^{N_h\times N_{\text{data}}}$};
     \node[dashedop, below=8mm of U] (POD) {POD (Alg.~\ref{algo: pod}) w.r.t.\ $\G$};
-    \node[op, below=8mm of POD, fill=black!3] (A) {$\A\in\R^{N_h\times N_A}$};
+    \node[op, below=8mm of POD] (A) {$\A\in\R^{N_h\times N_A}$};
   
     \draw[->, dashed] (U) -- (POD);
     \draw[->, dashed] (POD) -- (A);
   
     %==================== inner DOD module ====================
-    \node[box, right=50mm of U] (INPT) {$(\mu,t)\in\Theta\times[0,T]$};
+    \node[box, right=12cm of U, anchor=east] (INPT) {$(\mu,t)\in\Theta\times[0,T]$};
   
-    \node[op, below=10mm of INPT] (SNET) {$s(\theta_\text{DOD}):\ \R^{p+1}\!\to\!\R^{\ell}$};
+    \node[op, below=10mm of INPT, fill=blue!8] (SNET) {$s(\theta_\text{DOD}):\ \R^{p+1}\!\to\!\R^{\ell}$};
     \draw[->] (INPT) -- (SNET);
   
-    \node[op, below=8mm of SNET, minimum width=64mm] (PAR) {$\big( (R_1\!\odot\! s)(\theta_\text{DOD}),\ \dots,\ (R_{N'}\!\odot\! s)(\theta_\text{DOD})\big)$\\
+    \node[op, below=8mm of SNET, minimum width=64mm, fill=blue!8] (PAR) {$\big( (R_1\!\odot\! s)(\theta_\text{DOD}),\ \dots,\ (R_{N'}\!\odot\! s)(\theta_\text{DOD})\big)$\\
       \tiny $R_i:\ \R^{\ell}\!\to\!\R^{N_A}$ (parallel)};
     \draw[->] (SNET) -- (PAR);
   
     \node[op, below=8mm of PAR] (STACK) {$\text{STACK}:\ \R^{N_A\cdot N'}\!\to\!\R^{N_A\times N'}$};
     \node[op, below=8mm of STACK] (ORTH) {$\text{ORTH}:\ \R^{N_A\times N'}\!\to\!\R^{N_A\times N'}$\\\tiny span-preserving (e.g.\ QR)};
-    \node[box, below=8mm of ORTH] (Vt) {$\tilde{\V}_{\mu,t}(\theta_{\text{DOD}})\in\R^{N_A\times N'}$};
+    \node[box, below=8mm of ORTH, fill=blue!8] (Vt) {$\tilde{\V}_{\mu,t}(\theta_{\text{DOD}})\in\R^{N_A\times N'}$};
   
     \draw[->] (PAR) -- (STACK);
     \draw[->] (STACK) -- (ORTH);
@@ -793,10 +791,9 @@ The following technically depicts a RB method.
     \end{pgfonlayer}
     \node[tiny, fill=white, inner sep=1pt] at ([yshift=1.6mm]ONBOX.north) {forward call};
   
-  
     \end{tikzpicture}
     \end{adjustbox}
-    \caption{Realization of the Deep Orthogonal Decomposition for given $\theta_\text{DOD} \in \Theta(\Phi_{\tilde{\V}})$}
+    \caption{Realization of the Deep Orthogonal Decomposition for given $\theta_\text{DOD} \in \Theta(\Phi_{\tilde{\V}})$.}
     \label{fig:dod-matrix-workflow}
   \end{figure}
   
@@ -808,7 +805,7 @@ in the same manner as before, i.e.
     u_\text{pre-red}^{\mu, \nu, t} := \A^T \G \uht \in \R^{N_A} \qquad \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal.
 \end{equation*}
 Then the loss function with regard to that data can be defined, again justified by 
-Proposition (\ref{prop: switch to euklidian norm}), as follows
+Proposition (\ref{prop: switch to euclidean norm}), as follows
 \begin{multline} \label{eq: loss dod}
     \Lcal_\text{DOD}\left(R_\rho(\Phi_{\tilde{\V}}(\theta_\text{DOD})) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
     \{u_\text{pre-red}^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) \\
@@ -904,7 +901,7 @@ and then used to define the DOD-DL-ROM loss function utilizing the $\G$-orthonor
         + \, \frac{1 - \omega_h}{2} \, \euknorm{R_\rho(\Psi'_n(\theta_\text{E}))(u_{\text{red}^2}^{\mu_i, \nu_j, k \Delta t}) 
         - R_\rho(\Phi_n^\text{DF}(\theta_\text{DF}))(\mu_i, \nu_j, k \Delta t)}^2 \bigg).
 \end{multline}
-Notice, that this reduction allows us to elect an algorithm, which uses only the $n$- and $N'$-dimensional euklidian norm,
+Notice, that this reduction allows us to elect an algorithm, which uses only the $n$- and $N'$-dimensional euclidean norm,
 therefore enabling even less computational complexity for each training epoch, under the assumption of an already 
 optimized DOD.
 

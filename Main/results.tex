@@ -9,7 +9,7 @@ execute the reduction for the norm $\norm{\cdot}$ defined in that chapter,
 we require a mass matrix, that is independent of $\mu \in \Theta$, since otherwise the orthonormality 
 with regard to it cannot be computed under the generalized POD Algorithm (\ref{algo: pod}). However, we note, 
 that the paper \cite{brivio2023} we base most of this chapter on, and severall other works dealing with a similar setup, instead
-neglect the representation in the underlying Hilbert space and use a simple euklidian norm for the
+neglect the representation in the underlying Hilbert space and use a simple euclidean norm for the
 coefficient vectors. For our sitution though, we let
 \begin{equation} \label{eq: representation uhat}
     \hat{u}_h(x, t; \mu, \nu) = \sum_{j=1}^{N_h} [\uhhat(t)]_j \varphi_j(x),
@@ -147,16 +147,16 @@ and an already fixed weight $\theta_\text{DDNN} \in \Theta(\Phi^\text{D}_{N'})$.
     \node[box, below=8mm of DODHEAD] (INP2) {$(\mu,\nu,t)\in\Theta\times\Theta'\times[0,T]$};
   
     %==================== POD lane ====================
-    \node[op, below=10mm of INP1] (DNNP) {DNN $\Phi^{\mathrm{P}}_{N}$\\\tiny input $p{+}q{+}1$ $\rightarrow$ output $N$};
+    \node[op, below=10mm of INP1, fill=blue!8] (DNNP) {DNN $\Phi^{\mathrm{P}}_{N}$\\\tiny input $p{+}q{+}1$ $\rightarrow$ output $N$};
     \node[box, below=8mm of DNNP] (QP) {$\hat q_{\mathrm{P}}(\mu,\nu,t)\in\mathbb{R}^{N}$};
   
     \node[op, below=10mm of QP] (AP) {$\A_{\mathrm{P}}\in\mathbb{R}^{N_h\times N}$\\\tiny POD basis (Alg.~\ref{algo: pod}) w.r.t. $\G$};
   
     \node[box, below=10mm of AP, fill=black!3] (UHP) {$\hat \uht =  \A_{\text{P}}\hat q_{\text{P}} \in \R^{N_h}$};
   
-    \node[box, left=8mm of QP, yshift=0mm] (QPTrue) {$q_{\mathrm{P}}=\A_{\mathrm{P}}^{T}\G \uht \in \R^{N}$};
+    \node[box, left=8mm of QP, yshift=0mm, fill=orange!12] (QPTrue) {$q_{\mathrm{P}}=\A_{\mathrm{P}}^{T}\G \uht \in \R^{N}$};
     \node[dashedop, below=8mm of QPTrue, yshift=0mm] (APTG) {$\A_{\mathrm{P}}^{T} \G \in \R^{N \times N_h}$};
-    \node[box, below=8mm of APTG, yshift=0mm] (UTrueP) {$\uht \in \R^{N_h}$};
+    \node[box, below=8mm of APTG, yshift=0mm, fill=orange!12] (UTrueP) {$\uht \in \R^{N_h}$};
   
     \draw[->] (INP1) -- (DNNP);
     \draw[->] (DNNP) -- (QP);
@@ -169,11 +169,11 @@ and an already fixed weight $\theta_\text{DDNN} \in \Theta(\Phi^\text{D}_{N'})$.
   
   
     %==================== DOD lane ====================
-    \node[op, below=10mm of INP2] (DNND) {DNN $\Phi^{\mathrm{D}}_{N'}$\\\tiny input $p{+}q{+}1$ $\rightarrow$ output $N'$};
-    \node[op, right=8mm of INP2] (DODINNER) {$\tilde \V_{\mu,t}(\theta_{\mathrm{DOD}})\in\mathbb{R}^{N_A\times N'}$\\\tiny ORTH \& stack};
+    \node[op, below=10mm of INP2, fill=blue!8] (DNND) {DNN $\Phi^{\mathrm{D}}_{N'}$\\\tiny input $p{+}q{+}1$ $\rightarrow$ output $N'$};
+    \node[op, right=8mm of INP2, fill=blue!8] (DODINNER) {$\tilde \V_{\mu,t}(\theta_{\mathrm{DOD}})\in\mathbb{R}^{N_A\times N'}$\\\tiny ORTH \& stack};
 
     \node[dashedop, right=8mm of DODINNER] (ATG) {$\A^{T} \G \in \R^{N_A \times N_h}$};
-    \node[box, below=8mm of ATG] (UTrueD2) {$\uht \in \R^{N_h}$};
+    \node[box, below=8mm of ATG, fill=orange!12] (UTrueD2) {$\uht \in \R^{N_h}$};
 
     \node[op, below=6mm of DODINNER] (AUP) {$\A \in ^{N_h\times N'}$\\\tiny POD basis (Alg.~\ref{algo: pod}) w.r.t. $\G$};
     \node[box, below=6mm of AUP] (VMT) {$\V_{\mu,t}=\A \tilde \V_{\mu,t} \in \R^{N_h\times N'}$};
@@ -182,9 +182,9 @@ and an already fixed weight $\theta_\text{DDNN} \in \Theta(\Phi^\text{D}_{N'})$.
   
     \node[box, below=20mm of QD, fill=black!3] (UHD) {$\hat u_h(\mu,\nu,t)= \V_{\mu,t} \hat q_{\mathrm{D}}\in\R^{N_h}$};
   
-    \node[box, left=8mm of QD] (QDTrue) {$q_{\mathrm{D}} = \V_{\mu,t}^T \G \uht \in \R^{N'}$};
+    \node[box, left=8mm of QD, fill=orange!12] (QDTrue) {$q_{\mathrm{D}} = \V_{\mu,t}^T \G \uht \in \R^{N'}$};
     \node[dashedop, below=8mm of QDTrue] (VTTG) {$\A^{T} \G \in \R^{N_A \times N_h}$};
-    \node[box, below=8mm of VTTG] (UTrueD) {$\uht \in \R^{N_h}$};
+    \node[box, below=8mm of VTTG, fill=orange!12] (UTrueD) {$\uht \in \R^{N_h}$};
   
     \draw[->] (INP2) -- (DODINNER);
     \draw[->] (DODINNER) -- (AUP);
@@ -199,8 +199,7 @@ and an already fixed weight $\theta_\text{DDNN} \in \Theta(\Phi^\text{D}_{N'})$.
     \draw[dash pattern=on 3pt off 1.5pt] (QDTrue.east) -- ($(QD.west)+(0,0)$);
     \draw[dash pattern=on 3pt off 1.5pt] (ATG) -- (DODINNER);
     \draw[->] (UTrueD2) -- (ATG);
-
-    %==================== NEW: dotted soft-gray fit-box around both DNN nodes ====================
+ 
     \begin{pgfonlayer}{background}
       \node[draw, rounded corners=3pt, dotted, line width=.9pt, fill=black!4, inner sep=8pt,
             fit=(DNNP)(DNND)] (SWBOX) {};
@@ -213,6 +212,7 @@ and an already fixed weight $\theta_\text{DDNN} \in \Theta(\Phi^\text{D}_{N'})$.
     Solid arrows show the inference; dashed lines denote training.}
     \label{fig:dimensional-workflow-pod-dod}
   \end{figure}
+
 
 
 
@@ -628,7 +628,7 @@ result.
     by the $1$-Lipschitz propert of $R_\rho(\zeta(\theta^*_\text{DOD}))$ and the argument of $\norm{\A x} = \euknorm{x}$
     for any $x \in \R^{N_h}$.
     Hence, as a matrix, the DOD is indeed in the pre-image of $J$. We further with
-    the Proposition (\ref{prop: switch to euklidian norm}) for the switch to the euklidian norm
+    the Proposition (\ref{prop: switch to euclidean norm}) for the switch to the euclidean norm
     with 
     \begin{equation*}
         c_\A' := \int_{\Theta \times [0, T]} \bigg( \sup\limits_{\nu \in \Theta'} \underbrace{\norm{\uht - \A \A^T \G \uht}^2}_{= c_\A} \bigg) d(\mu,t).
@@ -1082,17 +1082,17 @@ it is build in structure exactly like the DOD+DNN.
     \node[box, below=8mm of DODHEAD] (INP2) {$(\mu,\nu,t)\in\Theta\times\Theta'\times[0,T]$};
   
     %==================== POD-DL-ROM lane ====================
-    \node[op, below=10mm of INP1] (DFNNP) {DFNN $\phi_{n}$\\\tiny $\R^{p+q+1}\!\to\!\R^{n}$};
-    \node[op, above=9mm of QPTrue] (ENCP) {Encoder $\Psi'_{n}$\\\tiny $\R^{N}\!\to\!\R^{n}$};
-    \node[op, below=5mm of DFNNP] (DECP) {Decoder $\Psi_{N}$\\\tiny $\R^{n}\!\to\!\R^{N}$};
+    \node[op, below=10mm of INP1, fill=blue!8] (DFNNP) {DFNN $\phi_{n}$\\\tiny $\R^{p+q+1}\!\to\!\R^{n}$};
+    \node[op, above=9mm of QPTrue, fill=blue!8] (ENCP) {Encoder $\Psi'_{n}$\\\tiny $\R^{N}\!\to\!\R^{n}$};
+    \node[op, below=5mm of DFNNP, fill=blue!8] (DECP) {Decoder $\Psi_{N}$\\\tiny $\R^{n}\!\to\!\R^{N}$};
     \node[box, below=10mm of DECP] (QP) {$\hat q_{\mathrm P}(\mu,\nu,t)\in\R^{N}$};
   
     \node[op, below=10mm of QP] (AP) {$\A_{\mathrm P}\in\R^{N_h\times N}$\\\tiny POD basis (Alg.~\ref{algo: pod}) w.r.t.\ $\G$};
     \node[box, below=10mm of AP, fill=black!3] (UHP) {$\hat \uht=\A_{\mathrm P}\,\hat q_{\mathrm P}\in\R^{N_h}$};
   
-    \node[box, left=8mm of QP] (QPTrue) {$q_{\mathrm P}=\A_{\mathrm P}^{T}\G\,\uht\in\R^{N}$};
+    \node[box, left=8mm of QP, fill=orange!12] (QPTrue) {$q_{\mathrm P}=\A_{\mathrm P}^{T}\G\,\uht\in\R^{N}$};
     \node[dashedop, below=8mm of QPTrue] (APTG) {$\A_{\mathrm P}^{T}\G\in\R^{N\times N_h}$};
-    \node[box, below=8mm of APTG] (UTrueP) {$\uht\in\R^{N_h}$};
+    \node[box, below=8mm of APTG, fill=orange!12] (UTrueP) {$\uht\in\R^{N_h}$};
   
     \draw[->] (INP1) -- (DFNNP);
     \draw[->] (DFNNP) -- (DECP);
@@ -1108,23 +1108,23 @@ it is build in structure exactly like the DOD+DNN.
     \draw[->] (QPTrue) -- (ENCP);
   
     %==================== DOD-DL-ROM lane ====================
-    \node[op, right=8mm of INP2] (DODINNER) {$\tilde \V_{\mu,t}(\theta_{\mathrm{DOD}})\in\R^{N_A\times N'}$\\\tiny ORTH \& stack};
+    \node[op, right=8mm of INP2, fill=blue!8] (DODINNER) {$\tilde \V_{\mu,t}(\theta_{\mathrm{DOD}})\in\R^{N_A\times N'}$\\\tiny ORTH \& stack};
     \node[dashedop, right=8mm of DODINNER] (ATG) {$\A^{T}\G\in\R^{N_A\times N_h}$};
-    \node[box, below=8mm of ATG] (UTrueD2) {$\uht\in\R^{N_h}$};
+    \node[box, below=8mm of ATG, fill=orange!12] (UTrueD2) {$\uht\in\R^{N_h}$};
   
     \node[op, below=6mm of DODINNER] (AUP) {$\A\in\R^{N_h\times N_A}$\\\tiny POD basis (Alg.~\ref{algo: pod}) w.r.t.\ $\G$};
     \node[box, below=6mm of AUP] (VMT) {$\V_{\mu,t}=\A\,\tilde \V_{\mu,t}\in\R^{N_h\times N'}$};
   
-    \node[op, below=10mm of INP2] (DFNND) {DFNN $\phi_{n}$\\\tiny $\R^{p+q+1}\!\to\!\R^{n}$};
-    \node[op, above=9mm of QDTrue] (ENCD) {Encoder $\Psi'_{n}$\\\tiny $\R^{N'}\!\to\!\R^{n}$};
-    \node[op, below=5mm of DFNND] (DECD) {Decoder $\Psi_{N'}$\\\tiny $\R^{n}\!\to\!\R^{N'}$};
+    \node[op, below=10mm of INP2, fill=blue!8] (DFNND) {DFNN $\phi_{n}$\\\tiny $\R^{p+q+1}\!\to\!\R^{n}$};
+    \node[op, above=9mm of QDTrue, fill=blue!8] (ENCD) {Encoder $\Psi'_{n}$\\\tiny $\R^{N'}\!\to\!\R^{n}$};
+    \node[op, below=5mm of DFNND, fill=blue!8] (DECD) {Decoder $\Psi_{N'}$\\\tiny $\R^{n}\!\to\!\R^{N'}$};
     \node[box, below=10mm of DECD] (QD) {$\hat q_{\mathrm D}(\mu,\nu,t)\in\R^{N'}$};
   
     \node[box, below=20mm of QD, fill=black!3] (UHD) {$\hat u_h(\mu,\nu,t)=\V_{\mu,t}\,\hat q_{\mathrm D}\in\R^{N_h}$};
   
-    \node[box, left=8mm of QD] (QDTrue) {$q_{\mathrm D}=\V_{\mu,t}^{T}\G\,\uht\in\R^{N'}$};
+    \node[box, left=8mm of QD, fill=orange!12] (QDTrue) {$q_{\mathrm D}=\V_{\mu,t}^{T}\G\,\uht\in\R^{N'}$};
     \node[dashedop, below=8mm of QDTrue] (VTTG) {$\A^{T}\G\in\R^{N_A\times N_h}$};
-    \node[box, below=8mm of VTTG] (UTrueD) {$\uht\in\R^{N_h}$};
+    \node[box, below=8mm of VTTG, fill=orange!12] (UTrueD) {$\uht\in\R^{N_h}$};
   
     \draw[->] (INP2) -- (DODINNER);
     \draw[->] (DODINNER) -- (AUP);
@@ -1400,7 +1400,7 @@ This is within the framework of Assumption (\ref{assumption: dimension hierarchy
 note, that this can be relaxed in a similar way to the POD error $\Ecal_\text{POD}$, as has been
 done in Theorem (\ref{theo: PAC bound for POD-DL-ROM}). In fact, this constitutes that
 $N_A$ must be chosen in the same order as $N$ has been for the POD-DL-ROM, since the ambient
-error $c_\A$ from Proposition (\ref{prop: switch to euklidian norm}) has the same inhibition 
+error $c_\A$ from Proposition (\ref{prop: switch to euclidean norm}) has the same inhibition 
 of scaling with the total POD eigenvalues. 
 
 \begin{theorem} \label{theo: PAC bound for DOD-DL-ROM}
