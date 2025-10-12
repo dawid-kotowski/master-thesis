@@ -3,14 +3,14 @@
 
 Let $\N := \{1, 2, \dots \}$, $\N_0 := \{0, 1, \dots\}$ and $\N_{\geq n} := \{n, n+1, \dots \}$ for $n \in \N$. 
 Next the set $\R^+:= \{x \in \R \, \vert \, x \geq 0 \}$ will represent all real numbers, which are non-negative.
-Furthermore for any finite set $A$, we will
+Furthermore, for any finite set $A$, we will
 write $\vert A \vert$ to denote its cardinality. However, if $A \subset \R^n$ measurable for some $n \in \N$, 
 we will use $\vert A \vert := \lambda(A)$, i.e. the Lebesgue measure. 
 If $x \in \R$, the gaussian ceiling function is given via
 $\ceil{x} := \min\{k \in \mathbb{Z} \, : \, k \geq x\}$.
 
 If $d \in \N$ and $\norm{\cdot}$ is a norm, then for $x \in \R^d$ and $r>0$ we set 
-$B_{r, \norm{\cdot}}(x)$ as the open ball around $x$ with radius $r$. Additionally $\vert \cdot \vert$ denotes
+$B_{r, \norm{\cdot}}(x)$ as the open ball around $x$ with radius $r$. Additionally, $\vert \cdot \vert$ denotes
 the regular euclidean norm on $\R^d$. We usually do not differ between vectors and scalars in ubiquitous notation.
 
 The transpose of a matrix $A \in \R^{d_1 \times d_2}$ for some $d_1, d_2 \in \N$ is given by
@@ -25,7 +25,7 @@ In a similar vein, we use $a_n \lesssim b_n$, to describe the situation of $a_n 
 for all $n \in \N$ and some constant $C > 0$.
 
 When writing $a \ll b$ for $a, b \in \R$, the reader can infer, that $a < b$, but also, that the difference 
-is "substancial".
+is "substantial".
 We do not provide a rigorous definition of this, even though some literature does on occasion.
 
 Moreover, we define the \emph{multi-index} notation as follows. For ${\vec{n}} = (n_1, \dots, n_d) 
@@ -132,7 +132,7 @@ the meta-solution for which we actually search an approximation, is not $\text{P
 where $\Theta$ denotes some parameter set and $W$ is the (time-sensitive) solution space of the respective parametric partial
 differential equation. The infinity here denotes the general setting of "a solution in a 
 potentially infinite-dimensional solution space". The first direct approximation, which can be done,
-uses a finite-dimensional spatial solution space. Otherwise it would be generally difficult to
+uses a finite-dimensional spatial solution space. Otherwise, it would be generally difficult to
 portray a non-analytical problem on a computer, and hence to use a numerical algorithm in order to find a solution.
 From here, we can infer a map
 \begin{equation*}
@@ -182,7 +182,7 @@ Reduced Order Modeling.
 
 In this thesis, we will lay the groundwork for 
 the use of approximation theory for data-driven
-Reduced Order Modelling. Furthermore we propose a novel Reduced Order Model heavily inspired by the Deep Orthogonal Decomposition,
+Reduced Order Modelling. Furthermore, we propose a novel Reduced Order Model heavily inspired by the Deep Orthogonal Decomposition,
 which has been proposed for the stationary case in \cite{franco2024}, and combine it with the
 autoencoder-based latent architecture of the DL-ROM introduced in the paper \cite{fresca2020} to attain
 the DOD-DL-ROM. As such, this model will have a lot of similarity to the POD-DL-ROM given by
@@ -358,7 +358,7 @@ In its essence, the origin of the artificial neural network is the paper \cite{m
 where the authors found a consistent logical calculation description of biological neurons and proposed a 
 mathematical construction. This, in a sense, became the leading idea for most of the later theory,
 since it served as inspiration for the \emph{perceptron}, the term coined by Rosenblatt in
-\cite{rosenblatt1958}. In todays notation, this describes a neural layer with very limited
+\cite{rosenblatt1958}. In today's notation, this describes a neural layer with very limited
 range and a specific activation function, i.e.
 \begin{equation*}
     f: \R^n \to \{0, 1\}; \quad f(x) = h(w \cdot x + b),

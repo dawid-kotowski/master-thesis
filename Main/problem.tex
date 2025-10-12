@@ -3,13 +3,13 @@
 
 Let $\Theta \subset \R^{p}$ and $\Theta' \subset \R^q$ be compact and denote the geometric and physical parameter spaces 
 respectively. 
-Further we let $\Omega \subset \R^d$ be some Lipschitz domain and $[0, T]$ be a time interval
-for some $T > 0$ of a parametric time-dependent PDE, 
-i.e. for any $\mu \in \Theta$ and $\nu \in \Theta'$
+Additionally, let $\Omega \subset \R^d$ be some Lipschitz domain and $[0, T]$ be a time interval
+for some $T > 0$ of a parametric time-dependent PDE.
+For $\mu \in \Theta$ and $\nu \in \Theta'$
 \begin{equation*}
-    u^{\mu, \nu} := u(\mu, \nu) , \quad \text{in a sufficiently smooth space},
+    u^{\mu, \nu} := u(\mu, \nu) , \quad \text{with sufficient regularity},
 \end{equation*}
-is the (strong) solution of the PDE, for the choice of the space depending on the given
+is called the (strong) solution of the PPDE, with the choice of the function space depending on the
 specified problem, if
 \begin{equation*}\begin{cases}
     \displaystyle
@@ -24,30 +24,31 @@ specified problem, if
 \end{equation*}
 where $\mathcal{L}$ represents a linear, and $\mathcal{N}$ represents a non-linear integro-differential operator.
 Using calculus of variation or distribution theory, 
-one can then formulate a weak form of the problem and find a general space, most commonly
-Sobolev (for elliptic problems with coersive properties), Bochner (for parabolic problems with coersive properties
-on the stationary part) or discontinuous Galerkin spaces (for hyperbolic problems with enough regularity), on which
-a weak solution can be defined. Such a space $\Hcal$ is generally some Banach space, most often a subspace of
+one can then formulate a weak form of the problem and find a general space. For example, if the problem
+has a weak form, the space commonly is
+Sobolev (for elliptic problems with coercive properties), Bochner (for parabolic problems with coercive properties
+on the stationary part) or discontinuous Galerkin spaces (for hyperbolic problems with enough regularity). 
+Such a space $\Hcal$ is generally some Banach space, most often a subspace of
 $L^2$.
 
-This weak solution will have less regularity imposed than the strong formulation, 
-but this sometimes allows us to retrieve existence and uniqueness results. 
-Quite famously, there are counter examples of course; the Navier-Stokes Equation in three 
-dimensions poses one such result, where a weak form exists and numerical methods have been developed, which
+This weak solution will have less regularity imposed than the strong formulation. Such weak form, then 
+sometimes allows us to retrieve existence and uniqueness results. 
+Quite famously, there are counter examples; the Navier-Stokes Equation in three 
+dimensions poses one such result. For this PDE, a weak form exists, and numerical methods have been developed, which
 can provide a solution in special cases, but existence remains unproven in general. 
-As mentioned beforehand, we will completely omit the exact transformation
-of the strong PDE formulation into a weak one, and simple assume that this can be done:
+As mentioned before, we will omit the transformation
+of the strong PDE formulation into a weak one, and simple assume that this can be done.
 
-Say we (can) discretize the problem in the spacial domain $\Omega$ with $N_h$ degrees of freedom, i.e. 
-let $\Hcal_h \subset \Hcal$ be a Hilbert space with $\Hcal_h \cong \R^{N_h}$, a scalar product 
-$\langle \cdot, \cdot \rangle_{\Hcal_h}$ and a corresponding norm $\norm{\cdot}_{\Hcal_h}$,
-such that the resulting full order model solution can be identified using the formulation
+Say we (can) discretize the problem in the spacial domain $\Omega$ with $N_h$ degrees of freedom. For this, 
+let $\Hcal_h \subset \Hcal$ a Hilbert space with $\Hcal_h \cong \R^{N_h}$, an inner product 
+$\langle \cdot, \cdot \rangle_{\Hcal_h}$ and a corresponding norm $\norm{\cdot}_{\Hcal_h}$.
+Then the resulting full order model solution can be identified by
 \begin{equation} \label{eq: fom solution identity}
     t \mapsto u_h(\cdot, t; \mu, \nu) = \sum_{j = 1}^{N_h} [\uh(t)]_j \, \varphi_j(\mu) \in C^1([0, T]; \Hcal_h) 
 \end{equation}
 with $\{\varphi_j(\mu)\}_{j=1}^{N_h}$ a basis of $\Hcal_h$ for each $\mu \in \Theta$ and $\uh(t) \in \R^{N_h}$ 
-for each $t \in [0, T]$, and the underlying
-problem for the coefficients
+for each $t \in [0, T]$. Then it is assumed, that the coefficients are a solution to a problem of the following
+formulation.
 \begin{equation} \label{eq: fom ppde}
     \begin{cases}
     \displaystyle
@@ -64,7 +65,7 @@ where we assume
     \item[$\bullet$] $f: [0, T] \times \R^{N_h} \times \Theta \times \Theta' \to \R^{N_h}$ 
     to be the corresponding source term of the equation.
 \end{enumerate}    
-Additionally let $u_0: \Theta \times \Theta' \to \R^{N_h}$ be the inital data. 
+Additionally, let $u_0: \Theta \times \Theta' \to \R^{N_h}$ be the initial datum. 
 The mass matrix is defined for each $\mu \in \Theta$ as follows
 \begin{equation*}
     M(\mu) = \begin{bmatrix}
@@ -79,23 +80,22 @@ norm
 \begin{equation} \label{eq: definition mass matrix norm}
     \norm{\uht} := \sqrt{(\uht)^T M(\mu) \uht}
 \end{equation}
-for each $\mu \in \Theta, \nu \in \Theta', t \in [0, T]$ and $\uht \in \Scal$
-which is, in fact, the adapted norm from before, i.e. $\norm{\uht} = \norm{u_h(\cdot, t; \mu, \nu)}_{\Hcal_h}$.
+for $\mu \in \Theta, \nu \in \Theta', t \in [0, T]$ and $\uht \in \Scal$. In fact, 
+the norm above used on the coefficient representation 
+is equivalent to the $\Hcal_h$-norm, i.e. $\norm{\uht} = \norm{u_h(\cdot, t; \mu, \nu)}_{\Hcal_h}$.
 
-Note that it is indeed possible to arrive at that discretization without skipping to a weak formulation, e.g.
-using finite differences or finite volume schemes, but since any existence statement needs a more general space
-than $C^n$ to guarantee completeness and hence imposes some identity using a basis, 
-we need only to infer such a procedure. For the interested reader, an explicit discretization using finite volume
+Note that it is indeed possible to achieve this discretization without skipping to a weak formulation, e.g.
+using finite differences or finite volume schemes. 
+For the interested reader, an explicit discretization using finite volume
 schemes can be seen in \cite{haasdonk2008pod}.
 
-This formulation establishes smoothness with regard to time, 
-however we will implicitly further discretize in time using
-$\{t_k\}_{k=1}^{N_t} := \Tcal$ time steps by gathering data only at these points. This is called
+The formulation in Equation (\ref{eq: fom ppde}) establishes smoothness with regard to time. This is called
 \emph{method of lines approach} \cite[p. 278]{hesthaven2022rb}. 
-
+To solve this resulted ODE, we will implicitly further discretize by using time steps
+$\{t_k\}_{k=1}^{N_t} := \Tcal$ to gather data. 
 
 \begin{definition}[Solution Data] \label{def: solution data}    
-    Following this, we may denote with
+    We denote with
     \begin{equation*}
         \uht := \uh(t) \in \R^{N_h}, \quad \text{for }\mu \in \Theta, \nu \in \Theta' \text{ and all } t \in \Tcal,
     \end{equation*}
@@ -106,30 +106,38 @@ $\{t_k\}_{k=1}^{N_t} := \Tcal$ time steps by gathering data only at these points
     \end{equation*}
     with $N_t := \vert \Tcal \vert$ a finite dimensional \emph{solution trajectory} of the discretized parametric PDE.
     Furthermore, let $\Pcal_1 \subset \Theta$, $\Pcal_2 \subset \Theta'$ and $\Pcal = \Pcal_1 \times
-    \Pcal_2$ be some finite parameter data with respective sizes $N_{s_1}, N_{s_2} \in \N \cup \{\infty\}$ and $N_s = N_{s_1} N_{s_2}$.
+    \Pcal_2$ be some finite parameter data with sizes $N_{s_1}, N_{s_2} \in \N \cup \{\infty\}$ and $N_s = N_{s_1} N_{s_2}$, 
+    respectively.
 \end{definition}
 
 
-Mainly, we stated the problem framework, 
-to know with which class of
-of PDEs we will be working with. Hence any regularity assumption is only given here in order to assert an outlook on the
-use of $L^p$ norms for the error between the weak solution $u \in \Hcal$, the finite dimenisonal solution $u_h \in \Hcal_h$ 
-and the approximation of that solution $\hat{u}_h \in \Hcal_h$ (of reduced order) using ROM methods.
+We have stated the problem framework, 
+to know which class
+of PDEs, we will be considering. However, to justify the
+use of $L^2$ norms, we assume that $\Hcal_h$ can be 
+embedded in $L^2$. Then we can compare the finite dimensional solution $u_h \in \Hcal_h$ 
+and the approximation of that solution $\hat{u}_h \in \Hcal_h$ (of reduced order) using ROM methods with $L^2$ estimates.
 
-It is the latter ones, we will be concerned with in this thesis, 
-which are however clearly embedded in $L^2$, since they are finite dimensional and bounded by an upcoming assumption.
+From this point forward, we want to consistently rely on the following few assumptions, which regulate the 
+discrete problem above. 
 
-From this point forward, we want to consistenly rely on the following few assumptions, which regulate the 
-discrete problem above. The first Assumption (\ref{assumption KnW decay}) justifies a nuanced approach regarding the
+Assumption (\ref{assumption KnW decay}) justifies a nuanced approach regarding the
 geometric parameter $\mu$ and the physical parameter $\nu$, but can be relaxed
-under some constraints. The second Assumption (\ref{assumption sample}) is necessary
+under some constraints. Note, that the exact size of $\alpha$ and $\beta$ is not needed for any
+of the upcoming proofs. However, the general separation of problems with slow and fast KnW decay is important
+in the context of literature.
+
+Assumption (\ref{assumption sample}) is required
 for the derivation of any convergence result to a true parameter-to-solution map, 
-when sampling an ever growing number of examples, while the third Assumption (\ref{assumption parameter-to-solution map})
-imposes regularity on the mentioned parameter-to-solution map. Interestingly enough, it is that Assumption, which ensures
-the existence of a true solution of the discrete problem for any specified parameter choice. Observing of course, that
+when sampling an ever-growing number of examples. 
+
+Assumption (\ref{assumption parameter-to-solution map})
+imposes regularity on the mentioned parameter-to-solution map. It ensures
+the existence of a true solution of the discrete problem for any specified parameter choice. We observe, that
 this does not translate into the solvability for the upstream general problem.
-The last Assumption (\ref{assumption perfect embedding}) gives us the ability to later meaningfully 
-use an Autoencoder for a reduction.
+
+Assumption (\ref{assumption perfect embedding}) gives us the ability to later meaningfully 
+use an Autoencoder to achieve a reduction. Its application is justified with results from \cite{franco2023}.
 
 
 \begin{assumption} \label{assumption KnW decay}
@@ -151,28 +159,28 @@ use an Autoencoder for a reduction.
     \end{enumerate}
 \end{assumption}
 
-This is mostly satisfied for problems in which the transport dominated or non-linear part is chained
+This is mostly satisfied for problems in which the transport dominated, or non-linear part is chained
 to the parameter $\mu$, and
-any coersive or elliptic operator is most heavily influence by $\nu$.
+any coercive or elliptic operator is most heavily influence by $\nu$.
 
 \begin{assumption} \label{assumption sample}    
     Let $\Theta, \Theta'$ and $[0, T]$
-    for $T > 0$ as above. We assume that all $N_s \in \N_{\geq 2}$ parameter data points according to 
-    Definition (\ref{def: solution data}) are sampled uniformly and 
-    iid in the joint parameter space $\Theta \times \Theta'$, 
-    while a uniform grid is employed for the time variable, 
-    $\Tcal = \{\Delta t, 2 \Delta t, \dots, N_t \Delta t \}$, 
+    for $T > 0$ as above. We assume that all $N_s \in \N_{\geq 2}$ parameter data points as in 
+    (\ref{def: solution data}) are sampled 
+    independent and identically distributed in the joint parameter space $\Theta \times \Theta'$.
+    For the time variable a uniform grid 
+    $\Tcal = \{\Delta t, 2 \Delta t, \dots, N_t \Delta t \}$ is used, 
     where $N_t \in \mathbb{N}_{\geq 2}$, $N_{s_1}$ and $N_{s_2}$ 
     are the respective number of random samples in the parameter spaces $\Theta$ and $\Theta'$,
     $N_s = N_{s_1} N_{s_2} \in \mathbb{N}$ is the total sample size, and $\Delta t = T / N_t$.
 \end{assumption}
 
-We remark, that the equidistant spacing of the time samples is a matter of convenience, 
-and could be loosened under some constraints.
+We remark, that the equidistant spacing of the time samples is a matter of convenience. 
+It could be loosened under some constraints.
 
 \begin{assumption} \label{assumption parameter-to-solution map}
     Let $\mathcal{G}: \Theta \times \Theta' \times [0, T] \to \R^{N_h}$ be the parameter-to-solution map, 
-    mapping $(\mu, \nu, t) \mapsto \uht$. Here we assume that
+    mapping $(\mu, \nu, t) \mapsto \uht$. Then, we assume that
     \begin{enumerate}
         \item $m = 
         \underset{(\mu, \nu, t) \in \Theta \times \Theta' \times \mathcal{T}}{\operatorname{ess}\, \inf}
@@ -183,15 +191,16 @@ and could be loosened under some constraints.
     \end{enumerate}
 \end{assumption}
 
-A very important fact follows already directly from the presumably allowed well-posed definition of such a map; the solution 
-$u_h(\cdot, \cdot \, ; \mu, \nu)$ exists and is unique, in at least an $L^2$-embedded sense, since the time-derivate can
-be relaxed using a variational argument. 
+There is another subliminal assumption inside the well-posed definition of such a parameter-to-solution map; the solution 
+$u_h(\cdot, \cdot \, ; \mu, \nu)$ exists and is unique. This is meant, at least, in an $L^2$-embedded sense, 
+since the time-derivative can be relaxed using a variational argument. 
 
 \begin{assumption} \label{assumption perfect embedding}
-    Let $N \in \N$ be fixed. We assume that for $s, s'$ sufficiently large, there are two maps 
+    Let $N \in \N$ be fixed and $n \in \N$ such that $n \leq 2(p + q) + 3$. 
+    We assume that for $s, s'$ sufficiently large, there are two maps 
     $\psi_*: \R^n \to \R^N$ and $\psi_*': \R^N \to \R^n$ 
-    which attain the perfect nonlinear embedding of the reduced solution manifold, 
-    as given in Definition (\ref{def: nonlinear kolmogorov}) for any $n \leq 2(p + q) + 3$, i.e.
+    which attain a nonlinear embedding without loss of the reduced solution manifold, 
+    as given in Definition (\ref{def: nonlinear kolmogorov}), i.e.
     for $\mathcal{S}_N := \{ q(\mu, \nu, t) = \A^T u(\mu, \nu, t) \, \vert \, (\mu, \nu, t) 
     \in \Theta \times \Theta' \times \Tcal \}$, where $\A \in \R^{N_h \times N}$ is the POD matrix,
     \begin{equation*}
@@ -201,7 +210,7 @@ be relaxed using a variational argument.
 
 
 
-Every following Reduced Order Model will pursue the universal (and vague) following goal.
+From here on, every introduced Reduced Order Model will pursue the following universal (and vague) goal.
 
 \begin{goal}
     Find
@@ -216,9 +225,9 @@ Every following Reduced Order Model will pursue the universal (and vague) follow
     is small.
 \end{goal}
 
-In general, we remind ourselves of the starting situation: $\Hcal_h \subset \Hcal$ is a finite dimensional
-approximation space of our weak problem. As mentioned before, we also have employed discretized time-steps.
-We therefore have something along the lines of
+We recall, that $\Hcal_h \subset \Hcal$ is a finite dimensional
+approximation space of our weak problem. As mentioned before, we discretized time-steps.
+Therefore, we have something akin to
 \begin{equation} \label{eq: full discrete ppde}
     \begin{cases}
     \displaystyle
@@ -228,8 +237,9 @@ We therefore have something along the lines of
     \uh(0) = u_0(\mu, \nu) \quad &t=0,
     \end{cases}
 \end{equation}
-for $\hat{\partial}_t$ being a discrete approximation of the time-derivative and $\uh(t) \in \R^{N_h}$ for
-$t \in [t_k, t_{k+1})$ and some $k = 0, \dots, N_t - 1$ the piecewise constant coefficient vector for the true solution
+for $\hat{\partial}_t$ a discrete time-stepping operator and $\uh(t) \in \R^{N_h}$ for
+$t \in [t_k, t_{k+1})$. For some $k = 0, \dots, N_t - 1$ the piecewise constant coefficient vector for the true solution
+is then given by
 \begin{equation*}
     u_h(\cdot, t; \mu, \nu) = \sum_{j = 1}^{N_h} [\uh(t)]_j \, \varphi_j(\mu) \in \Hcal_h, 
     \text{ for each } t \in  [t_k, t_{k+1}) \text{ and } (\mu, \nu) \in \Theta \times \Theta'. 
@@ -240,11 +250,11 @@ $t \in [t_k, t_{k+1})$ and some $k = 0, \dots, N_t - 1$ the piecewise constant c
 \section{Intrusive Reduced Order Models}
 
 
-In this section we want to introduce some such \emph{intrusive} methods for the dimensionality reduction of the finite
+In this section, we will introduce some \emph{intrusive} methods for the dimensionality reduction of the finite
 dimensional parametric PDE. The name "intrusive" means to symbolize the "intrusion" of the method into the formulation
-of the PDE and the specifications of its operators. Coinciding with that, there are methods for linear and non-linear
-problems respectively, as the more simple and light weight reduction techniques can leverage an abstract linear variational
-problem to achieve a (Petrov-)Galerkin projection, whereas any non-linear problem, so a problem with $N \neq 0$
+of the PDE and the specifications of its operators. There are methods for linear and non-linear
+problems respectively. The more simple and lightweight reduction techniques can leverage an abstract linear variational
+problem to achieve a (Petrov-)Galerkin projection. The methods for non-linear problems, so problems with $N \neq 0$
 according to Equation (\ref{eq: fom ppde}), utilize the specifications of the non-linear operator to achieve reduction.
 
 \begin{remark}[Historic Literature]
@@ -253,34 +263,30 @@ according to Equation (\ref{eq: fom ppde}), utilize the specifications of the no
     spaces were systematically introduced in the context of parametrized PDEs. 
     Early formulations of the \emph{reduced basis (RB) method} can be found in the 
     control and approximation theory literature, e.g.\ in the pioneering works of 
-    Courant and Hilbert on variational methods~\cite{couranthilbert1953}, and in 
+    Courant and Hilbert on variational methods \cite{couranthilbert1953}, and in 
     the first computational implementations by Noor and coworkers 
-    in structural mechanics~\cite{noor1980}. These ideas were later rigorously 
+    in structural mechanics \cite{noor1980}. These ideas were later rigorously 
     developed into the modern RB methodology by Patera in the mid-1980s 
     \cite{patera1984}, and subsequently advanced by Maday, Rovas, Prud'homme and 
-    others in the 1990s and 2000s~\cite{maday2002,prudhomme2002}.  
+    others in the 1990s and 2000s \cite{maday2002,prudhomme2002}.  
 
     In parallel, the POD emerged as a 
     computational tool for obtaining optimal low-rank approximations of 
     dynamical systems, building on statistical formulations dating back to 
     Karhunen and Loève. The introduction of POD-Galerkin for intrusive model 
     reduction was consolidated in applied mechanics and fluid dynamics in the 
-    1990s and early 2000s (see~\cite{holmes1996,kunischvolkwein2001}).  
+    1990s and early 2000s (see \cite{holmes1996,kunischvolkwein2001}).  
 
-    As nonlinear problems became central, the cost of evaluating nonlinear terms 
+    As nonlinear problems gained prominence, the cost of evaluating nonlinear terms 
     prompted the development of \emph{hyper-reduction techniques}, such as the 
-    Empirical Interpolation Method (EIM)~\cite{barrault2004} and its discrete 
-    variants (DEIM)~\cite{chaturantabut2010}, which remain core components of 
+    Empirical Interpolation Method (EIM) \cite{barrault2004} and its discrete 
+    variants (DEIM) \cite{chaturantabut2010}, which remain core components of 
     modern intrusive ROM frameworks.  
 \end{remark}
 
 
 We will start with the framework of projection-based methods, that necessitate a problem with $N = 0$.
-
-All of the following methods will be discussed broadly, as the thesis concerns itself mostly
-with the later data-driven ROMs. 
-
-
+All the following methods will be discussed broadly, as the thesis will focus on the later data-driven ROMs. 
 
 \begin{definition}[Reduced Basis]
     Let $\Hcal_n \subset \operatorname{span}(u_h(\cdot, t; \mu, \nu) \in \Hcal_h \, \vert \,
@@ -289,45 +295,47 @@ with the later data-driven ROMs.
     \emph{reduced basis}.
 \end{definition}
 
-From this starting point, the goal of all \emph{reduced basis methods} is to find a reduced basis $\{\hat{\varphi}_j(\mu)\}_{j=1}^n$ 
+Henceforth, the goal of all \emph{reduced basis methods} is to find a reduced basis $\{\hat{\varphi}_j(\mu)\}_{j=1}^n$ 
 and $\uhhat(t) \in \R^n$ for $n \ll N_h$, such that
 \begin{equation*}
-    \hat{u}_h(\cdot, t; \mu, \nu) = \sum_{j=1}^{n} [\uhhat(t)]_j \, \hat{\varphi}_j(\mu) \in \Hcal_n \subset \Hcal_h,
+    \hat{u}_h(\cdot, t; \mu, \nu) = \sum_{j=1}^{n} [\uhhat(t)]_j \, \hat{\varphi}_j(\mu) \in \Hcal_n \subset \Hcal_h.
 \end{equation*}
-where, in a yet vague formulation,
+Note, that we aim to vaguely achieve
 \begin{equation*}
     \hat{u}_h(\cdot, t; \mu, \nu) \approx u_h(\cdot, t; \mu, \nu) \quad \text{for all } \mu \in \Theta, \nu \in \Theta'
     \text{ and } t \in [0, T].
 \end{equation*}
-In the terminology the RB methods are a setup for many different ROMs, but most often appear for so-called
-projection-based ROMs, which itself are 
-intrusive ROMs. They help with the identification of a suitable basis to project upon.
-Two prominent examples of such reduced basis methods in the context of projection-based ROMs can be found in the following. 
-Both will enhibit intrinsically an \emph{offline}
-and an \emph{online} part in the algorithm, whose separation we will mostly neglect. However, when remarking something
-about the offline procedure, we usually talk about the part of the algorithm that can be collected a priori to 
-its purposed deployment. Here this is the collection and reduction of dimension using a reduced basis via samples. 
+In the terminology the Reduced Basis (RB) methods are a setup for many ROMs, and often appear for so-called
+projection-based ROMs. These itself are 
+intrusive ROMs. Projection-based ROMs identify a reduced basis, and then solve the reduced problem
+for the coefficients of this basis.
+Two prominent examples of such RB methods in the context of projection-based ROMs can be found in the following. 
+Both will contain intrinsically an \emph{offline}
+and an \emph{online} part in the algorithm, whose separation we will mostly neglect. However, 
+the offline procedure commonly refers to the part of the algorithm, that can be collected a priori to 
+its purposed deployment. Here, this is the construction of a reduced basis via samples. 
 On the other hand, online refers to its counterpart; the many-query element of the procedure, such as the evaluation of the 
-best-guess parameter-to-solution map. This terminology is used often throughout the literature as it instinctively 
+best-guess parameter-to-solution map. This terminology is used frequently throughout the literature as it instinctively 
 makes sense in a software development environment.
 
 
 \subsection{Galerkin Proper Orthogonal Decomposition}
 
-As a prerequisit for Galerkin orthogonality, we assume here that the weak form giving rise to the equation at hand derives
-from an abstract bilinear form in the stationary part. This is justified if the non-linear summand is zero. The source
-for this subsection is \cite[p. 137]{quarteroni2015rb}.
+As a prerequisite for Galerkin orthogonality, we assume for this subsection that the weak form 
+giving rise to the equation at hand derives
+from an abstract bilinear form in the stationary part. This is justified, since the non-linear summand is assumed to be zero. 
+The source for this subsection is \cite[p. 137]{quarteroni2015rb}.
 
-The POD as introduced in Definition (\ref{def: POD}) is one of the most common methods for a reduction in
-a classical sense. We can use the system above to solve for the solution using a Galerkin projection for the following
-Ansatz:
+The POD as introduced in Definition (\ref{def: POD}) is one of the most common methods for a dimensional reduction. 
+We can use the system above to solve for the solution using a Galerkin projection for the following
+identity.
 \begin{equation} \label{eq: identity for pod galerkin}
     \hat{u}_h(x, t; \mu, \nu) = \sum_{j=1}^n [\uhhat(t)]_j \, \xi_j(x),
 \end{equation}
-where $x \in \Omega$, $t \in [0, 1]$, $(\mu, \nu) \in \Theta \times \Theta'$ and 
-$\xi_j$ for $1 \leq j \leq n$ are the POD modes, as given by the construction of the POD in Defintition 
-(\ref{def: POD}) with $\G := \I_{N_h}$, and $\uhhat(t) \in \R^n$
-is the coefficient vector, that solves the following reduced equation
+where $x \in \Omega$, $t \in [0, T]$, $(\mu, \nu) \in \Theta \times \Theta'$ and 
+$\xi_j$ for $1 \leq j \leq n$ are the POD modes, of Definition 
+(\ref{def: POD}) with $\G := \I_{N_h}$. Then $\uhhat(t) \in \R^n$
+is the coefficient vector, that solves the reduced equation
 \begin{equation} \label{eq: reduced full discrete ppde}
     \begin{cases}
         \A^T M(\mu) \A \hat{\partial}_t \uhhat(t) + \A^T A(\mu, \nu) \A \uhhat(t)
@@ -336,10 +344,11 @@ is the coefficient vector, that solves the following reduced equation
     \end{cases}
 \end{equation}
 
-Note, that in this construction $\A$ is \emph{not} $M(\mu)$-orthogonal, thus losing certain projection qualities
-with regard to the inherent $L^2$-norm of the underlying Hilbert space $\Hcal_h$.
+Note, that in this construction $\A$ is generally \emph{not} $M(\mu)$-orthogonal. However, if we can set up the
+problem with a $\mu$-independent mass matrix $\G$, then such a POD matrix would retain $\G$-orthonormality. This would then
+conclude in a simpler variant of the problem in Equation (\ref{eq: reduced full discrete ppde}) due to $\A^T \G \A = \I_n$.
 The parameter-to-solution map can be recovered by the following Algorithm (\ref{algo: pod-galerkin}), where the steps
-1--4 can be done \emph{offline} and 5--6 are called for each \emph{online} computation.
+1--4 are executed \emph{offline} and 5--6 are called for each \emph{online} computation.
 
 \begin{algorithm}
     \caption{POD-Galerkin} \label{algo: pod-galerkin}
@@ -368,29 +377,31 @@ The parameter-to-solution map can be recovered by the following Algorithm (\ref{
 
 
 
-An introduction to this method in the stationary and well-posed case can be found in \cite{siena2022pod}. As done
-previously in the subsection above, we assume $N = 0$ in Equation (\ref{eq: full discrete ppde}). This gives us a 
-coersive abstract bilinear form for the stationary part. Additionally let $\eta : \Theta \times \Theta' \to \R$ be 
-a function estimating the error of projection under a specific parameter set, i.e. such that 
+An introduction to this method in the stationary and well-posed case can be found in \cite{siena2022pod}. As before, 
+we assume $N = 0$ in Equation (\ref{eq: full discrete ppde}) and the inheritance
+from a weak formulation. Additionally, let $\eta : \Theta \times \Theta' \to \R$ be 
+a function estimating the error of projection under a specific parameter set, i.e. 
 \begin{equation*}
     \sup\limits_{t \in \Tcal} \, \norm{u_h(\mu, \nu, t) - \hat{u}_h(\mu, \nu, t)} \leq \eta(\mu, \nu),
 \end{equation*}
-
-for $(\mu, \nu) \in \Pcal$. Purely using POD-Galerkin can encounter major pitfalls, namely if the range of $\Pcal$ is extensive, 
-since then calculating a singluar value decomposition for the correlation matrix might get too cumbersome to provide all
+for $(\mu, \nu) \in \Pcal$. Purely using POD-Galerkin can encounter major pitfalls. Namely, if the range of $\Pcal$ is extensive, 
+the calculation of an eigenvalue decomposition for the correlation matrix might get too cumbersome to provide all
 areas of interest in the set. Moreover, to obtain the snapshots for fixed parameters, a complete time-trajectory must
-be computed, which entails a lot of overhead of otherwise useless information. To overcome this \cite{grepl2005rb} proposed,
-and later \cite{haasdonk2008pod} improved upon, the mixed POD-Greedy approach, which takes a POD over the time-trajectories
-(or, in the improved version, the error trajectories) while using the Greedy approach to handle the parameter samples.
-It follows a similar workflow, as the POD-Galerkin, since the only thing, that changes is the choice of basis, and the fact that the size
-of the basis is chosen according to the tolerance in the offline part of the algorithm, i.e.
+be computed, which entails a lot of overhead of otherwise useless information. To overcome this the mixed POD-Greedy approach 
+was proposed in \cite{grepl2005rb}. This method was later improved in \cite{haasdonk2008pod}. The method 
+takes a POD over the solution trajectories
+(or, in the improved version, the error trajectories), while using the Greedy approach to handle the parameter samples.
+It follows a similar workflow, as the POD-Galerkin, since the only thing, that changes is the choice and number of basis functions.
+In fact, the size of the basis is chosen according to the tolerance in the offline part of the algorithm.
+
+Let
 \begin{equation} \label{eq: identity for pod greedy galerkin}
     \hat{u}_h(x, t; \mu, \nu) = \sum_{j=1}^N [\uhhat(t)]_j \, \xi_j(x),
 \end{equation}
 with $x \in \Omega$, $t \in [0, 1]$, $(\mu, \nu) \in \Theta \times \Theta'$ 
-identifies the reduced solution of dimension $N$, where $\xi_j$ are the basis functions obtained from the offline procedure
-in Algorithm (\ref{algo: pod-greedy-galerkin}) for $1 \leq j \leq N$ and the
-coefficient vector being the solution to 
+identify the reduced solution of dimension $N$, where $\xi_j$ are the basis functions obtained from the offline procedure
+in Algorithm (\ref{algo: pod-greedy-galerkin}) for $1 \leq j \leq N$. Then $\uhhat(t) \in \R^N$ is the
+coefficient vector, that solves the reduced equation
 \begin{equation} \label{eq: reduced full discrete ppde greedy}
     \begin{cases}
         \V_\text{rb}^T M(\mu) \V_\text{rb} \hat{\partial}_t \uhhat(t) + \V_\text{rb}^T A(\mu, \nu) \V_\text{rb} \uhhat(t)
@@ -399,9 +410,10 @@ coefficient vector being the solution to
     \end{cases}
 \end{equation}
 
-Note again, that $\V_\text{rb}$ is \emph{not} $M(\mu)$-orthonormal.
-The complexity of the offline computation for this Algorithm (\ref{algo: pod-greedy-galerkin}) is additive, and not multplicative, in the number of 
-training data $\Pcal$, which is a huge advantage when compared to the direct POD-Galerkin approach. 
+Note again, that $\V_\text{rb}$ is generally \emph{not} $M(\mu)$-orthonormal.
+The complexity of the offline computation for this Algorithm (\ref{algo: pod-greedy-galerkin}) is additive, 
+and not multiplicative, in the number of 
+training data $\Pcal$. This can be an advantage, when compared to the pure POD-Galerkin approach. 
 
 \begin{algorithm}
     \caption{POD-Greedy-Galerkin} \label{algo: pod-greedy-galerkin}
@@ -431,12 +443,6 @@ training data $\Pcal$, which is a huge advantage when compared to the direct POD
     \end{algorithmic}
 \end{algorithm}
 
-\begin{remark}
-    It would be possible to include the physical parameter into the first POD scheme in each iteration, which could 
-    give a high yield for this specific problem as the Kolmogorov
-    $n$-width decay as imposed by Assumption (\ref{assumption KnW decay}) implies. However since we lose generality 
-    by setting $N = 0$ in both projection-based algorithm, this is only an argument for divergent discussions.
-\end{remark}
 
 
 
@@ -446,13 +452,14 @@ training data $\Pcal$, which is a huge advantage when compared to the direct POD
 
 
 
-In this subsection, we want to briefly introduce relevant ROMs, which handle situations in which $N \neq 0$
-according to Equation (\ref{eq: fom ppde}). Under Finite Element Methods, such situations can be found, in case
+In this subsection, we want to briefly introduce relevant ROMs, that handle situations in which $N \neq 0$
+according to Equation (\ref{eq: fom ppde}). For discrete problem derived from Finite Element Methods, 
+such situations can be found, in case
 the associated weak form of the PPDE has a non-affine representation in the respective space in regard
 to the parameters. Each of these methods, try to overcome the issue of $N_h$-dimensional workflow in 
-the $N$ operator. This is straightforward, if one would try to use an RB-method in order to substitute
-the Equation (\ref{eq: fom ppde}) in the same way as we have done in both POD methods;
-we would get
+the $N$ operator. This is straightforward, if one would use a RB-method in order to substitute
+the Equation (\ref{eq: fom ppde}) in the same way as we have done in projection-based ROMs above.
+In such case, we would get
 \begin{equation*}
     \begin{cases}
         M_\text{red}(\mu) \hat{\partial}_t u_\text{red}^{\mu, \nu}(t) + A_\text{red}(\mu, \nu) u_\text{red}^{\mu, \nu}(t)
@@ -461,49 +468,49 @@ we would get
     \end{cases}
 \end{equation*}
 with $\uhhat(t) \approx V u_\text{red}^{\mu, \nu}(t)$ for each $t \in [0, T]$ and some reduction operator
-$V$, hence still relying on 
+$V$. Hence, we would still rely on 
 the high dimensional evaluation of the non-linear term.
 In the following, we will list some of the intrusive ROMs to overcome such evaluating, and
 give a brief description of their workflow.
 
 \paragraph{Empirical Interpolation Method (EIM)}
 
-In essence, the EIM leverages on interpolation functionals, which are defined iteratively;
-one minimizes with regard to $\inf_{z \in W_{M-1}} \norm{N(\cdot, \mu, \nu) - z}_{L^\infty(\Omega)}$,
+In essence, the EIM leverages on interpolation functionals, which are defined iteratively.
+We minimize with regard to $\inf_{z \in W_{M-1}} \norm{N(\cdot, \mu, \nu) - z}_{L^\infty(\Omega)}$,
 where $W_{M-1}$ is the span of the last iteration, which appends all former ones. The start
 of this iteration is given by setting $W_1 := \operatorname{span}(\xi_1)$ with $\xi_1 := 
 N(u_h^{\mu_1, \nu_1, t_1}, \mu, \nu)$ for some solution snapshot.
-This constitutes finding a space, in which the non-affine (non-linear) opeartor $N$ is approximated well
-by interpolation. After sufficient steps, one breaks the creation of this space and takes the wanted
-amount $m < N_h$ of interpolation functionals spanning that space, and 
-then approximates with $U = [\xi_j]_{j=1}^m$ and $P \in \R^{N_h \times m}$ being the selection matrix the
+This constitutes finding a space, in which the non-affine (non-linear) operator $N$ is approximated well
+by interpolation. After sufficient steps, we stop the creation of this space and take the wanted
+amount $m < N_h$ of interpolation functionals spanning that space. 
+Then, we approximate with $U = [\xi_j]_{j=1}^m$ and $P \in \R^{N_h \times m}$ being the selection matrix for the
 non-linear term under a less costly interpolant
 \begin{equation*}
-    N(\uhhat, \mu, \nu) \approx U (P^T U)^{-1} P^T N(\uhthat, \mu, \nu),
+    N(\uhhat, \mu, \nu) \approx U (P^T U)^{-1} P^T N(\uhthat, \mu, \nu).
 \end{equation*}
-since the expensive $U (P^T U)^{-1}$ term can be computed offline, 
-while only $m \ll N_h$ entries of $N(\uhhat, \mu, \nu)$ need to be assembled only. The EIM has been
-introduced in \cite{barrault2004}, but a more fitting definition in our framework can be found
+In fact, the expensive $U (P^T U)^{-1}$ term can be computed offline, 
+while only $m \ll N_h$ entries of $N(\uhhat, \mu, \nu)$ need to be assembled online. The EIM has been
+introduced in \cite{barrault2004}, but a more fitting definition for our framework can be found
 in \cite{quarteroni2015rb}.
 
 \paragraph{Gappy-POD Residual Minimization (GNAT)}
 
-For simplicity and consistency with the literatures notation, we will denote with $R: \R^{N_h} \to \R^{N_h}$
-given with
+For simplicity and consistency with the literature's notation, we will denote with $R: \R^{N_h} \to \R^{N_h}$
+given by
 \begin{equation*}
     R(u) := M(\mu) \partial_t u + A(\mu, \nu) + N(u, \mu, \nu) - f(t; \mu, \nu)
 \end{equation*}
 the residual of the problem in Equation (\ref{eq: fom ppde}). The GNAT aims at reducing the dimensionality
-of an arbitrary residual realization by using a Petrov-Galerkin projection, thus limiting the domain of the
-residual to a less complex, intrinsically low dimensional, subspace of $\R^{N_h}$, by a use of 
-gappy POD and sampling. After this it
-solves a least-squares problem with a Gauss-Newton method, i.e.
+of an arbitrary residual realization by using a Petrov-Galerkin projection. Thus, it limits the domain of the
+residual to a less complex, intrinsically low dimensional, subspace of $\R^{N_h}$, by using
+gappy POD and sampling. After this, it
+solves a least-squares problem with a Gauss-Newton method, i.e. it finds
 \begin{equation*}
     \min\limits_{u_\text{red}} \norm{P^T R(V u_\text{red})}^2,
 \end{equation*}
-with $P \in \R^{N_h \times m}$ again being a basis selector and $V$ the reduction matrix.
-References to this are \cite{carlberg2013}
-and its idea basis in \cite{carlberg2011}.
+with $P \in \R^{N_h \times m}$ a basis selector and $V$ the reduction matrix.
+For this refer to \cite{carlberg2013}.
+However, the origin of the method can be found in \cite{carlberg2011}.
 
 
 
@@ -517,49 +524,52 @@ and its idea basis in \cite{carlberg2011}.
 
 
 In contrast to the introduced intrusive ROMs above, the \emph{data-driven} alternatives aim to circumvent 
-the direct use of the governing equations, and, as such, allow for more leniency toward unknown operator qualities.
+the direct use of the governing equations. As such, they allow a more general treatment.
 
 \begin{remark}[Historic Literature]
     The origins of data-driven ROMs can be traced back to techniques in fluid 
     dynamics and control, where the objective was to extract coherent structures 
     or dominant modes from experimental measurements without explicit reliance on 
-    the full Navier--Stokes equations. A first influential step was the development 
+    the full Navier-Stokes equations. A first influential step was the development 
     of the POD for experimental data, 
-    introduced in the turbulence community by Lumley~\cite{lumley1967}, and further 
-    popularized in the coherent structure analysis of Sirovich~\cite{sirovich1987}. 
-    While POD itself does not provide a dynamical law for the online phase, it laid the foundation for 
-    representing complex systems with a small number of empirical modes.
+    introduced in the turbulence community by Lumley \cite{lumley1967}, and further 
+    popularized in the coherent structure analysis of Sirovich \cite{sirovich1987}. 
+    While the POD itself does not provide a dynamical law for the online phase, it laid the foundation for 
+    representing complex systems with only few empirical modes.
 
-    A decisive breakthrough came with the advent of the 
-    \emph{Dynamic Mode Decomposition} (DMD)~\cite{schmid2010}, which may be 
+    A decisive breakthrough was the 
+    \emph{Dynamic Mode Decomposition} (DMD) \cite{schmid2010}, which can be 
     interpreted as a data-driven approximation of the infinite-dimensional Koopman 
-    operator~\cite{rowley2009}. DMD represents temporal evolution as a best-fit 
+    operator \cite{rowley2009}. DMD represents temporal evolution as a best-fit 
     linear operator acting on snapshot data, thereby yielding both modal 
     decompositions and a surrogate model for prediction. This was one of the first 
     systematic attempts to construct a fully non-intrusive ROM.
 
     In parallel, regression-based approaches have been developed to learn reduced 
     operators directly from data, often under the name of 
-    \emph{operator inference}~\cite{peherstorfer2016}, or in the form of 
+    \emph{operator inference} \cite{peherstorfer2016}, or in the form of 
     interpolation-based reduced models, e.g.\ POD with interpolation (PODI) 
-    as in Barrault et al.~\cite{barrault2004}. These methods demonstrate that the 
+    as in Barrault et al. \cite{barrault2004}. These methods demonstrate that the 
     reduced dynamics can be inferred without Galerkin projection, either by 
     statistical regression or by interpolation in parameter space.
 \end{remark}
 
 For this section we intentionally do not give an explicit training algorithm for any of the methods presented,
-since it can be infered with an optimizer of the readers choice from the discussion 
+since it can be inferred with an optimizer of the readers choice from the discussion 
 in Subsection (\ref{subsec: statistical learning}). With readability in mind, we thus only state the architecture
 of the network at hand and its loss function. Most importantly, we assume that some choice of basis
-for $\Hcal_h$ is already done a priori to the training of the network and independent of $\mu \in \Theta$
-thus setting $\G := M(\mu)$ for all $\mu \in \Theta$ as our mass matrix. Under Equation
+for $\Hcal_h$ is already done a priori to the training of the network and independent of $\mu \in \Theta$.
+Thus, we assume $\G := M(\mu)$ for all $\mu \in \Theta$ as our mass matrix. Under Equation
 (\ref{eq: definition mass matrix norm}) this also implies a $\mu$-independent norm $\norm{\cdot}$, which in fact
-allow us to use the POD matrix, if constructed with $\G$, as a true projector onto the span of $\A$ in an $L^2$ sense.
+allow us to use the POD matrix, if constructed with $\G$, as a $\G$-orthogonal projector 
+onto the span of $\A$ in an $L^2$ sense.
 Note, that this could be relaxed, if a general equivalent norm would be known without imposing a $\mu$-independent
 basis.
 
-For clarity, we formulate the following as an assumption, since from experience, the reduction system across comparable
-architectures can get confusing, and the reader is therefore encouraged to revisit this assumption, whenever
+For clarity, we formulate the following as an assumption, since the reduction systems presented
+can choose these dimensional numbers somewhat freely. They should however retain this hierarchy, to ensure comparability.
+Note, that the number of systems can make the dimensionality of the architectures confusing.
+The reader is therefore encouraged to revisit this assumption, whenever
 the general setting appears to be unclear.
 
 \begin{assumption}[Dimension Hierarchy] \label{assumption: dimension hierarchy}
@@ -571,7 +581,7 @@ the general setting appears to be unclear.
 \end{assumption}
 
 A general Deep Learning based ROM (DL-ROM) first appeared in architecture and 
-training in the paper \cite{fresca2020}; to properly approximate the potentially 
+training in the paper \cite{fresca2020}. To properly approximate the potentially 
 non-linear solution manifold of the high fidelity FOM, an Autoencoder (AE) is deployed to map the degrees of freedom 
 to a coefficient dimension, 
 from where some other neural network architecture, 
@@ -579,22 +589,22 @@ like the proposed Deep Feed-Forward Neural Network (DFNN), is used to learn the 
 This concludes in the following approximation of the FOM coefficient solution $\uht \in \R^{N_h}$ for each 
 $\mu \in \Theta$, $\nu \in \Theta'$ and $t \in \Tcal$
 \begin{equation} \label{eq: dl rom solution}
-    \uhthat = \left(R_\rho(\Psi_h(\theta^*_\text{D})) \circ R_\rho(\Phi_n(\theta^*_\text{DF}))\right) (t; \mu, \nu) \in \R^{N_h},
+    \uhthat = \left(R_\rho(\Psi_h) \circ R_\rho(\Phi_n)\right) (t; \mu, \nu) \in \R^{N_h},
 \end{equation}
 where we set $\Psi_h = f^\text{D}_h$ for the decoder architecture with input dimension $n$ and output dimension $N_h$
 (and $\Psi'_n = f^\text{E}_n$ the corresponding encoder architecture) of a convolutional AE. 
-Then $\Psi'_n$ denotes the projection onto the reduced trial solution manifold and we 
+Then $\Psi'_n$ denotes the projection onto the reduced trial solution manifold, and we 
 let $\Phi_n = \Phi_n^\text{DF}$  
 to be the DFNN architecture of input dimension $p + q + 1$ and output dimension $n$, 
 mapping the dynamics of the parametric PDE onto the reduced trial solution manifold.
 
 The subsequent training is then performed via a loss function of a convex combination of both, 
 the projection error using the encoder and the dynamics error considering both the decoder and 
-the feed forward network, i.e. for $\theta = (\theta_D, \theta_E, \theta_{DF})$ define the optimal weights via
-the problem in
-Definition (\ref{def: neural network weights}) with the loss function
+the feed forward network. For this optimization problem, we define 
+the trainable weights $\theta = (\theta_\text{D}, \theta_\text{E}, \theta_\text{DF}) 
+\in \Theta(\Psi_h) \times \Theta(\Psi_n') \times \Theta(\Phi_n)$ and the loss function
 \begin{multline} \label{eq: loss function dl rom}
-    \Lcal_\text{DL-ROM}\left(R_\rho(\Psi_h \odot \Phi_n(\theta)) \vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
+    \Lcal_\text{DL-ROM}\left(R_\rho(P(\Psi_h \odot \Phi_n, \Psi_n')(\theta)) \vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
     \{u_h^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) =  \\
         \sum_{i=1}^{N_{s_1}} \sum_{j=1}^{N_{s_2}} 
         \sum_{k = 1}^{N_t} \, \frac{\omega_h}{2} \, 
@@ -613,36 +623,37 @@ Definition (\ref{def: neural network weights}) with the loss function
 
 
 
-The main idea of the POD-DL-ROM is the additional employment of an outer a priori reduction of DL-ROM problem using 
-a POD. It can be found in \cite{fresca2022}. Note, that we
-sway a bit from the source, since we are trying to achieve 
-an estimate, which is close to the high-fidenlity solution
-in an $L^2$-sense and not a euclidean one by applying the
-mass matrix from the start of the section.
+The main idea of the POD-DL-ROM, in contrast to the DL-ROM, is the additional employment of an 
+outer a priori reduction of the training data using a POD. We base the following definition on \cite{fresca2022}. 
+Note, that we
+sway somewhat from the source, since we are trying to achieve 
+an estimate, which is close to the high-fidelity solution
+in an $L^2$-sense by applying the
+mass matrix $\G$ from the start of the section.
 Such a reduction yields great benefits, such as the scalability in $N_h$ 
 and reduction in computational cost for
-the offline training. It is done by employing a POD (see Algorithm (\ref{algo: pod}))
+the offline training. This is done by employing a POD (see Algorithm (\ref{algo: pod}))
 on the stacked solution trajectories 
 \begin{equation*}
     U := \left[u_h^{\mu_1, \nu_1} \big\vert \cdots \big\vert u_h^{\mu_{N_{s_1}}, \nu_1} \big\vert \cdots \big\vert 
     u_h^{\mu_{N_{s_1}}, \nu_{N_{s_2}}}\right]^T \in \R^{N_h \times N_\text{data}},
 \end{equation*}
-with the solution trajectories of Definition (\ref{def: solution data}), resulting in the POD matrix 
-$\A_\text{P}  \in \R^{N_h \times N}$ for the $N < N_h$ from Assumption (\ref{assumption: dimension hierarchy}). Then we can
-define the pre-reduced solution snapshots by computing
+of Definition (\ref{def: solution data}), resulting in the POD matrix 
+$\A_\text{P} \in \R^{N_h \times N}$ for $N < N_h$ from Assumption (\ref{assumption: dimension hierarchy}). Then we can
+define the reduced solution snapshots by computing
 \begin{equation*}
     u_\text{red}^{\mu, \nu, t} := \A_\text{P} ^T \G \uht \in \R^{N} \qquad \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal.
 \end{equation*}
 By $\G$-orthonormality of $\A_\text{P} $, we can thus define the FOM approximate coefficient solution $\uhthat \in \R^{N_h}$ for each 
 $\mu \in \Theta$, $\nu \in \Theta'$ and $t \in \Tcal$
 \begin{equation} \label{eq: pod-dl-rom solution}
-    \uhthat = \A_\text{P}  \cdot \left(R_\rho(\Psi_N(\theta^*_\text{D})) \circ R_\rho(\Phi_n(\theta^*_\text{DF}))\right) (t; \mu, \nu) \in \R^{N_h},
+    \uhthat = \A_\text{P}  \cdot \left(R_\rho(\Psi_N) \circ R_\rho(\Phi_n)\right) (t; \mu, \nu) \in \R^{N_h},
 \end{equation}
 where we set $\Psi_N = f^\text{D}_{N}$ for the decoder architecture with input dimension $n$ and output dimension $N$
 (and $\Psi'_n = f^\text{E}_n$ the corresponding encoder architecture) of a convolutional AE. 
-Then $f^\text{E}_n$ denotes the projection onto the reduced trial solution manifold and we 
+Then $f^\text{E}_n$ denotes the projection onto the reduced trial solution manifold, and we 
 let $\Phi_n = \Phi_n^\text{DF}$  
-to be the DFNN architecture of input dimension $p + q + 1$ and output dimension $n$ same as before.
+be the DFNN architecture of input dimension $p + q + 1$ and output dimension $n$ same as before.
 
 The loss function has now the attribute of being fed only at most $N$-dimensional training data, and only
 evaluating at most $N$-dimensional euclidean norms, hence greatly 
@@ -651,7 +662,9 @@ comes directly from the Proposition (\ref{prop: switch to euclidean norm}),
 where the averaging over all deterministic POD projection errors can be collectively ignored for training,
 without misrepresenting the solution as a bare vector in euclidean space.
 
-Hence, we can define with $P$ being the network parallelization operator the loss function with
+Hence, we can define the optimization problem. Let the neural network weights $\theta = 
+(\theta_\text{D}, \theta_\text{E}, \theta_\text{DF}) 
+\in \Theta(\Psi_N) \times \Theta(\Psi_n') \times \Theta(\Phi_n)$ and the loss function be defined by
 \begin{multline} \label{eq: loss function pod dl rom}
     \Lcal_\text{POD-DL-ROM}\left(R_\rho(P(\Psi_N \odot \Phi_n, \Psi'_n)(\theta)) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
     \{u_\text{red}^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) =  \\
@@ -672,34 +685,34 @@ Hence, we can define with $P$ being the network parallelization operator the los
 
 
 A big advantage of the POD-DL-ROM is the fact, that under the assumption of a static basis 
-$\{\xi_j\}_{j=1}^{N_h} \subset \Hcal_h$ of $\Hcal_h$ and its associated mass matrix $\G$ and $\Hcal_h$ equivalent norm
-$\norm{\cdot}$, we may reduce the high dimensional loss function in its essence to a managable computational complexity.
-However, this so far ignored the particular problem in sight; it ignores Assumption (\ref{assumption KnW decay}),
-which guarantees a significant reduction cost, when employing a $(\mu, t)$-independent projector.
+$\{\xi_j\}_{j=1}^{N_h} \subset \Hcal_h$ of $\Hcal_h$ and its associated mass matrix $\G$ and $\Hcal_h$ sensitive norm
+$\norm{\cdot}$, we may reduce the high dimensional optimization problem to a more manageable
+computational complexity.
+However, this so far ignored the particular problem in sight. Assumption (\ref{assumption KnW decay})
+guarantees a significant reduction cost, when employing a $(\mu, t)$-independent linear projector.
 To circumvent this Kolmogorov $N$-width barrier for $N \ll N_h$, one can instead of using a POD for the choice of reduced basis,
-invoke a Neural Network based linear projector, that fits a basis superposition dependend on $\mu$ and $t$,
-and can thus exhibit a further reduction to $N' < N$ under a similar value for the worst-case projection,
-i.e. the Kolmogorov $N'$-width.
+invoke a Neural Network based linear projector, that fits a basis superposition dependent on $\mu$ and $t$.
+This projector can thus produce a further reduction to $N' < N$ under a similar energy loss.
 
-The following technically depicts a RB method. 
+The following depicts an adaptive RB method. 
 \begin{definition}[Deep Orthogonal Decomposition] \label{def: DOD}
     Recollect the dimensional hierarchy of Assumption (\ref{assumption: dimension hierarchy}).
     Employ a POD (according to Algorithm (\ref{algo: pod})) with $\G$
-    given as above using
+    given as above, using
     the stacked solution trajectories
     \begin{equation*}
         U := \left[u_h^{\mu_1, \nu_1} \big\vert \cdots \big\vert u_h^{\mu_{N_{s_1}}, \nu_1} \big\vert \cdots \big\vert 
-        u_h^{\mu_{N_{s_1}}, \nu_{N_{s_2}}}\right]^T \in \R^{N_h \times N_\text{data}},
+        u_h^{\mu_{N_{s_1}}, \nu_{N_{s_2}}}\right]^T \in \R^{N_h \times N_\text{data}}.
     \end{equation*}
-    with the solution trajectories of Definition (\ref{def: solution data}), resulting in the POD matrix 
-    $\A \in \R^{N_h \times N_A}$.
-    Now set up for the inner module of the Deep Orthogonal Decomposition a Neural Network architecture 
-    $\Phi_{\tilde{\V}}$ with input dimension $p + 1$ and output dimension $N_A \times N'$
+    This results in the POD matrix $\A \in \R^{N_h \times N_A}$.
+    Now set up a Neural Network architecture 
+    $\Phi_{\tilde{\V}}$ with input dimension $p + 1$ and output dimension $N_A \times N'$,
     such that
     \begin{equation*}
         \Phi_{\tilde{\V}} = \text{ORTH} \circ \text{STACK} \circ (P((R_1 \odot s), \dots, (R_N \odot s))),
     \end{equation*}
-    where $P$ is denoting the network parallelization operator as given in Definition (\ref{def: network parallelization})
+    where $P$ is denoting the network parallelization operator as given in Definition (\ref{def: network parallelization}).
+    Here, we have
     \begin{enumerate}
         \item $s$ is a Deep Feed Forward Neural Network architecture with input dimension $p + 1$ and output dimension $l$,
         \item $R_1, \dots, R_N$ are a collection of Deep Feed Forward Neural Network architectures
@@ -719,8 +732,8 @@ The following technically depicts a RB method.
     the inner DOD module.
 
     \emph{The Deep Orthogonal Decomposition} can hence be achieved by upward projection under the POD matrix $\A$ of 
-    the inner DOD module, i.e. a realization of the underlying DOD neural network for a choice of weights
-    $\theta_\text{DOD} \in \Theta(\Phi_{\tilde{\V}})$ is attained for some
+    the inner DOD module. In other words, a realization of the underlying DOD neural network for a choice of weights
+    $\theta_\text{DOD} \in \Theta(\Phi_{\tilde{\V}})$ is attained for
     $\mu \in \Theta$ and $t \in [0, T]$ by
     \begin{equation} \label{eq: DOD}
         \V_{\mu, t}(\theta_\text{DOD}) := \A \cdot \tilde{\V}_{\mu, t}(\theta_\text{DOD}) \in \R^{N_h \times N'}.
@@ -798,30 +811,29 @@ The following technically depicts a RB method.
   \end{figure}
   
 
-Nonetheless this does not warrant a "good" DOD, just a defined one. 
+Nonetheless, this does not warrant a "good" DOD; just a defined one. 
 For this one needs to assert a qualitative loss function and some data, which we will collect by pre-reduction
-in the same manner as before, i.e.
+in the same manner as before, i.e. let
 \begin{equation*}
     u_\text{pre-red}^{\mu, \nu, t} := \A^T \G \uht \in \R^{N_A} \qquad \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal.
 \end{equation*}
-Then the loss function with regard to that data can be defined, again justified by 
-Proposition (\ref{prop: switch to euclidean norm}), as follows
+Then, we define the optimization problem as follows. Let $\theta = \theta_\text{DOD} 
+\in \Theta(\Phi_{\tilde{\V}})$ be the trainable weights, then we optimize using the following loss function
 \begin{multline} \label{eq: loss dod}
-    \Lcal_\text{DOD}\left(R_\rho(\Phi_{\tilde{\V}}(\theta_\text{DOD})) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
+    \Lcal_\text{DOD}\left(R_\rho(\Phi_{\tilde{\V}}(\theta)) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
     \{u_\text{pre-red}^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) \\
     = \frac{1}{N_\text{data}}\sum_{i=1}^{N_{s_1}} \sum_{j=1}^{N_{s_2}} 
     \sum_{k = 1}^{N_t} \, \euknorm{u_\text{pre-red}^{\mu_i, \nu_j, k \Delta t} - 
     \tilde{\V}_{\mu_i, k \Delta t}(\theta_\text{DOD}) \tilde{\V}^T_{\mu_i, k \Delta t}(\theta_\text{DOD}) 
     u_\text{pre-red}^{\mu_i, \nu_j, k \Delta t}}^2.
 \end{multline}
-Note, that this is indeed again a $N_A$-dimensional loss function, thanks to the $\G$-orthonormality
-of the POD matrix.
-In some abuse of notation, we will sometimes refer to the optimized version of the DOD network as the DOD.
+Note, that this is indeed again an $N_A$-dimensional loss function, thanks to the $\G$-orthonormality
+of the POD matrix and Proposition (\ref{prop: switch to euclidean norm}).
+We will denote by $\theta_\text{DOD}^* \in \Theta(\Phi_{\tilde{\V}})$ the optimized neural network weights.
 
-Notice, that we have not yet performed any actual search for the approximate parameter-to-solution map, that maps
-a specific instance of parameters to a coefficient time-trajectory, that can then be used to build the
-solution map in the underlying high fidelity Hilber space approximating the FOM solution in 
-Equation (\ref{eq: fom solution identity}).
+Notice, that we have not yet performed any actual search for the approximate parameter-to-solution map $\Gcal$. 
+After all, the frozen DOD is a linear orthogonal projector, and not an estimation of $\Gcal$. It can be seen
+as an analog to the POD.
 
 In this paper, we propose two novel data-driven ROMs, based on the DOD, to find an approximate solution-to-parameter 
 map. These are the \emph{Deep Orthogonal Decomposition with Deep Feed-Forward Neural Network} (DOD+DFNN) and the
@@ -834,22 +846,26 @@ of the DL-ROM architecture introduced in the header of the section.
 
 Let $\Phi_{N'} := \Phi_{N'}^\text{DF}$ 
 be some Deep Feed-Forward Neural Network architecture
-with input dimension $p+q+1$ and output dimension $N'$, then the approximate parameter-to-solution map for
-a fixed weight $\theta = (\theta_\text{DOD}, \theta_\text{DF}) \in 
-\Theta(\Phi_{\tilde{\V}}) \times \Theta(\Phi_n^\text{DF})  $ according to 
-Definition (\ref{def: neural network weights}) can be given for each $(\mu, \nu, t) \in \Theta \times \Theta'
+with input dimension $p+q+1$ and output dimension $N'$. Then the approximate parameter-to-solution map 
+of the \emph{DOD+DFNN}
+can be given for each $(\mu, \nu, t) \in \Theta \times \Theta'
 \times [0, T]$ via
 \begin{equation} \label{eq: dod+dnn solution}
-    \uhthat = \V_{\mu, t}(\theta_\text{DOD}) \cdot R_\rho(\Phi_{N'}(\theta_\text{DF}))(\mu, \nu, t) \in \R^{N_h}.
+    \uhthat = \A \cdot R_\rho(\Phi_{\tilde{\V}})(\mu, t) \cdot R_\rho(\Phi_{N'})(\mu, \nu, t) \in \R^{N_h}.
 \end{equation}
 
-Subsequently the training is done in series and not in parallel, as the optimal DOD parameter $\theta^*_\text{DOD}$
-needs to be found first. Secondly, the $\G$-orthonormality of the DOD can be leveraged with
+The training is done in series and not in parallel.
+We first find the optimal DOD parameter $\theta^*_\text{DOD} \in \Theta(\Phi_{\tilde{\V}})$ by 
+solving the optimization problem
+in Definition (\ref{def: DOD}). This freezes the DOD, and we set $\V_{\mu, t} := \V_{\mu, t}(\theta^*_\text{DOD})$.
+
+Now, we can use the frozen DOD matrix to reduce the training data
 \begin{equation*}
-    u_{\text{red}^2}^{\mu, \nu, t} := \V_{\mu, t}(\theta^*_\text{DOD})^T \G \uht \in \R^{N'} 
-    \qquad \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal,
+    u_{\text{red}^2}^{\mu, \nu, t} := \V_{\mu, t}^T \G \uht \in \R^{N'} 
+    \qquad \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal.
 \end{equation*}
-to further reduce the training data and finally define the loss function for the DOD+DFNN architecture
+Let the optimization problem be given for any choice of neural network weights $\theta = \theta_\text{DF} \in \Theta(\Phi_{N'})$
+by the loss function
 \begin{multline} \label{eq: loss dod+dnn}
     \Lcal_\text{DOD+DNN}\left(R_\rho(\Phi_{N'}(\theta_\text{DF})) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
     \{u_{\text{red}^2}^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) \\
@@ -871,26 +887,30 @@ It will be the basic benchmark to overcome for the following algorithms.
 
 
 
-Let $\Psi_{N'} := f_{N'}^\text{D}$ be a decoder architecture with input dimension $n$ and output dimension $N'$ 
-(and $\Psi'_n := f_n^\text{E}$ the corresponding encoder architecture), and $\Phi_n := \Phi_n^\text{DF}$
-be some Deep Feed-Forward Neural Network architecture with input dimension $p+q+1$ and output dimension $n$
-then the approximate parameter-to-solution map for
-a fixed weight $\theta = (\theta_\text{DOD}, \theta_\text{D}, \theta_\text{DF}) \in 
-\Theta(\Phi_{\tilde{\V}}) \times \Theta(f_N^\text{D}) \times \Theta(\Phi_n^\text{DF})$ according to 
-Definition (\ref{def: neural network weights}) can be given for each $(\mu, \nu, t) \in \Theta \times \Theta'
+Let $\Psi_{N'} := f_{N'}^\text{D}$ be a Decoder architecture with input dimension $n$ and output dimension $N'$ 
+(and $\Psi'_n := f_n^\text{E}$ the corresponding Encoder architecture), and $\Phi_n := \Phi_n^\text{DF}$
+be some Deep Feed-Forward Neural Network architecture with input dimension $p+q+1$ and output dimension $n$.
+Then the approximate parameter-to-solution map of the \emph{DOD-DL-ROM} 
+can be given for each $(\mu, \nu, t) \in \Theta \times \Theta'
 \times [0, T]$ via
 \begin{equation} \label{eq: dod-dl-rom solution}
-    \uhthat = \V_{\mu, t}(\theta_\text{DOD}) \cdot 
-    \left(R_\rho(\Psi_{N'}(\theta_\text{D})) \circ R_\rho(\Phi_n(\theta_\text{DF}))\right) (t; \mu, \nu) \in \R^{N_h}
+    \uhthat = \A \cdot R_\rho(\Phi_{\tilde{\V}}) \cdot 
+    \left(R_\rho(\Psi_{N'}) \circ R_\rho(\Phi_n)\right) (t; \mu, \nu) \in \R^{N_h}.
 \end{equation}
 
-Same, as for the DOD+DNN, the training is done in series. One observes, that the training data can be again
+Same as for the DOD+DNN, the training is done in series. We find the optimal DOD parameter 
+$\theta^*_\text{DOD} \in \Theta(\Phi_{\tilde{\V}})$ by solving the optimization problem in
+Definition (\ref{def: DOD}). This again freezes the DOD, and we set $\V_{\mu, t}:= \V_{\mu, t}(\theta_\text{DOD}^*)$.
+One then observes, that the training data can be again
 reduced with
 \begin{equation*}
-    u_{\text{red}^2}^{\mu, \nu, t} := \V_{\mu, t}(\theta^*_\text{DOD})^T \G \uht \in \R^{N'} \qquad 
-    \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal,
+    u_{\text{red}^2}^{\mu, \nu, t} := \V_{\mu, t}^T \G \uht \in \R^{N'} \qquad 
+    \text{for all } (\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal.
 \end{equation*}
-and then used to define the DOD-DL-ROM loss function utilizing the $\G$-orthonormality of the DOD, hence
+Let the optimization problem be given for any choice of neural network weights $\theta = 
+(\theta_\text{DOD}, \theta_\text{D}, \theta_\text{DF}) \in 
+\Theta(\Phi_{\tilde{\V}}) \times \Theta(f_N^\text{D}) \times \Theta(\Phi_n^\text{DF})$
+by the loss function
 \begin{multline} \label{eq: loss function dod dl rom}
     \Lcal_\text{DOD-DL-ROM}\left(R_\rho(P(\Psi_{N'} \odot \Phi_n, \Psi'_n)(\theta)) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
     \{u_{\text{red}^2}^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) =  \\
@@ -914,8 +934,8 @@ optimized DOD.
 
 In this subsection, we will introduce a novel 
 architecture based on the Continuous Low Rank Adaptation (CoLoRA) \cite{berman2024}.
-It will use the stationary version of the Deep Orthogonal Decomposition and a sublementing
-Dense Forward Neural Network, defined in \cite{franco2024}, to achieve a solution approximation of the 
+It will use the stationary version of the Deep Orthogonal Decomposition and a supplementing
+Dense Forward Neural Network, defined in \cite{franco2024}. This will be done to achieve a solution approximation of the 
 stationary limit case of the problem. This "first guess" is then continuously adapted during the online phase using CoLoRA layers.
 Notice, that such a procedure only makes sense in a case, where the problem has a meaningful stationary limit case.
 
@@ -933,9 +953,9 @@ define a fully discretized stationary problem. Note, that the boundary term coul
 Neumann or Robin. We assume, that this problem is 
 closely related to the time-dependent version, in a sense that
 \begin{equation*}
-    \lim\limits_{t \to T} \uht = \statuh.
+    \lim\limits_{t \to T} \uht = \statuh, \qquad \text{for all } (\mu, \nu) \in \Theta \times \Theta'.
 \end{equation*}
-Then we want to define the stationary model using the DOD Definition (\ref{def: DOD}) with $[0, T] = \{T\}$.
+Then we define the stationary model using the DOD Definition (\ref{def: DOD}) with $[0, T] = \{T\}$.
 The pre-reduction here is taken as a POD $\A_0 \in \R^{N_h \times N_A}$ of the stationary snapshot matrix
 \begin{equation*}
     U_0 = \left[u_{h, 0}^{\mu_1, \nu_1} \big\vert \cdots \big\vert u_{h, 0}^{\mu_{N_{s_1}}, \nu_1} \big\vert \cdots \big\vert 
@@ -943,17 +963,28 @@ The pre-reduction here is taken as a POD $\A_0 \in \R^{N_h \times N_A}$ of the s
 \end{equation*}
 We can then produce some stationary reduced data $u_{\text{pre-red}, 0}^{\mu, \nu} := \A_0^T \G \statuh \in \R^{N_A}$ for $\mu \in \Pcal_1$
 and $\nu \in \Pcal_2$, where $\statuh \in \R^{N_h}$ are the solutions of Equation (\ref{eq: full discrete stationary ppde}).
-This data is used to find neural network weights $\theta^*_\text{DOD} \in \Theta(\Phi^\text{stat}_{\tilde{\V}})$ 
-for the stationary DOD. From this point on,
-we then denote with $\tilde{\V}_{\mu}(\theta^*_\text{DOD}) \in \R^{N_A \times N'}$ a realization of the inner
+This data is used to find the optimal neural network weights $\theta^*_\text{sDOD} \in \Theta(\Phi^\text{stat}_{\tilde{\V}})$ 
+for the stationary DOD, thus freezing it. 
+We then denote with $\tilde{\V}_\mu := R_\rho(\Phi^\text{stat}_{\tilde{\V}}(\theta^*_\text{sDOD}))(\mu)$ 
+any realization of the inner
 stationary DOD module as given in \cite{franco2024}.
 As a next step, we define a DFNN $\Phi^\text{stat}_{N'}$ in an analogous way to the DOD+DFNN subsection above, 
-to attain for any $\theta_{sDFNN} \in \Theta(\Phi^\text{stat}_{N'})$ and
+to attain for any 
 input choice $(\mu, \nu) \in \Theta \times \Theta'$ the total approximation for a stationary solution of the form
 \begin{equation*}
-    \statuhhat =  \A_0 \cdot \underbrace{\tilde{\V}_{\mu}(\theta^*_\text{sDOD}) \cdot 
-    R_\rho(\Phi^\text{stat}_{N'}(\theta_\text{sDFNN}))(\mu, \nu)}_{=: \hat{u}_{\text{pre-red}, 0}^{\mu, \nu}}.
+    \statuhhat =  \A_0 \cdot \tilde{\V}_{\mu} \cdot 
+    R_\rho(\Phi^\text{stat}_{N'})(\mu, \nu) \in \R^{N_h}.
 \end{equation*}
+Then let the neural network weights $\theta_\text{sDFNN} \in \Theta(\Phi^\text{stat}_{N'})$ and the loss
+function of the corresponding optimization problem be given in an analogous way to the DOD+DFNN.
+Solving it, will freeze the stationary DFNN as well. This lets us write the frozen stationary approximation
+for the optimal 
+weights $\theta^*_\text{sDFNN} \in \Theta(\Phi^\text{stat}_{N'})$ as
+\begin{equation*}
+    \hat{u}_{\text{pre-red}, 0}^{\mu, \nu} := \tilde{\V}_{\mu} \cdot 
+    R_\rho(\Phi^\text{stat}_{N'}(\theta^*_\text{sDFNN}))(\mu, \nu) \in \R^{N_A},
+\end{equation*}
+for any $(\mu, \nu) \in \Theta \times \Theta'$.
 Following this, we now implement a CoLoRA neural network architecture, which defines
 neural networks in terms of CoLoRA layers.
 \begin{definition}[CoLoRA network]
@@ -980,28 +1011,26 @@ neural networks in terms of CoLoRA layers.
         x_L &:= W_L x_{L-1} + \alpha_L(\nu, t)\, A_L B_L x_{L-1} + b_L.
     \end{align*}
 \end{definition}
-Finally, with this definition, we can set up the actual workflow of the proposed method.
+Finally, with this definition, we can set up the total workflow of the proposed method.
 For the latent state $\alpha$, we use a simple realization of an underlying neural network, a DFNN, 
 where we set up a fixed layer size for each of them. This strategy is simply lifted from \cite{berman2024},
 but as the authors have mentioned there too, this can be replaced by some other continuous mapping.
 
-Let now $\theta = (\theta_\text{sDOD}, \theta_\text{sDFNN}, \theta_\alpha) \in \Theta(\Phi^\text{stat}_{\tilde{\V}})
-\times \Theta(\Phi^\text{stat}_{N'}) \times \Theta(\Phi_\alpha)$ be some choice of weights, then the 
-approximate solution to the time-dependent problem in Equation (\ref{eq: full discrete ppde}) is given by
-the realization of a CoLoRA network $\Phi_\alpha$ with weights $\theta_\alpha \in \Theta(\Phi_\alpha)$, and a lift
+The approximate solution to the time-dependent problem in Equation (\ref{eq: full discrete ppde}) is given by
+the realization of a CoLoRA network $\Phi_\alpha$, and a lift
 using the time-trajectory sensitive POD, i.e.
 \begin{equation*}
-    \hat u_{h}^{\mu, \nu, t} = \A \cdot R_\rho(\Phi_\alpha(\theta_\alpha))(\nu, t, \hat{u}_{\text{pre-red}, 0}^{\mu, \nu}).
+    \hat u_{h}^{\mu, \nu, t} = \A \cdot R_\rho(\Phi_\alpha)(\nu, t, \hat{u}_{\text{pre-red}, 0}^{\mu, \nu}) \in \R^{N_h}.
 \end{equation*}
-
 Since, the trainable network of this method is defined again on the span of the $N_A$-dimensional POD
 matrix, we can set up the reduced training data as
 \begin{equation*}
     \uhtprered := \A^T \G \uht \in \R^{N_A} \quad \text{for all }(\mu, \nu, t) \in \Pcal_1 \times \Pcal_2 \times \Tcal.
 \end{equation*}
-Then the third and last training in series of the CoLoRA inspired method can be achieved, using 
+Let the optimization problem be given for any choice of
+neural network weights $\theta = \theta_\alpha \in \Theta(\Phi_\alpha)$ by the loss function
 \begin{multline} \label{eq: loss colora}
-    \Lcal_\text{CoLoRA}\left(R_\rho(\Phi_\alpha(\theta_\alpha)) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
+    \Lcal_\text{CoLoRA}\left(R_\rho(\Phi_\alpha(\theta)) \big\vert \{\mu_i, \nu_j, k \Delta t\}_{i,j,k}, 
     \{u_{\text{pre-red}}^{\mu_i, \nu_j, k \Delta t} \}_{i,j,k}\right) \\
     = \frac{1}{N_\text{data}}\sum_{i=1}^{N_{s_1}} \sum_{j=1}^{N_{s_2}} 
     \sum_{k = 1}^{N_t} \, \euknorm{u_{\text{pre-red}}^{\mu_i, \nu_j, k \Delta t} - 
@@ -1012,7 +1041,7 @@ Then the third and last training in series of the CoLoRA inspired method can be 
 \begin{remark}[Heuristic Discussion]
     The idea of this adapted approach is that many partial differential equations, such as parabolic ones, 
     often have an intrinsically linked stationary limit. Further, specifically parabolic equations tend to gain smoothness
-    in growing time. Hence the continuous adaptation of an intitial approximate solution might make sense.
+    in growing time. Hence, the continuous adaptation of an initial approximate solution might make sense.
     Additionally, to counter the KnW barrier, we employ the DOD method for a cheap reduction in case of a hybrid parameter
     problem.
 \end{remark}

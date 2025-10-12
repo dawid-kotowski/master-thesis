@@ -267,7 +267,7 @@ using a symmetric positive definite matrix $\G \in \R^{N_h \times N_h}$ via
 and the corresponding norm $\norm{\cdot} := \langle \cdot, \cdot \rangle_\G$.
 
 It is assumed,
-that we sample the parameters independently and identically distributed and the time points equidistantly determined
+that we sample the parameters independently and identically distributed, and the time points equidistantly determined
 from their respective spaces, and that 
 \begin{equation*}
     \sup\limits_{(\mu, t) \in \Theta \times [0, T]} \norm{u(\mu, t)} \leq M < \infty, \quad \inf\limits_{(\mu, t) \in \Theta \times [0, T]}\norm{u(\mu, t)} \geq m > 0,
@@ -304,7 +304,7 @@ for $N \leq N_A \leq N_h$ is also $\G$-orthonormal. This is quantified by the fo
 \end{proposition}
 \begin{proof}
     By Lemma (\ref{lemma: orthogonal projector on span of A}), we know that $\A \A^T \G$ is a $\G$-orthonormal 
-    projector into the span of $\A$. Thus its residual $u - \A \A^T \G u$ must be 
+    projector into the span of $\A$. Thus, its residual $u - \A \A^T \G u$ must be 
     $\G$-orthogonal to all columns of $\A$, since we can decompose 
     $u = u_\perp + u_\parallel$, where $u_\parallel \in \text{span}(\A)$ and 
     $u_\perp \in \R^{N_h} - \text{span}(\A)$. Then the Pythagoras decomposition gives
@@ -325,7 +325,7 @@ assert closeness with regard to the representations of the solution and
 simultaneous provide a computationally
 feasible option with the euclidean $N_A$-dimensional
 norm. The term $c_\A$ is the quantity describing the energy loss by considering an a priori
-\emph{ambient} reduction. \emph{Ambient} is an heuristic word, describing some determined space in which solutions
+\emph{ambient} reduction. \emph{Ambient} is a heuristic word, describing some determined space in which solutions
 are embedded in a non-trainable fashion. Its construction can, for example, be done by a \emph{Proper Orthogonal Decomposition.}
 
 Next, we will discuss this Proper Orthogonal Decomposition and related concepts. For instance the 
@@ -495,7 +495,7 @@ dimension $N \leq N_h$ is small, then the POD retains most of the energy and a l
 
 On the other hand, non-linear problems, and specifically hyperbolic and transport dominated PPDEs, have
 the tendency to have slowly decaying Kolmogorov $N$-width. This means they retain energy only for large choices of $N$.
-Thus the reduction must then potentially commit a non-linear mapping, motivating the following definition:
+Thus, the reduction must then potentially commit a non-linear mapping, motivating the following definition:
 
 \begin{definition}[Nonlinear Kolmogorov $N$-width] \label{def: nonlinear kolmogorov}
     Let $N \in \N$, $N \leq N_h$ and $\Scal= \{ u(\mu, t) \in \R^{N_h} \, 
@@ -515,7 +515,7 @@ Thus the reduction must then potentially commit a non-linear mapping, motivating
 
 In this section, we will introduce the general notion of neural networks using the notation
 and most arguments of \cite{gühring2019nn}, if not given otherwise. Specifically important for us will be 
-concatenations of dense linear layers, which are a specific subclass of networks, the so called 
+concatenations of dense linear layers, which are a specific subclass of networks, the so-called 
 \emph{Deep Feedforward Neural Network} (DFNN).
 
 \begin{definition}[Neural Network] \label{def: neural network}
@@ -526,7 +526,7 @@ concatenations of dense linear layers, which are a specific subclass of networks
     such that $N_0 = d$ and $N_1, \dots, N_L \in \N$, where each $A_l$ is an $N_l \times \sum_{k=0}^{l-1} N_k$ dimensional
     matrix, and $b_l \in \R^{N_l}$.
     
-    We further define $R_\rho(\Phi): \R^d \to \R^{N_L}$ as a \emph{realizations of $\Phi$ with activation function $\rho$} for some
+    We further define $R_\rho(\Phi): \R^d \to \R^{N_L}$ as a \emph{realization of $\Phi$ with activation function $\rho$} for some
     arbitrary map $\rho : \R \to \R$ as the result of the following scheme for some input $x \in R^d$.
     \begin{align*}
         x_0 &:= x, \\
@@ -538,7 +538,7 @@ concatenations of dense linear layers, which are a specific subclass of networks
     \begin{equation*}
         A_l = \begin{bmatrix}[c|c|c]A_{l, x_0} & \cdots & A_{l, x_{l-1}}\end{bmatrix},
     \end{equation*}
-    with $A_{l, x_k}$ being a $N_l \times N_k$ dimensional matrix for $k = 0, \dots, l-1$ and $l = 1, \dots, L$.
+    with $A_{l, x_k}$ being a $(N_l \times N_k)$-dimensional matrix for $k = 0, \dots, l-1$ and $l = 1, \dots, L$.
     This simplifies the scheme via
     \begin{align*}
         x_l &:= \rho \left( A_{l, x_0} x_0 + \dots + A_{l, x_{l-1}} x_{l-1} + b_l \right), \quad \mbox{for } l = 1, \dots, L-1, \\
@@ -672,7 +672,7 @@ an arbitrarily close ReLU valued neural network realization \cite{hornik1991nn}.
     Then $\mathcal{N}_d(\rho)$ lies dense in $L^p(\mu)$ for every finite measure $\mu$, $p \in (0, \infty)$.
 \end{theorem}
 
-The proof of this statement leverages on Hahn Banach. Thus it does not provide the specific architecture of
+The proof of this statement leverages on Hahn Banach. Thus, it does not provide the specific architecture of
 the required neural network, which would be used for such an approximation. In our case, we will however focus
 on an explicit construction to attain bounds for the complexity of the network used. We will hence
 not mention the proof beyond this outline. 
@@ -714,7 +714,7 @@ numbers. The complexity of a concatenated network can be simplified, by using th
     Then
     $\Phi^1 \odot \Phi^2 := \Phi^1 \bullet \Phi^{\text{id}} \bullet \Phi^2$ is a neural network with $d$-dimensional input, $L_1 + L_2$ layers
     with $\omega_{\Phi^1 \odot \Phi^2} \leq 2\omega_{\Phi^1}
-    + 2\omega_{\Phi^2}$ active weights, $N_{\Phi^1 \odot \Phi^2} \leq 2N_{\Phi^1} + 2N_{\Phi^2}$ neurons. Additionally
+    + 2\omega_{\Phi^2}$ active weights, $N_{\Phi^1 \odot \Phi^2} \leq 2N_{\Phi^1} + 2N_{\Phi^2}$ neurons. Additionally,
     for all $x \in \R^d$, we have
     \begin{equation*}
         R_\rho(\Phi^1 \odot \Phi^2)(x) = R_\rho(\Phi^1) \circ R_\rho(\Phi^2)(x).
@@ -833,7 +833,7 @@ operation. This quasi-multiplication will be able to relate a partition of unity
 with a neural network. For this, we need to
 take the interpolation error into account, which is closely linked to the regularity of the function, we want
 to approximate. For instance, if we have a
-function $f$ in the Sobolev space $W^{2, 2}((0,1)^d)$, then it is apparent, that at least two weak derivatives of $f$ must exists.
+function $f$ in the Sobolev space $W^{2, 2}((0,1)^d)$, then it is apparent, that at least two weak derivatives of $f$ must exist.
 Therefore, this can be leveraged to get a Taylor expansion around some selected points.
 
 This procedure will deduce a quantifiable error of the network approximation for any $W^{1, \infty}(\Omega)$ function.
@@ -918,7 +918,7 @@ theoretical setting, which will not be important for the actual results presente
     \begin{equation*}
         x = \frac{k + \alpha}{2^m}, \quad \text{with } \alpha \in [0, 1),
     \end{equation*}
-    we can assure $0 \leq \theta/2^{m-s} < 1$ for any $s \leq m$. Therefore the slope is constant on each $I_k$. 
+    we can assure $0 \leq \theta/2^{m-s} < 1$ for any $s \leq m$. Therefore, the slope is constant on each $I_k$. 
     And since the slope for each segment of a fixed sabertooth function $g_s$ is the same in magnitude,
     we write
     \begin{equation*}
@@ -1023,7 +1023,7 @@ theoretical setting, which will not be important for the actual results presente
     \end{figure}
 
 
-    Now, since we know that the function $f_m$ is just an addition of at most a $m$ layered networks
+    Now, since we know that the function $f_m$ is just an addition of at most $m$ layered networks
     \begin{equation*}
         g_m(x) = g \circ \cdots \circ g (x) = R_\rho(\Phi \odot \cdots \odot \Phi),    
     \end{equation*} 
@@ -1044,7 +1044,7 @@ theoretical setting, which will not be important for the actual results presente
     \begin{equation*}
         \norm{R_\rho(\Phi^\text{sq}_m) - f}_{L^\infty((0,1))} = \norm{f_m - f}_{L^\infty((0,1))} = 2^{-2m-2}.
     \end{equation*}
-    Hence setting $m = \ceil{\ln(1/\varepsilon)}$, with $C, C' > 0$ constants, only dependent on
+    Hence, setting $m = \ceil{\ln(1/\varepsilon)}$, with $C, C' > 0$ constants, only dependent on
     the domain, we achieve the wanted bound from the statement for the neural network
     $\Phi^{\text{sq}}_\varepsilon := \Phi^\text{sq}_m$ with $\Ocal(m) = 
     \Ocal(\ln(1 / \varepsilon) + 1) \leq \Ocal(2 \ln(1 / \varepsilon))$
@@ -1078,7 +1078,7 @@ as given by the first binomial formula.
     which now of course has $\Ocal(\ln(1/\delta))$ many layers, active weights and neurons. To achieve 
     this we have to implement negative numbers as well. With $\vert x \vert = \rho(x) + \rho(-x)$, it can be shown,
     that it is indeed possible to expand any neural network with a positive domain to a negative domain using a neural network (by simply concatenating).
-    Thus we construct $\tilde{\times}$ via appending an 
+    Thus, we construct $\tilde{\times}$ via appending an 
     addition layer on top of parallel square networks with scaled input, achieving
     \begin{equation*}
         R_\rho(\tilde{\times})(x, y) = 2 M^2 \left( R_\rho(\Phi^\text{sq}_\delta) 
@@ -1091,7 +1091,7 @@ as given by the first binomial formula.
     This uses the constants in Proposition (\ref{prop: approximation by square}) as follows.
     \begin{enumerate}
         \item We have $2$ layers for the implementation of the absolute value, $1$ for the addition in the end, 
-        and $c_0 \ln(1 / \delta)$ for the square function. Thus 
+        and $c_0 \ln(1 / \delta)$ for the square function. Thus,
         $L_{\tilde{\times}} \leq c_0\ln(1/\varepsilon) + c_0 \ln(6M^2) + 3$ in total.
         \item We need $4 + 2 + 2$ active weights for the first matrix to distribute each $(x,y)$ onto the parallel networks 
         together with $6$ active weights for the superposing of the input into the $\vert \cdot \vert$-function. 
@@ -1124,14 +1124,14 @@ as given by the first binomial formula.
     We discuss a few things happening here for clarity. It is possible to simply use the reverse triangle equality
     to get all three error terms added, and then put them together. This can be done, since the $L^\infty((0,1)^2)$ norm 
     detects only the maximal value of the error across all possible elements of the $(0,1)^2$ domain. Here
-    the inner function is bijective, so these are just the same. Additionally, we use the, trivial by definition, statement
+    the inner function is bijective, so these are just the same. Additionally, we use the statement
     \begin{equation*}
         \norm{g \circ f}_{L^\infty((0,1))} \leq \norm{g}_{L^\infty((0,1))}.
     \end{equation*}
     This proves the statement (1.).
 
     Statement (2.) 
-    on the other hand, is a direct consequence of the subliminally result in Proposition (\ref{prop: approximation by square}).
+    on the other hand, is a direct consequence of the subliminal result in Proposition (\ref{prop: approximation by square}).
 \end{proof}
 
 As a last step, before stating and proving the Yarotsky Theorem, we will discuss the construction and complexity
@@ -1270,7 +1270,7 @@ will be enough to get an approximation under a corresponding complexity discussi
         R_\rho(\Phi_{\vec{m}, l})(x) = 3N \left( x_l - \frac{m_l}{N} \right), 
         \quad \text{for all } x \in \R^d \text{ and } \vec{m} \in \{0, \dots, N\}^d.
     \end{equation*}
-    Then the complexity of this network is $1$ layer, $2$ active weights and $d+1$ neurons. Finally realizing
+    Then the complexity of this network is $1$ layer, $2$ active weights and $d+1$ neurons. Finally, realizing
     that the composition of both these functions, i.e. the realization of the concatenation of networks, would yield
     each factor for the desired function. If we now parallelize this concatenation, we get property (4.)
     by definition. In fact, let 
@@ -1494,7 +1494,7 @@ This extension is presented by Gühring et al. \cite{gühring2019nn}.
     \begin{enumerate}
         \item The first step is to expand the Proposition (\ref{prop: approximation by square}) to the 
         $W^{1, \infty}(0,1)$-norm. This is done by straight forward calculation.
-        \item This can be applied to Proposition (\ref{prop: quasi multiplication}) in the same way. Additionally
+        \item This can be applied to Proposition (\ref{prop: quasi multiplication}) in the same way. Additionally,
         we need to bound $\euknorm{R_\rho(\tilde{\times})}_{W^{1, \infty}((0,1)^2)}$, in order to
         estimate the collective error under the Taylor expanded function.
         \item The crucial next step is to prepare the switch of norms using
@@ -1633,7 +1633,7 @@ Then the \emph{min-max normalization} for that sample is given via
     x_i \mapsto \frac{x_i - x_\text{min}}{x_\text{max} - x_\text{min}} \in [0, 1], \quad y_i \mapsto 
     \frac{y_i - y_\text{min}}{y_\text{max} - y_\text{min}} \in [0, 1],
 \end{equation*}
-where we setup the maximum and minimum via
+where we set up the maximum and minimum via
 \begin{equation*}
     x_\text{max} = \max\limits_{i = 1, \dots, N} x_i, \quad x_\text{min} = \min\limits_{i = 1, \dots, N} x_i,
 \end{equation*}
