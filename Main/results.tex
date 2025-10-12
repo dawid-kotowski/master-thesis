@@ -104,10 +104,10 @@ where we let $\A_\text{P} \in \R^{N_h \times N}$ be a POD computed by Algorithm 
 with the mass matrix $\G$,
 and
 \begin{equation*}
-    \hat{q}_\text{P} := R_\rho(\Phi^\text{P}_N(\theta_\text{PDNN})) \in \R^N
+    \hat{q}_\text{P} := R_\rho(\Phi^\text{P}_N(\theta_\text{PDNN})) : \R^{p+q+1} \to \R^N
 \end{equation*}
 be the realization of some neural network $\Phi^\text{P}_N$ with input dimension $p + q + 1$ and output dimension $N$,
-and an already fixed weight $\theta_\text{PDNN} \in \Theta(\Phi^\text{P}_N)$. And let similarly the approximate
+and any neural network weights $\theta_\text{PDNN} \in \Theta(\Phi^\text{P}_N)$. And let similarly the approximate
 DOD-based parameter-to-solution map be defined as follows
 \begin{equation*}
     \Gcal_\text{DOD+DNN}: \Theta \times \Theta' \times [0, T] \to \R^{N_h}; \quad (\mu, \nu, t) \mapsto 
@@ -116,14 +116,15 @@ DOD-based parameter-to-solution map be defined as follows
 where we let 
 \begin{equation*}
     \V_{\mu, t} := \A \cdot \tilde{\V}_{\mu, t}(\theta_\text{DOD}) \in \R^{N_h \times N'},
+    \quad \text{for } (\mu, t) \in \Theta \times [0, T],
 \end{equation*}
-for an a priori fixed parameter $\theta_\text{DOD} \in \Theta(\Phi_{\tilde{\V}})$ according to Definition 
+and any neural network weights $\theta_\text{DOD} \in \Theta(\Phi_{\tilde{\V}})$ according to Definition 
 (\ref{def: DOD}) and the used POD matrix $\A \in \R^{N_h \times N_A}$, and
 \begin{equation*}
-    \hat{q}_\text{D} := R_\rho(\Phi_{N'}(\theta_\text{DDNN})) \in \R^{N'}
+    \hat{q}_\text{D} := R_\rho(\Phi^\text{D}_{N'}(\theta_\text{DDNN})) : \R^{p+q+1} \to \R^{N'}
 \end{equation*}
 be the realization of some neural network $\Phi^\text{D}_{N'}$ with input dimension $p + q + 1$ and output dimension $N'$,
-and an already fixed weight $\theta_\text{DDNN} \in \Theta(\Phi^\text{D}_{N'})$.
+and any neural network weights $\theta_\text{DDNN} \in \Theta(\Phi^\text{D}_{N'})$.
 
 
 \begin{figure}[tb]
@@ -297,12 +298,11 @@ of the DOD+DNN or the POD+DNN.
     $\norm{v}_{L^2_\omega} = 0$ for some $v \in L^2(\Theta \times \Theta' \times [0, T])$, then assuming $v \neq 0$ 
     yields with Assumption (\ref{assumption parameter-to-solution map})
     \begin{equation*}
-        \norm{v}_{L^2_\omega}^2 \geq  m^{-1} \int_{\Theta \times \Theta' \times [0, T]} \norm{v(\mu, \nu, t)}^2 d(\mu, \nu, t) 
+        \norm{v}_{L^2_\omega}^2 \geq  M^{-2} \int_{\Theta \times \Theta' \times [0, T]} \norm{v(\mu, \nu, t)}^2 d(\mu, \nu, t) 
         > 0,
     \end{equation*}
     hence reaching a contradiction.
-    With the knowledge of $\norm{ \cdot }_{L^2_\omega}$ being a norm, we know it must be subject to the 
-    triangle inequality, thus
+    With $\norm{ \cdot }_{L^2_\omega}$ being a norm, we have
     \begin{align}
         \mathcal{E}_\text{R} &= \left( \int_{\Theta \times \Theta' \times [0, T]} 
         \frac{\norm{\uht - \A_\text{P} \hat{q}_\text{P}(\mu, \nu, t)}^2}{\norm{\uht}^2} d(\mu, \nu, t) \right)^{1/2} \\ 
@@ -310,11 +310,11 @@ of the DOD+DNN or the POD+DNN.
         &\leq \norm{\uht - \A_\text{P} \A_\text{P}^T \G \uht}_{L_\omega^2} + \norm{\A_\text{P} \A_\text{P}^T \G \uht - 
         \A_\text{P} \hat{q}_\text{P}(\mu, \nu, t)}_{L^2_\omega}.
     \end{align}
-    Let $q_N(\mu, \nu, t) := \A_\text{P}^T \G \uht \in \R^N$ be a reduced solution according to the POD basis. 
+    Let $q_\text{P}(\mu, \nu, t) := \A_\text{P}^T \G \uht \in \R^N$ be a reduced solution according to the POD basis. 
     Then the natural definition of the neural network approximation error is
     \begin{equation}
         \mathcal{E}_{\text{NN}} = \left( \int_{\Theta \times \Theta' \times [0, T]} \frac{\norm{\A_\text{P} 
-        q_N(\mu, \nu, t) - 
+        q_\text{P}(\mu, \nu, t) - 
         \A_\text{P} \hat{q}_\text{P}(\mu, \nu, t)}^2}{\norm{\uht}^2} d(\mu, \nu, t) \right)^{1/2}.
     \end{equation}
     This marks the second part in (\ref{eq: decomposed errors poddnn}). This is only dependent on the ability of 
@@ -387,7 +387,7 @@ This observation can be reformulated into the following theorem.
     the projection coefficients are chosen at best sub-optimal, i.e.
     \begin{equation*}
         \Ecal_\text{R}^2 = \int_{\Theta \times \Theta' \times [0, T]} 
-        \frac{\norm{\uht - \A_\text{P} \hat{q}_N(\mu, \nu, t)}^2}{\norm{\uht}^2} d(\mu, \nu, t)
+        \frac{\norm{\uht - \A_\text{P} \hat{q}_\text{P}(\mu, \nu, t)}^2}{\norm{\uht}^2} d(\mu, \nu, t)
         \geq
         \int_{\Theta \times \Theta' \times [0, T]} 
         \frac{\norm{\uht - \A_\text{P} \A_\text{P}^T \G \uht}^2}{\norm{\uht}^2} d(\mu, \nu, t),
@@ -493,27 +493,52 @@ result.
             &= (\I - P)(u - u') + (P' - P)u'.
         \end{aligned}
     \end{equation}
-    Then we can calculate with, the reverse triangle inequality, and our auxiliary 
+    Then we can calculate with our auxiliary 
     Equation (\ref{eq: optimal dod help equation}),
     \begin{align*}
-        \euknorm{J(\mu, t, \V) - J(\mu', t', \V')} &= \int_{\Xcal} \euknorm{\norm{\uht - \V \V^T \G \uht}^2 - 
-        \norm{u_h^{\mu', \nu, t} - \V' (\V')^T \G u_h^{\mu', \nu, t}}^2} d(\nu) \\
-        &= \int_{\Xcal} \left\vert \, \norm{\uht - \V 
-        \V^T \G \uht} - 
-        \norm{u_h^{\mu', \nu, t'} - \V' (\V')^T \G 
-        u_h^{\mu', \nu, t'}} \, \right\vert d(\nu) \\
-        &= \int_{\Xcal} \left\lVert  \left(u_h^{\mu, \nu, t} - \V 
-        \V^T \G u_h^{\mu, \nu, t}\right) - 
-        \left(u_h^{\mu', \nu, t'} - \V' (\V')^T \G
-        u_h^{\mu', \nu, t'}\right) \right\rVert^2 d(\nu) \\
-        &\leq \int_{\Xcal} \norm{(\I- \V \V^T \G)(\uht - 
-        u_h^{\mu', \nu, t'})}^2 d(\nu) + M^2 \vert \Xcal \vert \opnorm{\V \V^T \G - 
-        \V' (\V')^T \G}   \\
-        &\leq \vert \Xcal \vert (L^2  + 2  M^2 ) \left( \euknorm{\mu - \mu'} + \euknorm{t - t'} + \euknorm{\V - \V'}\right),
+        \euknorm{J(\mu, t, \V) - J(\mu', t', \V')}
+        &= \int_{\Xcal} 
+           \Big| \, \norm{u - P u}^2 - \norm{u' - P' u'}^2 \, \Big| \, d(\nu)
+           \\
+        &= \int_{\Xcal}
+           \Big| \, \big\langle (u - Pu) + (u' - P'u'),\; (u - Pu) - (u' - P'u') \big\rangle \, \Big| \, d(\nu)
+           \\
+        &\leq \int_{\Xcal}
+           \Big( \norm{u - Pu} + \norm{u' - P'u'} \Big)\;
+           \norm{ (u - Pu) - (u' - P'u') } \, d(\nu)
+           \\
+        &= \int_{\Xcal}
+           \Big( \norm{u - Pu} + \norm{u' - P'u'} \Big)\;
+           \norm{ (\I - P)(u - u') + (P' - P)u' } \, d(\nu)
+           \\
+        &= \int_{\Xcal}
+           \Big( \norm{u - Pu} + \norm{u' - P'u'} \Big)\;
+           \Big( \norm{(\I - P)(u - u')} + \norm{(P' - P)u'} \Big) \, d(\nu)
+           \\
+        &\leq \int_{\Xcal}
+           \Big( \norm{u} + \norm{u'} \Big)\;
+           \norm{u - u'} \, d(\nu)
+           + \int_{\Xcal}
+           \Big( \norm{u} + \norm{u'} \Big)\;
+           \opnorm{P' - P} \; \norm{u'} \, d(\nu)
+           \\
+        &\leq |\Xcal| \, (2M)\, L \big(\euknorm{\mu-\mu'} + \euknorm{t-t'}\big)
+           \;+\; |\Xcal| \, (2M^2)\, \opnorm{P' - P}
+           \\
+        &\leq |\Xcal| \Big( 2ML \big(\euknorm{\mu-\mu'} + \euknorm{t-t'}\big) + 2 M^2 \, \opnorm{\V - \V'} \Big) \\
+        &\leq |\Xcal| \, (L + 2M)\, \big(\euknorm{\mu-\mu'} + \euknorm{t-t'} + \opnorm{\V - \V'}\big).
     \end{align*}
-    where our last step is justified with the projector quality of $\V \V^T \G$ from 
-    Lemma (\ref{lemma: orthogonal projector on span of A}), thus explicitly having eigenvalues $0$ and $1$,
-    and therefore making $J$ Lipschitz continuous. To prove existence of the optimal DOD $s: \Theta \times [0, T]
+    The key justification here, is the bound on $\opnorm{P - P'}$, that can be achieved by considering 
+    \begin{align*}
+        \opnorm{P - P'} &= \opnorm{(\V' - \V) (\V')^T \G - \V ((\V')^T - \V^T) \G} \\
+        &\leq \opnorm{\V' - \V} \cdot \euknorm{(\V')^T \G}_\text{op} + \opnorm{\V} \cdot \euknorm{((\V')^T - \V^T) \G}_\text{op} \\
+        &\leq 2 \opnorm{\V - \V'}.
+    \end{align*}
+    Here, we denote with $\euknorm{\cdot}_\text{op}$ the standard (euclidean) spectral norm. Hence, by considerations
+    made in the introductory Section (\ref{section: linear algebra}), we have $\opnorm{\V} = \euknorm{\V^T \G} = 1$ for
+    any $\G$-orthonormal matrix $\V \in \R^{N_h \times N'}$.
+    
+    To prove existence of the optimal DOD $s: \Theta \times [0, T]
     \to [-1, 1]^{N_A \times N'}$, we remark, that the space $[-1, 1]^{N_A \times N'}$ is a compact one,
     and the objective DOD functional $J$ is continuous, which allows us to use 
     the Kuratowski-Ryll-Nardzewski Theorem, found in \cite{kuratowski1965}. The specifications of
@@ -531,10 +556,11 @@ result.
     $(\mu, t)$-invariant pre-reduced solution submanifold, where $\A \in \R^{N_h \times N_A}$ is a 
     $\G$-orthonormal matrix. 
     Then, under the Assumptions (\ref{assumption sample}) and (\ref{assumption parameter-to-solution map}), 
-    for every $\epsilon > 0$ there are weights $\theta_\text{DOD}^* \in \Theta(\Phi_{\tilde{\V}})$ 
-    for a DOD of output dimension $N_h \times N'$ according to Definition (\ref{def: DOD}), denoting
-    $\V_{\mu, t} := \V_{\mu, t}(\theta_\text{DOD}^*)$ for each $(\mu, t) \in \Theta \times [0, T]$ and
-    a constant $c_\A' > 0$ only depending on $\A$ and the parameter space, such that
+    for every $\epsilon > 0$ there is a neural network architecture $\Phi_{\tilde{\V}}$ and 
+    neural network weights $\theta_\text{DOD}^* \in \Theta(\Phi_{\tilde{\V}})$ 
+    for a DOD according to Definition (\ref{def: DOD}), denoted by
+    $\V_{\mu, t} := \V_{\mu, t}(\theta_\text{DOD}^*) \in \R^{N_h \times N'}$ for each $(\mu, t) \in \Theta \times [0, T]$ and
+    a constant $c_\A' > 0$ only depending on $\A, N_A$ and the parameter space, such that
     \begin{equation*}
         \int_{\Theta \times \Theta' \times [0, T]} 
         \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2 d(\mu, \nu, t)
@@ -561,19 +587,24 @@ result.
     entry in position $(i, j) \in \{1, \dots, N_A\} \times \{1, \dots, N'\}$.
 
     This means that by Hornik Theorem (\ref{theo: hornik theorem}), there is a neural network architecture 
-    $\Acal^{[\tilde{\V}_0]_{ij}}$ with  $(p+1)$-dimensional input and one-dimensional output, 
-    and a neural network of that architecture $[\tilde{\V}_0]_{ij}$, satisfying
+    $[\tilde{\V}_0]_{ij}$ with $(p+1)$-dimensional input and one-dimensional output, 
+    and a choice of neural network weights $\theta^*_{ij} \in \Theta([\tilde{\V}]_{ij})$ 
+    for that architecture, satisfying
     \begin{equation*}
-        \norm{[s]_{ij} - R_\rho([\tilde{\V}_0]_{ij})}^2_{L^2(\Theta \times [0, T]; \R)} \leq \epsilon,
+        \norm{[s]_{ij} - R_\rho([\tilde{\V}_0]_{ij}(\theta^*_{ij}))}^2_{L^2(\Theta \times [0, T]; \R)} \leq \epsilon,
     \end{equation*}
-    for each $(i, j) \in \{1, \dots, N_A\} \times \{1, \dots, N'\}$, and then using network parallelization 
+    for each $(i, j) \in \{1, \dots, N_A\} \times \{1, \dots, N'\}$.
+    We then write $[\tilde{\V}_0]_{ij} := [\tilde{\V}_0]_{ij}(\theta^*_{ij})$ for each of
+    these networks. Thus, by using network parallelization 
     as in Definition (\ref{def: network parallelization}), we can set the optimal DOD neural network as
     \begin{equation*}
         \tilde{\V}_0 := P\left(P([\tilde{\V}_0]_{1 1}, \dots, [\tilde{\V}_0]_{1 N'}), \dots, 
         P([\tilde{\V}_0]_{N_A  1}, \dots,
         [\tilde{\V}_0]_{N_A N'})\right),
     \end{equation*}
-    since it attains the wanted accuracy
+    with a joint set of weights $\theta^*_{\Sigma ij} \in \Theta(\tilde{\V}_0)$. These can technically be 
+    computed using the canonical lift and the Definition (\ref{def: network parallelization}) of parallelized networks. 
+    The realization of this network then attains
     \begin{equation*}
         \norm{s - R_\rho(\tilde{\V}_0)}^2_{L^2(\Theta \times [0, T]; \R^{N_A \times N'})} \leq
         \epsilon.
@@ -615,18 +646,22 @@ result.
 
 
     Further because the Lipschitz constant of this map is $1$, we can infer with the definition
-    $\V_{\mu, t} := \A \cdot \left(R_\rho(\zeta(\theta^*_\text{DOD})) \circ R_\rho(\tilde{\V}_0(\theta^*_\text{DOD})) \right)
-    (\mu, t)$ a new network, called the inner DOD module, with a final
-    architecture $\Phi_{\tilde{\V}}$ and
-    complexity only differing by constants, and a choice of neural network weights $\theta^*_\text{DOD} 
-    \in \Theta(\Phi_{\tilde{\V}})$, such that
+    \begin{equation*}
+        \tilde{\V}_{\mu, t} := \left(R_\rho(\zeta) \circ R_\rho(\tilde{\V}_0(\theta^*_{\Sigma ij})) \right)
+        (\mu, t), \quad \text{for } (\mu, t) \in \Theta \times [0, T],
+    \end{equation*}
+    a new network, called the inner DOD module, with a final
+    architecture $\Phi_{\tilde{\V}}$ and weights $\theta^*_\text{DOD} 
+    \in \Theta(\Phi_{\tilde{\V}})$. Note, that these weights can be computed using the canonical lift, and 
+    the Definition (\ref{def: network concatenation}) of network concatenations. The
+    complexity of it only differs from $\tilde{\V}_0$ by constants, such that
     \begin{equation*}
         \int_{\Theta \times [0, T]} \norm{\V_{\mu, t} - \A s(\mu, t)}^2 d(\mu, t)
         \leq \int_{\Theta \times [0, T]} \euknorm{R_\rho(\tilde{\V}_0)(\mu, t) - s(\mu, t)}^2
         d(\mu, t)
         \leq \epsilon,
     \end{equation*}
-    by the $1$-Lipschitz property of $R_\rho(\zeta(\theta^*_\text{DOD}))$ and the argument of $\norm{\A x} = \euknorm{x}$
+    by the $1$-Lipschitz property of $R_\rho(\zeta)$ and the argument of $\norm{\A x} = \euknorm{x}$
     for any $x \in \R^{N_h}$.
     Hence, as a matrix, the DOD is indeed in the pre-image of $J$. We further with
     the Proposition (\ref{prop: switch to euclidean norm}) for the switch to the euclidean norm
@@ -634,7 +669,7 @@ result.
     \begin{equation*}
         c_\A' := \int_{\Theta \times [0, T]} \bigg( \sup\limits_{\nu \in \Theta'} \underbrace{\norm{\uht - \A \A^T \G \uht}^2}_{= c_\A} \bigg) d(\mu,t).
     \end{equation*} 
-    Then we can write with $\uhtprered := \A^T \G \uht$,
+    Then we can calculate with $\uhtprered := \A^T \G \uht$
     \begin{multline} \label{eq: last step for optimal DOD}
         \int_{\Theta \times \Theta' \times [0, T]} 
         \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2 d(\mu, \nu, t) \\ 
@@ -660,7 +695,7 @@ result.
     Then the entire proof can be done in the same way, since the Lipschitz property of $\hat J$ in Lemma
     (\ref{lemma: DOD functional is lipschitz}) can be transferred, 
     and culminates in the following version of Proposition (\ref{prop: DOD Existence}) for $\V_{\mu, t} :=
-    \V_{\mu, t}(\hat \theta^*_\text{DOD})$, when discarding the very last step in 
+    \V_{\mu, t}(\theta^*_\text{DOD})$, when discarding the very last step in 
     Equation (\ref{eq: last step for optimal DOD})
     \begin{equation*}
         \frac{\euknorm{\Theta'}}{N_{s_2}} \sum_{\nu \in \Pcal_2}
@@ -672,19 +707,15 @@ result.
         \euknorm{\uhtprered - \tilde{\V} \tilde{\V}^T \uhtprered}^2,
     \end{equation*}
     for any choice of $(\mu, t) \in \Theta \times [0, T]$.
-    Notice, that in general $\hat \theta^*_\text{DOD} \neq \theta^*_\text{DOD}$, since the change of the objective
-    DOD functional induces a change to the optimal DOD and hence a potential change to the choice of neural network
-    weights. 
-    
-    As another note, it is clear, that if $N_A = N_h$, we have $c_\A = 0$ by the definition
-    of the POD as a canonical $\G$-orthonormalization and the right-hand-side sum
-    would be over the non-reduced quantity. This would simply constitute a case, where we 
+    Note, that if $N_A = N_h$, we have $c_\A = 0$ by the definition
+    of the POD as a canonical $\G$-orthonormalization. In this case, the right-hand-side sum
+    would be over the non-reduced average of KnW. This would simply constitute a case, where we 
     completely circumvent a pre-reduction.
 \end{remark}
 
 
 With that in mind, one can now build an analog to the relative error on the
-POD+DNN ROM (i.e. Theorem (\ref{theo: relative error POD+DNN})), since we now have a similar statement
+POD+DNN (i.e. Theorem (\ref{theo: relative error POD+DNN})), since we now have a similar statement
 as the one of Proposition (\ref{prop: eigenvalues and optimal projection under sampling}), in the form
 of Remark (\ref{remark: discrete optimal DOD}). In fact, we can even leverage 
 Proposition (\ref{prop: eigenvalues and optimal projection under sampling}) to define
@@ -784,19 +815,19 @@ that fulfill
     $\norm{\cdot}_{L^2_\omega}: L^2(\Theta \times \Theta' \times [0, T]; \R^{N_h}) \to \R^+$ be the norm as given before,
     and define
     \begin{equation*}
-        q_{N'}(\mu, \nu, t) := \V_{\mu, t}^T \G \uht \in \R^{N'}, 
+        q_\text{D}(\mu, \nu, t) := \V_{\mu, t}^T \G \uht \in \R^{N'}, 
     \end{equation*}
     as the reduced solution regarding the DOD projection.
     Then we can apply the triangle inequality like before, to achieve 
     \begin{equation*}
         \Ecal_\text{R}^\text{DOD+DNN} \leq \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}_{L^2_\omega} + 
-        \norm{\V_{\mu, t} q_{N'}(\mu, \nu, t) - \V_{\mu, t} \hat{q}_\text{D}(\mu, \nu, t)}_{L^2_\omega}.
+        \norm{\V_{\mu, t} q_\text{D}(\mu, \nu, t) - \V_{\mu, t} \hat{q}_\text{D}(\mu, \nu, t)}_{L^2_\omega}.
     \end{equation*}
     In turn, from here we can already infer the error stemming from the latent dynamics identification under the 
     neural network realization $\hat{q}_\text{D}$, i.e.
     \begin{equation}
         \mathcal{E}_\text{NN} = \left( \int_{\Theta \times \Theta' \times [0, T]} 
-        \frac{\norm{\V_{\mu, t} q_{N'}(\mu, \nu, t) - \V_{\mu, t} \hat{q}_\text{D}(\mu, \nu, t)}^2}{\norm{\uht}^2} 
+        \frac{\norm{\V_{\mu, t} q_\text{D}(\mu, \nu, t) - \V_{\mu, t} \hat{q}_\text{D}(\mu, \nu, t)}^2}{\norm{\uht}^2} 
         d(\mu, \nu, t) \right)^{1/2}.
     \end{equation}
     
@@ -837,7 +868,7 @@ that fulfill
     can assert, that $\Ecal_\text{S} \to 0$ almost surely by the uniform strong law of large numbers \cite{newey1994}.
     In fact, we calculate
     \begin{equation*}
-        \hat f(\nu; \mu, t) := \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2 \leq M^2 \opnorm{I_{N_h} - \V_{\mu, t}\V_{\mu,t}^T \G}^2
+        \hat f(\nu; \mu, t) := \norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2 \leq M^2 \opnorm{\I_{N_h} - \V_{\mu, t}\V_{\mu,t}^T \G}^2
         \leq 2M^2 < \infty,
     \end{equation*}
     uniformly bounded and continuous 
@@ -902,7 +933,7 @@ that fulfill
 
 
 To connect this line of thought to the prior discussion for the POD+DNN, we can now pose a similar lower bound on
-the error for the DOD+DNN ROM technique. For practical reasoning, the reader should keep in mind, that the result
+the error for the DOD+DNN technique. For practical reasoning, the reader should keep in mind, that the result
 is closely connected to the complexity of the neural network of the inner DOD module, even if the following
 theorem omits such an appreciation, since the connection given through Yarotsky Theorem (\ref{theo: yarotsky})
 is not immediate under the preliminaries alone.
@@ -921,11 +952,11 @@ is not immediate under the preliminaries alone.
 \end{theorem}
 \begin{proof}  
     The proof will again follow a similar structure as the one of Theorem (\ref{theo: lower bound pod+dnn}).
-    In fact, we can again infer the sub-optimal choice of the projection coefficients under any neural network
+    In fact, we can again infer the suboptimal choice of the projection coefficients under any neural network
     realization
     \begin{equation*}
         \int\limits_{\Theta \times \Theta' \times [0, T]} 
-        \frac{\norm{\uht - \V_{\mu, t} \hat{q}_{N'}(\mu, \nu, t)}^2}{\norm{\uht}^2} d(\mu, \nu, t)
+        \frac{\norm{\uht - \V_{\mu, t} \hat{q}_\text{D}(\mu, \nu, t)}^2}{\norm{\uht}^2} d(\mu, \nu, t)
         \geq
         \int\limits_{\Theta \times \Theta' \times [0, T]} 
         \frac{\norm{\uht - \V_{\mu, t} \V_{\mu, t}^T \G \uht}^2}{\norm{\uht}^2} d(\mu, \nu, t),
@@ -939,7 +970,7 @@ is not immediate under the preliminaries alone.
         U := \left[u_h^{\mu, \nu_1, t} \big\vert \cdots \big\vert u_h^{\mu, \nu_{N_{s_2}}, t} \right]^T 
         \in \R^{N_h \times N_{s_{2}}}
     \end{equation*}
-    for $N_{s_2} \to \infty$, which exists and is well defined via the Proposition 
+    for $N_{s_2} \to \infty$, which exists and is well-defined via the Proposition 
     (\ref{prop: eigenvalues and optimal projection under sampling}) and has eigenvalues
     $\sigma(\mu, t)^2_{1, \infty} \geq \cdots \geq \sigma(\mu, t)^2_{N', \infty}$, we
     get using the definition of the proof of Theorem (\ref{theo: relative error DOD+DNN})
@@ -1002,7 +1033,7 @@ relative error of the DOD-DL-ROM, however without any information about the maxi
 
 
 
-For the following discussion, we want to again set some preliminaries to shorten the theorems layout.
+For the following discussion, we want to again set some preliminaries to shorten the theorem's layout.
 Firstly, we assume the setup of the previous Section (\ref{section: error decomposition}), where we recall
 defining a sample to be used for all subsequent algorithms both POD-based and DOD-based neural networks,
 respectively marked POD+DNN and DOD+DNN. In fact,
@@ -1042,7 +1073,7 @@ the DOD+DFNN under weights $\theta_\text{DOD+DFNN} = (\theta_\text{DOD}, \theta_
     \qquad \text{for each } (\mu, t) \in \Theta \times [0, T] \text{, and } \\
     \phi_{N'} := R_\rho(\Phi_{N'}(\theta_{\text{DF}_2})): \R^{p+q+1} \to \R^{N'}
 \end{gather*}
-from the Subsection (\ref{subsec: DOD+DFNN}) and the DOD DefinitIon (\ref{def: DOD}), and
+from the Subsection (\ref{subsec: DOD+DFNN}) and the DOD Definition (\ref{def: DOD}), and
 \begin{equation*}
     \Gcal_\text{DOD-DL-ROM} : \Theta \times \Theta' \times [0, T] \to \R^{N_h}; \quad (\mu, \nu, t)
     \mapsto \V_{\mu, t} \cdot (\psi_{N'} \circ \phi_n)(\mu, \nu, t),
@@ -1182,14 +1213,15 @@ and $C_1, C_2$ analogously for $\psi_*$ and $\psi_*'$.
     Let the preliminaries of the POD-DL-ROM be given as in the introduction of this Section 
     (\ref{section: upper complexity bounds}).
     Then there is $N_\text{data} = N_\text{data}(\delta, \varepsilon)$, 
-    a constant $c = c(\Theta, \Theta', T, L, C_1, C_2, p, q, n, s, s')$ and 
-    a choice of weights for the POD-DL-ROM approximate parameter-to solution map $\A_\text{P} \cdot \hat{q}_N :=
+    a constant $c = c(\Theta, \Theta', T, L, C_1, C_2, p, q, n, s, s')$,
+    an architecture and a choice of neural network weights for that architecture, such that 
+    the POD-DL-ROM approximate parameter-to solution map $\A_\text{P} \cdot \hat{q}_\text{P} :=
     \A_\text{P} \cdot (\psi_N \circ \phi_n): \R^{p+q+1} \to \R^{N_h}$ 
-    such that 
+    attains
     \begin{equation*}
-        \prob\left[\Ecal^{POD-DL-ROM}_R < \varepsilon\right] > 1 - \delta,    
+        \prob\left[\Ecal^{POD-DL-ROM}_R < \varepsilon\right] > 1 - \delta.
     \end{equation*}
-    and the complexity is given by
+    Further, the complexity of the underlying architecture is at most
     \begin{enumerate}
         \item[-] $L_{\Psi_N} = c \log(\varepsilon^{-1})$ layers,
         \item[-] $\omega_{\Psi_N} = cN \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1})$ active weights,
@@ -1199,7 +1231,7 @@ and $C_1, C_2$ analogously for $\psi_*$ and $\psi_*'$.
         \item[-] $L_{\Phi_n} = c \log(\varepsilon^{-1})$ layers,
         \item[-] $\omega_{\Phi_n} = cn \varepsilon^{-(p+q+1)} \log(\varepsilon^{-1})$ active weights,
     \end{enumerate}
-    for the Deep Feed-Forward Neural Network.
+    for the Deep Feedforward Neural Network.
 \end{theorem}
 \begin{proof}
     We can directly bound $\Ecal_\text{S} = \Ecal_\text{S}(N_{s_1}, N_{s_2}, N_t)$ defined in the proof
@@ -1220,33 +1252,34 @@ and $C_1, C_2$ analogously for $\psi_*$ and $\psi_*'$.
     \begin{equation} \label{eq: bound on POD error pod-dl-rom}
         \Ecal_{\text{POD}} := m^{-1} \sqrt{\sum_{k > N} \sigma_k^2} \leq \frac{\varepsilon}{3}.
     \end{equation}
+    Let $q_\text{P}(\mu, \nu, t) := \A_\text{P}^T \G \uht \in \R^N$ be a reduced solution according to the POD basis. 
     To now bound the neural network approximation error, 
     we will need to simply rewrite the error in terms of a form accommodating a use of Gühring or Yarotsky Theorem;
     \begin{equation} \label{eq:nn error for pod-dl-rom}
         \begin{aligned}
             \Ecal_{\text{NN}} &= \left( \int_{\Theta \times \Theta' \times [0, T]} 
-            \frac{\norm{\A_\text{P} q_N(\mu, \nu, t) - \A_\text{P} \hat{q}_N(\mu, \nu, t)}^2}{\norm{\uht}^2}
+            \frac{\norm{\A_\text{P} q_\text{P}(\mu, \nu, t) - \A_\text{P} \hat{q}_\text{P}(\mu, \nu, t)}^2}{\norm{\uht}^2}
             \, d(\mu, \nu, t) \right)^{1/2} \\
             &\leq m^{-1} \left( \int_{\Theta \times \Theta' \times [0, T]} 
-            \norm{\A_\text{P} q_N(\mu, \nu, t) - \A_\text{P} \hat{q}_N(\mu, \nu, t)}^2 \, d(\mu, \nu, t) \right)^{1/2} \\
+            \norm{\A_\text{P} q_\text{P}(\mu, \nu, t) - \A_\text{P} \hat{q}_\text{P}(\mu, \nu, t)}^2 \, d(\mu, \nu, t) \right)^{1/2} \\
             &\leq m^{-1} \left( \left| \Theta \times \Theta' \times [0, T] \right| 
             \sup_{(\mu, \nu, t) \in \Theta \times \Theta' \times [0, T]} 
-            \norm{\A_\text{P} q_N(\mu, \nu, t) - \A_\text{P} \hat{q}_N(\mu, \nu, t)}^2 \right)^{1/2} \\
+            \norm{\A_\text{P} q_\text{P}(\mu, \nu, t) - \A_\text{P} \hat{q}_\text{P}(\mu, \nu, t)}^2 \right)^{1/2} \\
             &\leq m^{-1} \left( \left| \Theta \times \Theta' \times [0, T] \right| \cdot \opnorm{\A_\text{P}}^2 
             \sup_{(\mu, \nu, t) \in \Theta \times \Theta' \times [0, T]} 
-            \norm{q_N(\mu, \nu, t) - \hat{q}_N(\mu, \nu, t)}^2 \right)^{1/2} \\
+            \norm{q_\text{P}(\mu, \nu, t) - \hat{q}_\text{P}(\mu, \nu, t)}^2 \right)^{1/2} \\
             &= m^{-1} \left| \Theta \times \Theta' \times [0, T] \right|^{1/2} 
             \sup_{(\mu, \nu, t) \in \Theta \times \Theta' \times [0, T]} 
-            \norm{q_N(\mu, \nu, t) - \hat{q}_N(\mu, \nu, t)}.
+            \norm{q_\text{P}(\mu, \nu, t) - \hat{q}_\text{P}(\mu, \nu, t)}.
         \end{aligned}
         \end{equation}
-    We split the latter error into both parts, since $\hat{q}_N = \psi_N \circ \phi_n$ per definition. 
+    We split the latter error into both parts, since $\hat{q}_\text{P} = \psi_N \circ \phi_n$ per definition. 
     This means employing two types of error estimations
     in the matter of finding the respective optimal maps for the 
     feed forward estimation on the latent dynamics space via $\phi_*: \R^{(p+q+1)} \to \R^n$ 
     and the decoder lift via $\psi_*:\R^n \to \R^N$.
     \begin{enumerate}
-        \item[-] Let $\mathcal{S}_N := \{q(\mu, \nu, t) = \A_\text{P}^T \G \uht \in \R^N \, \vert \, (\mu, \nu, t) 
+        \item[-] Let $\mathcal{S}_N := \{q_\text{P}(\mu, \nu, t) = \A_\text{P}^T \G \uht \in \R^N \, \vert \, (\mu, \nu, t) 
         \in \Theta \times \Theta' \times [0, T] \}$, then the image of the optimal
         embedding $\mathcal{V}_n = \psi_*'(\mathcal{S}_N) \in \R^n$ is such that $\text{diam}(\mathcal{V}_n) 
         \leq C_1 L \cdot \text{diam}(\Theta \times \Theta' \times [0, T])$, given 
@@ -1276,14 +1309,17 @@ and $C_1, C_2$ analogously for $\psi_*$ and $\psi_*'$.
         \Theta' \times [0, T])}$, after unilateral prior transformation $x \mapsto x / \euknorm{x} \in (0, 1)^n$ of
         any input, 
         for the target space of the optimal function required by Theorem Gühring (\ref{theo: gühring}). Thus, 
-        there are neural network weights $\theta_\text{D}$ for $\psi_N = R_\rho(\Psi_N(\theta_\text{D})) 
-        : \R^n \to \R^N$ fitting the network realization to that optimal function, such that
+        there is a neural network architecture $\Psi_N$ and neural network weights $\theta_\text{D} \in \Theta(\Psi_N)$
+        fitting the network realization to that optimal function, such that its realization
+        $\psi_N = R_\rho(\Psi_N(\theta_\text{D})) : \R^n \to \R^N$ attains
         \begin{equation*}
             \norm{\psi_* - \psi_N}_{W^{1, \infty}((0,1)^d)} \leq \frac{m}{6} 
-            \euknorm{\Theta \times \Theta' \times [0, T]}^{-1/2} \varepsilon,
+            \euknorm{\Theta \times \Theta' \times [0, T]}^{-1/2} \varepsilon.
         \end{equation*}
-        with $L_{\Psi_N} = c \log(\varepsilon^{-1})$ layers and $\omega_{\Psi_N} = c N 
-        \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1})$ active weights. For the sake of completeness, we mention that
+        This architecture has at most $L_{\Psi_N} = c \log(\varepsilon^{-1})$ layers and $\omega_{\Psi_N} = c N 
+        \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1})$ active weights. 
+        
+        For the sake of completeness, we mention that
         one would build $N$-many entry-wise neural networks in parallel and hence attain for each $\omega_{[\psi_N]_1}
         = c \varepsilon^{-n/(s-1)} \log(\varepsilon^{-1})$ active weights under Gühring, then employ the Lemma
         (\ref{lemma: network parallelization}) for the parallelization of these. Note, that this 
@@ -1308,7 +1344,7 @@ and $C_1, C_2$ analogously for $\psi_*$ and $\psi_*'$.
         $\psi_*$ from the preliminaries of this Section (\ref{section: upper complexity bounds}).
 
 
-        \item[-] Now let $\phi_*(\mu, \nu, t) = \psi_*'(q(\mu, \nu, t))$ for 
+        \item[-] Now let $\phi_*(\mu, \nu, t) = \psi_*'(q_\text{P}(\mu, \nu, t))$ for 
         $(\mu, \nu, t) \in \Theta \times \Theta' \times [0, T]$, which is 
         Lipschitz continuous, with constant $L C_1$. In fact, we have for any pair $(\mu, \nu, t), (\mu', \nu', t')
         \in \Theta \times \Theta' \times [0, T]$,
@@ -1324,14 +1360,16 @@ and $C_1, C_2$ analogously for $\psi_*$ and $\psi_*'$.
         \text{diam}(\Theta \times \Theta' \times [0, T])$ by the same arguments as in the $\mathcal{V}_n$-case.
         Hence, after entry-wise normalization, $\phi_* \in \Fcal_{1, p+q+1, \infty, \text{diam}(\Scal_N)}$.
 
-        Now we employ Theorem Yarotski (\ref{theo: yarotsky}) to assert the existence of neural
-        network weights $\theta_\text{DF}$ such that its realization $\phi_n := R_\rho(\Phi_n(\theta_\text{DF})): 
+        Now we employ Theorem Yarotsky (\ref{theo: yarotsky}) to assert the existence of a 
+        neural network architecture $\Phi_n$ 
+        weights $\theta_\text{DF} \in \Theta(\Phi_n)$, such that its 
+        realization $\phi_n := R_\rho(\Phi_n(\theta_\text{DF})): 
         \R^{p+q+1} \to \R^n$ attains
         \begin{equation} \label{eq: dfnn error for pod-dl-rom}
             \norm{\phi_* - \phi_n}_{W^{0, \infty}(\Theta \times \Theta' \times [0, T])}
-            < \frac{m}{6 C_3}\euknorm{\Theta \times \Theta' \times [0, T]}^{-1/2} \varepsilon,
+            < \frac{m}{6 C_3}\euknorm{\Theta \times \Theta' \times [0, T]}^{-1/2} \varepsilon.
         \end{equation}
-        with $L_{\Phi_n} = c \log(\varepsilon^{-1})$ layers and 
+        This architecture has at most $L_{\Phi_n} = c \log(\varepsilon^{-1})$ layers and 
         $\omega_{\Phi_n} = c n \varepsilon^{-(p+q+1)} \log(\varepsilon^{-1})$ active weights, again with
         the argument of neural network parallelization.
     \end{enumerate}
@@ -1342,7 +1380,7 @@ and $C_1, C_2$ analogously for $\psi_*$ and $\psi_*'$.
     and (\ref{eq: dfnn error for pod-dl-rom}) 
     \begin{align*}
         &\sup_{(\mu, \nu, t) \in \Theta \times \Theta' \times [0, T]} 
-        \norm{q(\mu, \nu, t) - \hat{q}_N(\mu, \nu, t)} \\
+        \norm{q_\text{P}(\mu, \nu, t) - \hat{q}_\text{P}(\mu, \nu, t)} \\
         &\leq \sup\limits_{(\mu, \nu, t) \in \Theta \times \Theta' \times [0, T]} 
             ( \, \norm{\psi_*(\psi_*'(\mu, \nu, t)) - \psi(\phi_*(\mu, \nu, t))} + 
             \norm{\psi(\phi_*(\mu, \nu, t)) - \psi(\phi(\mu, \nu, t))} \, )  \\
@@ -1409,15 +1447,16 @@ of scaling with the total POD eigenvalues.
     (\ref{section: upper complexity bounds}), $N_A = N_h$ explicitly and the Assumption 
     (\ref{assumption additional lipschitz}) be true.
     Then there is $N_\text{data} = N_\text{data}(\delta, \varepsilon)$, 
-    a constant $c = c(\Theta, \Theta', T, L, \hat{L}, C_1, C_2, p, q, n, s, s')$ and 
-    a choice of weights for the DOD-DL-ROM approximate parameter-to solution map $(\mu, \nu, t) \mapsto 
-    \V_{\mu, t} \cdot \hat{q}_{N'} :=
+    a constant $c = c(\Theta, \Theta', T, L, \hat{L}, C_1, C_2, p, q, n, s, s')$,
+    an architecture and a choice of neural network weights for that architecture, such that
+    the DOD-DL-ROM approximate parameter-to solution map $(\mu, \nu, t) \mapsto 
+    \V_{\mu, t} \cdot \hat{q}_\text{D} :=
     \V_{\mu, t} \cdot (\psi_{N'} \circ \phi_n): \R^{p+q+1} \to \R^{N_h}$ 
-    such that 
+    attains
     \begin{equation*}
-        \prob\left[\Ecal^{DOD-DL-ROM}_R < \varepsilon\right] > 1 - \delta,    
+        \prob\left[\Ecal^{DOD-DL-ROM}_R < \varepsilon\right] > 1 - \delta.
     \end{equation*}
-    and the complexity is given by
+    Further, the complexity of the underlying architecture is at most
     \begin{enumerate}
         \item[-] $L_{\Phi_{\tilde{\V}}} = c \log(\varepsilon^{-1})$ layers,
         \item[-] $\omega_{\Phi_{\tilde{\V}}} = cN_A N' \varepsilon^{-(p+1)} \log(\varepsilon^{-1})$ active weights,
@@ -1432,7 +1471,7 @@ of scaling with the total POD eigenvalues.
         \item[-] $L_{\Phi_n} = c \log(\varepsilon^{-1})$ layers,
         \item[-] $\omega_{\Phi_n} = cn \varepsilon^{-(p+q+1)} \log(\varepsilon^{-1})$ active weights,
     \end{enumerate}
-    for the Deep Feed-Forward Neural Network.
+    for the Deep Feedforward Neural Network.
 \end{theorem}
 \begin{proof}
     Similar as to the proof of Theorem (\ref{theo: PAC bound for POD-DL-ROM}), we will try to bound each quantity
@@ -1469,31 +1508,36 @@ of scaling with the total POD eigenvalues.
         \end{aligned}
     \end{equation}
 
-    Under the Assumption (\ref{assumption additional lipschitz}), we get that a neural network can
-    be indeed found, such that it realizes 
+    Under the Assumption (\ref{assumption additional lipschitz}), a neural network architecture $[\tilde{\V}_0]_{ij}$
+    with corresponding weights $\theta^*_{ij}$ can indeed be found, such that
     \begin{equation*}
-        \norm{[s]_{ij} - R_\rho([\tilde{\V}_0]_{ij})}_{L^\infty(\Theta \times [0, T]; \R)} \leq \epsilon,
+        \norm{[s]_{ij} - R_\rho([\tilde{\V}_0]_{ij}(\theta^*_{ij}))}_{L^\infty(\Theta \times [0, T]; \R)} \leq \epsilon,
     \end{equation*}
-    for each $(i, j) \in \{1, \dots, N_A\} \times \{1, \dots, N'\}$
-    inside the proof of Proposition (\ref{prop: DOD Existence}) under the specifications of Remark
-    (\ref{remark: discrete optimal DOD}), with at most 
+    for each $(i, j) \in \{1, \dots, N_h\} \times \{1, \dots, N'\}$. This architecture has at most 
     \begin{enumerate}
-        \item[-] $L_{\Phi_{[\tilde{\V}_0]_{ij}}} = c'' \log(\varepsilon^{-1})$ layers and
-        \item[-] $\omega_{\Phi_{[\tilde{\V}_0]_{ij}}} = c'' \varepsilon^{-(p+1)} \log(\varepsilon^{-1})$ active weights,
+        \item[-] $L_{[\tilde{\V}_0]_{ij}} = c'' \log(\varepsilon^{-1})$ layers and
+        \item[-] $\omega_{[\tilde{\V}_0]_{ij}} = c'' \varepsilon^{-(p+1)} \log(\varepsilon^{-1})$ active weights,
     \end{enumerate}
-    for some $c'' = c''(\Theta, T, p, \hat{L}) > 0$ by Yarotsky Theorem (\ref{theo: yarotsky}), 
-    since the $\hat{L}$-Lipschitz property of the optimal DOD justifies $W^{1, \infty}$-regularity
+    for some $c'' = c''(\Theta, T, p, \hat{L}) > 0$ by Yarotsky Theorem (\ref{theo: yarotsky}). 
+    The use of this theorem is due to 
+    the $\hat{L}$-Lipschitz property of the optimal DOD, justifying $W^{1, \infty}$-regularity
     with an $\hat{L}$ bound by Theorem (\ref{theo: lipschitz implies sobolev}).
-    Then with the parallelization of the next argument of the proof, we get no change in the layer bound, 
-    but we multiply the weights approximation with $N'$ and with $N_A$ by Lemma (\ref{lemma: network parallelization}).
-    Lastly, the concatenation of the neural network of $\tilde{V}_0$ with $\zeta$ for normalization only
-    changes the layers by a constant according to Lemma (\ref{lemma: network concatenation}), thus
-    achieving for the inner DOD module at most
+
+    From this point, 
+    using the steps in the proof of Proposition (\ref{prop: DOD Existence}) under the specifications of Remark
+    (\ref{remark: discrete optimal DOD}), we can find a neural network architecture $\Phi_{\tilde{\V}}$ for
+    the inner DOD module and corresponding optimal weight $\theta^*_\text{DOD} \in \Theta(\Phi_{\tilde{\V}})$,
+    such that
+    \begin{equation*}
+        \norm{s - R_\rho(\Phi_{\tilde{\V}}(\theta^*_\text{DOD}))}_{L^\infty(\Theta \times [0, T]; \R^{N_h \times N'})} 
+        \leq \epsilon,
+    \end{equation*}
+    with at most
     \begin{enumerate}
         \item[-] $L_{\Phi_{\tilde{\V}}} = c' \log(\varepsilon^{-1})$ layers and
         \item[-] $\omega_{\Phi_{\tilde{\V}}} = c' N_A N' \varepsilon^{-(p+1)} \log(\varepsilon^{-1})$ active weights,
     \end{enumerate}
-    with $c' = 3 + c''$.
+    where $c' = 3 + c''$.
 
     Moreover, we can use the exact same arguments as in the bound for $\Ecal_{\text{NN}}$ for the POD-DL-ROM as in the
     proof of Theorem (\ref{theo: PAC bound for POD-DL-ROM}), which yields
@@ -1526,15 +1570,16 @@ This does not change basically anything regarding the proof, as the choice of $N
     (\ref{section: upper complexity bounds}), $N_A = N_h$ explicitly and the Assumption 
     (\ref{assumption additional lipschitz}) be true.
     Then there is $N_\text{data} = N_\text{data}(\delta, \varepsilon)$, 
-    a constant $c = c(\Theta, \Theta', T, L, \hat{L}, p, q, N')$ and 
-    a choice of weights for the DOD+DFNN approximate parameter-to solution map $(\mu, \nu, t) \mapsto 
-    \V_{\mu, t} \cdot \hat{q}_{N'} :=
+    a constant $c = c(\Theta, \Theta', T, L, \hat{L}, p, q, N')$,
+    an architecture and a choice of neural network weights for that architecture, such that
+    the DOD+DFNN approximate parameter-to solution map $(\mu, \nu, t) \mapsto 
+    \V_{\mu, t} \cdot \hat{q}_\text{D} :=
     \V_{\mu, t} \cdot \phi_{N'}: \R^{p+q+1} \to \R^{N_h}$ 
-    such that 
+    attains
     \begin{equation*}
-        \prob\left[\Ecal^{DOD+DFNN}_R < \varepsilon\right] > 1 - \delta,    
+        \prob\left[\Ecal^{DOD+DFNN}_R < \varepsilon\right] > 1 - \delta.
     \end{equation*}
-    and the complexity is given by
+    Further, the complexity of the underlying architecture is at most
     \begin{enumerate}
         \item[-] $L_{\Phi_{\tilde{\V}}} = c \log(\varepsilon^{-1})$ layers,
         \item[-] $\omega_{\Phi_{\tilde{\V}}} = cN_A N' \varepsilon^{-(p+1)} \log(\varepsilon^{-1})$ active weights,

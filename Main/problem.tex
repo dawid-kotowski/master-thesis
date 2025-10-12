@@ -589,7 +589,7 @@ like the proposed Deep Feed-Forward Neural Network (DFNN), is used to learn the 
 This concludes in the following approximation of the FOM coefficient solution $\uht \in \R^{N_h}$ for each 
 $\mu \in \Theta$, $\nu \in \Theta'$ and $t \in \Tcal$
 \begin{equation} \label{eq: dl rom solution}
-    \uhthat = \left(R_\rho(\Psi_h) \circ R_\rho(\Phi_n)\right) (t; \mu, \nu) \in \R^{N_h},
+    \uhthat = \left(R_\rho(\Psi_h) \circ R_\rho(\Phi_n)\right) (\mu, \nu, t) \in \R^{N_h},
 \end{equation}
 where we set $\Psi_h = f^\text{D}_h$ for the decoder architecture with input dimension $n$ and output dimension $N_h$
 (and $\Psi'_n = f^\text{E}_n$ the corresponding encoder architecture) of a convolutional AE. 
@@ -647,7 +647,7 @@ define the reduced solution snapshots by computing
 By $\G$-orthonormality of $\A_\text{P} $, we can thus define the FOM approximate coefficient solution $\uhthat \in \R^{N_h}$ for each 
 $\mu \in \Theta$, $\nu \in \Theta'$ and $t \in \Tcal$
 \begin{equation} \label{eq: pod-dl-rom solution}
-    \uhthat = \A_\text{P}  \cdot \left(R_\rho(\Psi_N) \circ R_\rho(\Phi_n)\right) (t; \mu, \nu) \in \R^{N_h},
+    \uhthat = \A_\text{P}  \cdot \left(R_\rho(\Psi_N) \circ R_\rho(\Phi_n)\right) (\mu, \nu, t) \in \R^{N_h},
 \end{equation}
 where we set $\Psi_N = f^\text{D}_{N}$ for the decoder architecture with input dimension $n$ and output dimension $N$
 (and $\Psi'_n = f^\text{E}_n$ the corresponding encoder architecture) of a convolutional AE. 
@@ -857,7 +857,8 @@ can be given for each $(\mu, \nu, t) \in \Theta \times \Theta'
 The training is done in series and not in parallel.
 We first find the optimal DOD parameter $\theta^*_\text{DOD} \in \Theta(\Phi_{\tilde{\V}})$ by 
 solving the optimization problem
-in Definition (\ref{def: DOD}). This freezes the DOD, and we set $\V_{\mu, t} := \V_{\mu, t}(\theta^*_\text{DOD})$.
+in Definition (\ref{def: DOD}). This freezes the DOD, and we set $\V_{\mu, t} := \V_{\mu, t}(\theta^*_\text{DOD})$ for 
+$(\mu, t) \in \Theta \times [0, T]$.
 
 Now, we can use the frozen DOD matrix to reduce the training data
 \begin{equation*}
@@ -894,13 +895,14 @@ Then the approximate parameter-to-solution map of the \emph{DOD-DL-ROM}
 can be given for each $(\mu, \nu, t) \in \Theta \times \Theta'
 \times [0, T]$ via
 \begin{equation} \label{eq: dod-dl-rom solution}
-    \uhthat = \A \cdot R_\rho(\Phi_{\tilde{\V}}) \cdot 
-    \left(R_\rho(\Psi_{N'}) \circ R_\rho(\Phi_n)\right) (t; \mu, \nu) \in \R^{N_h}.
+    \uhthat = \A \cdot R_\rho(\Phi_{\tilde{\V}})(\mu, t) \cdot 
+    \left(R_\rho(\Psi_{N'}) \circ R_\rho(\Phi_n)\right) (\mu, \nu, t) \in \R^{N_h}.
 \end{equation}
 
 Same as for the DOD+DNN, the training is done in series. We find the optimal DOD parameter 
 $\theta^*_\text{DOD} \in \Theta(\Phi_{\tilde{\V}})$ by solving the optimization problem in
-Definition (\ref{def: DOD}). This again freezes the DOD, and we set $\V_{\mu, t}:= \V_{\mu, t}(\theta_\text{DOD}^*)$.
+Definition (\ref{def: DOD}). This again freezes the DOD, and we set $\V_{\mu, t}:= \V_{\mu, t}(\theta_\text{DOD}^*)$ for 
+$(\mu, t) \in \Theta \times [0, T]$.
 One then observes, that the training data can be again
 reduced with
 \begin{equation*}
