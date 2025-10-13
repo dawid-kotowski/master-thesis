@@ -7,7 +7,7 @@ Additionally, let $\Omega \subset \R^d$ be some Lipschitz domain and $[0, T]$ be
 for some $T > 0$ of a parametric time-dependent PDE.
 For $\mu \in \Theta$ and $\nu \in \Theta'$
 \begin{equation*}
-    u^{\mu, \nu} := u(\mu, \nu) , \quad \text{with sufficient regularity},
+    u^{\mu, \nu} := u(\mu, \nu), \quad \text{with sufficient regularity},
 \end{equation*}
 is called the (strong) solution of the PPDE, with the choice of the function space depending on the
 specified problem, if
@@ -94,7 +94,8 @@ The formulation in Equation (\ref{eq: fom ppde}) establishes smoothness with reg
 To solve this resulted ODE, we will implicitly further discretize by using time steps
 $\{t_k\}_{k=1}^{N_t} := \Tcal$ to gather data. 
 
-\begin{definition}[Solution Data] \label{def: solution data}    
+\begin{definition}[Solution Data] 
+    \label{def: solution data}    
     We denote with
     \begin{equation*}
         \uht := \uh(t) \in \R^{N_h}, \quad \text{for }\mu \in \Theta, \nu \in \Theta' \text{ and all } t \in \Tcal,
@@ -547,7 +548,7 @@ the direct use of the governing equations. As such, they allow a more general tr
 
     In parallel, regression-based approaches have been developed to learn reduced 
     operators directly from data, often under the name of 
-    \emph{operator inference} \cite{peherstorfer2016}, or in the form of 
+    \emph{operator inference} \cite{peherstorfer2018}, or in the form of 
     interpolation-based reduced models, e.g.\ POD with interpolation (PODI) 
     as in Barrault et al. \cite{barrault2004}. These methods demonstrate that the 
     reduced dynamics can be inferred without Galerkin projection, either by 
@@ -695,7 +696,8 @@ invoke a Neural Network based linear projector, that fits a basis superposition 
 This projector can thus produce a further reduction to $N' < N$ under a similar energy loss.
 
 The following depicts an adaptive RB method. 
-\begin{definition}[Deep Orthogonal Decomposition] \label{def: DOD}
+\begin{definition}[Deep Orthogonal Decomposition] 
+    \label{def: DOD}
     Recollect the dimensional hierarchy of Assumption (\ref{assumption: dimension hierarchy}).
     Employ a POD (according to Algorithm (\ref{algo: pod})) with $\G$
     given as above, using
