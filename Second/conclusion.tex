@@ -1,8 +1,8 @@
 \chapter{Conclusion} \label{chapter: conclusion}
 
-In this final chapter, the focus will be to briefly review the results, and present potential further aspect 
-of scientific research in that area. For this, we want to lastly separated
-the portion into two sections, answering both concluding questions; what was achieved in this thesis
+In this final chapter, the focus will be to briefly review the results, and present potential further aspects 
+of scientific research in that area. For this, we want to lastly distinguish
+this portion into two sections, answering both concluding questions; what was achieved in this thesis
 and what might future developments be.
 
 \section{Review}
@@ -11,26 +11,31 @@ and what might future developments be.
 This thesis introduced in Chapter (\ref{chapter: problem}) the newly proposed adaptive Deep
 Orthogonal Decomposition based Deep Learning Reduced Order Model (DOD-DL-ROM)
 based on the founding idea of \cite{franco2024} and a crossing with the POD-DL-ROM
-given by \cite{fresca2022}, and
+given by \cite{fresca2022}. It further
 concluded in its theoretical framework in Chapter (\ref{chapter: results}) 
 of approximation theoretic statements, that
 the Deep Orthogonal Decomposition based Reduced Order Model might pose a viable alternative to the 
-Proper Orthogonal Decomposition based one, as long as the aimed upon error tolerance $\varepsilon$ is significantly low,
+Proper Orthogonal Decomposition based one. This is the case, as 
+long as the aimed upon error tolerance $\varepsilon$ is significantly small, the FOM dimension $N_h$ is containable,
 and enough regularity onto the optimal Deep Orthogonal Decomposition can be implied. The bottleneck
 criterion for this is most significantly given by 
 \begin{equation*}
-    \frac{n}{s-1} > \frac{\log(N_h)}{\log(\varepsilon^{-1})},
+    \frac{n}{s-1} > \frac{\log(N_h)}{\log(\varepsilon^{-1})}.
 \end{equation*}
-where $s$ denotes the implied regularity of the optimal non-linear embedding function between the coefficient
+Here, $s$ denotes the implied regularity of the optimal non-linear embedding function between the coefficient
 space and the latent dynamics.
 
 We reached this conclusion through a rigorous application of results about arbitrary proximity to the
 optimal projection
-derived from the paper \cite{franco2024} in a context of approximation theory lifted, in notation and
+derived from the paper \cite{franco2024}. This happened in a context of approximation theory, lifted, in notation and
 content, from \cite{gühring2019nn}. Furthermore, we could provide a distinct error decomposition upper and
-lower bound for any such Deep Orthogonal Decomposition based model, which we went on to visualize
-in the last of three examples, where the other two served the purpose of showing one instance of potential
+lower bound for any such Deep Orthogonal Decomposition projection-based model. We went on to visualize this
+in the last of three examples, whereas the other two served the purpose of showing one instance of potential
 superiority of the method over the legacy Proper Orthogonal data-driven model, and another of its limitations.
+
+In a different contribution, we have also provided a CoLoRA inspired architecture, that leverages a limit-fashion 
+stationary version of the PPDE. We could not provide any meaningful numerical results for this. However, 
+the model can be found in the repository \url{https://github.com/dawid-kotowski/doddlrom}.
 
 
 \section{Research}
